@@ -1,6 +1,6 @@
 // Category Mapping to friendly Thai names
 const CATEGORY_NAMES = {
-  "news_sbr": "ข่าวสารจาก สบร.",
+  "news_sbr": "ข่าวสารจาก สขร.",
   "index_files": "ดัชนีรวม / ดัชนีประจำแฟ้ม",
   "m7_1": "มาตรา 7 (1) โครงสร้างและการจัดองค์กรในการดำเนินงาน",
   "m7_2": "มาตรา 7 (2) สรุปอำนาจหน้าที่ที่สำคัญและวิธีการดำเนินงาน",
@@ -149,8 +149,8 @@ function renderItems(container) {
   // เพิ่มแบนเนอร์ด้านบนสุดสำหรับหน้า ข่าวสาร สขร. (news_sbr)
   if (hash === "news_sbr" && currentPage === 1) {
     html += `
-      <div class="w-full h-80 md:h-100 mb-8 rounded-2xl overflow-hidden shadow-sm relative bg-gray-100">
-        <video src="./assets/Man_in_uniform_and_statue_202607091447.mp4" class="w-full h-full object-cover object-center" autoplay loop muted playsinline></video>
+      <div class="w-100 h-80 md:h-85 rounded-2xl overflow-hidden shadow-sm relative bg-gray-100">
+        <video src="./assets/Man_in_uniform_and_statue_202607091447.mp4" class="w-full h-80 object-cover object-top" autoplay loop muted playsinline></video>
       </div>
     `;
   }
