@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Banner</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet" /> -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
+  <script>
+    window.tailwind = window.tailwind || {};
+    window.tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            prompt: ["Prompt", "sans-serif"],
+          },
+          colors: {
+            brand: {
+              teal: "#008675",
+              mint: "#55bbb0",
+              mist: "#f4f5f6",
+              ink: "#101314",
+            },
+          },
+        },
+      },
+    };
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="./src/styles.css" />
+  <style>
+    /* Lottie sidebar icon sizing */
+    .sidebar-icon dotlottie-wc {
+      display: inline-flex;
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+    /* Pause animation by default, play on hover */
+    .sidebar-link dotlottie-wc {
+      transition: opacity 0.2s;
+    }
+    .sidebar-link:not(:hover) dotlottie-wc {
+      filter: grayscale(40%);
+      opacity: 0.75;
+    }
+    .sidebar-link:hover dotlottie-wc,
+    .sidebar-link.active dotlottie-wc {
+      filter: none;
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body class="font-prompt">
+  <!-- Nav Component (loaded from components/nav.html) -->
+  <div data-component="./components/nav.html"></div>
+
+  <div class="parent">
+    <!-- Sidebar Component (loaded from components/sidebar.html) -->
+    <div data-component="./components/sidebar.html"></div>
+
+    <main class="content">
+      <h1 class="content-title">ดัชนีรวม / ดัชนีประจำแฟ้ม</h1>
+      
+      <!-- ตัวโหลด Lottie Animation -->
+      <div id="page-loader" style="display: flex; justify-content: center; align-items: center; min-height: 400px;">
+        <dotlottie-wc src="./assets/icons/Loading.json" autoplay loop style="width: 200px; height: 200px;"></dotlottie-wc>
+      </div>
+
+      <!-- ข้อมูลที่จะแสดงหลังโหลดเสร็จ (ซ่อนไว้ก่อนด้วย display: none) -->
+      <div class="content-box" id="page-content" style="display: none;">
+        <img src="./assets/เทศบาลนครเจ้าพระยาสุรศักดิ์.png" alt="" style="width: 80%; height: auto; border-radius: 10px; align-items: center; justify-content: center; margin: 0 auto; display: flex;">
+        <a href="#" class="content-link">ดัชนีประจำแฟ้ม มาตรา 7</a>
+        <a href="#" class="content-link">ดัชนีประจำแฟ้ม มาตรา 9</a>
+      </div>
+    </main>
+  </div>
+  
+  <!-- Footer Component -->
+  <div data-component="./components/footer.html"></div>
+
+  <!-- Component Loader -->
+  <script src="./components/loader.js"></script>
+  <!-- Supabase config & app code -->
+  <script src="./src/config.js"></script>
+  <script src="./src/app.js"></script>
+  <!-- Lottie Sidebar Icons -->
+  <script src="./assets/lottie-icons.js"></script>
+  
+  <!-- Script จัดการเวลาโหลด -->
+  <script>
+    window.addEventListener("load", function() {
+      // เมื่อเว็บโหลดเสร็จ ให้รออีก 2 วินาที (2000 ms) ค่อยแสดงข้อมูล
+      setTimeout(function() {
+        document.getElementById("page-loader").style.display = "none";
+        document.getElementById("page-content").style.display = ""; // ลบ display: none ออกเพื่อให้แสดงผลตาม CSS ปกติ
+      }, 1000);
+    });
+  </script>
+</body>
+
+</html>

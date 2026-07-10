@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ผู้ดูแลระบบ - ระบบจัดการข้อมูลข่าวสาร</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    window.tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            prompt: ["Prompt", "sans-serif"],
+          },
+          colors: {
+            brand: {
+              teal: "#008675",
+              mint: "#55bbb0",
+              mist: "#f4f5f6",
+              ink: "#101314",
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./src/config.js"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at left center, rgba(165, 241, 255, 0.1), transparent 25%),
+        radial-gradient(circle at right center, rgba(241, 251, 255, 0.9), transparent 25%),
+        linear-gradient(90deg, #f0f9ff 0%, #ffffff 50%, #ffffff 100%);
+    }
+  </style>
+</head>
+
+<body class="font-prompt text-brand-ink min-h-screen flex flex-col">
+
+  <!-- 1. Auth Page (Visible if not logged in) -->
+  <div id="auth-container" class="flex-grow flex items-center justify-center p-4">
+    <div
+      class="w-full max-w-md bg-white/70 backdrop-blur-xl border border-[rgba(0,134,117,0.15)] p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,134,117,0.08)]">
+      <div class="text-center mb-6">
+        <img src="./assets/logo.png" alt="Logo" class="mx-auto h-16 w-auto mb-3"
+          onerror="this.src='https://placehold.co/100x100?text=ICO'" />
+        <h2 class="text-2xl font-bold text-gray-800">ระบบจัดการข้อมูลข่าวสาร</h2>
+        <p class="text-gray-500 text-sm mt-1">เข้าสู่ระบบเฉพาะผู้ดูแลเครื่อง</p>
+      </div>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">อีเมล</label>
+          <input type="email" id="login-email" required
+            class="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-[rgba(0,134,117,0.1)] transition-all"
+            placeholder="admin@example.com" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">รหัสผ่าน</label>
+          <input type="password" id="login-password" required
+            class="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-[rgba(0,134,117,0.1)] transition-all"
+            placeholder="••••••••" />
+        </div>
+
+        <div id="login-error" class="hidden text-red-500 text-xs py-1 flex items-center gap-1.5">
+          <i class="fi fi-rr-triangle-warning"></i>
+          <span id="login-error-msg">อีเมลหรือรหัสผ่านไม่ถูกต้อง</span>
+        </div>
+
+        <button type="submit"
+          class="w-full py-3.5 bg-brand-teal text-white font-bold rounded-2xl shadow-lg shadow-[rgba(0,134,117,0.2)] hover:shadow-xl hover:shadow-[rgba(0,134,117,0.3)] hover:-translate-y-0.5 transition-all duration-200">
+          เข้าสู่ระบบ
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Admin Dashboard (Visible if logged in) -->
+  <div id="admin-dashboard" class="hidden flex-grow flex flex-col">
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-4 sticky top-0 z-30 shadow-sm">
+      <div class="w-full mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <img src="./assets/logo.png" alt="Logo" class="h-10 w-auto"
+            onerror="this.src='https://placehold.co/80x80?text=ICO'" />
+          <div>
+            <h1 class="text-lg font-bold text-gray-800 leading-tight">ระบบจัดการข้อมูลศูนย์ข่าวสาร</h1>
+            <p class="text-xs text-brand-teal font-semibold">แผงควบคุมผู้ดูแลระบบ</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <span id="admin-user-email" class="text-sm text-gray-500 hidden md:inline">admin@domain.com</span>
+          <button id="btn-logout"
+            class="px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all">
+            <i class="fi fi-rr-sign-out-alt align-middle mr-1"></i> ออกจากระบบ
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-5 gap-6 flex-grow items-start">
+      <!-- Left sidebar categories -->
+      <aside
+        class="lg:col-span-1 bg-white border border-gray-100 rounded-3xl p-4 shadow-sm flex flex-col gap-2 max-h-[80vh] overflow-y-auto sticky top-24">
+        <div class="px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">เลือกหัวข้อรายการข้อมูล</div>
+        <nav id="admin-categories" class="flex flex-col gap-1">
+          <!-- Dynamic category list loaded here -->
+        </nav>
+      </aside>
+
+      <!-- Right content area -->
+      <main
+        class="lg:col-span-3 xl:col-span-4 bg-white border border-gray-100 rounded-3xl p-6 shadow-sm min-h-[60vh] flex flex-col">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-100 pb-4 mb-6 gap-4">
+          <div>
+            <h2 id="active-category-title" class="text-xl font-bold text-gray-800">กรุณาเลือกหัวข้อ...</h2>
+            <p class="text-xs text-gray-400 mt-1">จัดการข้อมูลและไฟล์แนบประจำหัวข้อ</p>
+          </div>
+          <button id="btn-add-item"
+            class="hidden px-5 py-3 bg-brand-teal text-white text-sm font-bold rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-1.5">
+            <i class="fi fi-rr-add"></i> เพิ่มข้อมูลใหม่
+          </button>
+        </div>
+
+        <!-- Add/Edit Form Box -->
+        <div id="form-container"
+          class="hidden mb-8 bg-brand-mist/50 border border-[rgba(0,134,117,0.1)] p-6 rounded-2xl">
+          <h3 id="form-title" class="text-lg font-bold text-gray-800 mb-4">เพิ่มข้อมูลข่าวสาร</h3>
+          <form id="item-form" class="space-y-4">
+            <input type="hidden" id="item-id" />
+
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">หัวเรื่อง <span
+                  class="text-red-500">*</span></label>
+              <input type="text" id="item-title" required
+                class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-teal transition-all text-sm"
+                placeholder="ระบุหัวเรื่อง..." />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">รายละเอียด</label>
+              <textarea id="item-desc" rows="4"
+                class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-teal transition-all text-sm"
+                placeholder="ระบุรายละเอียดเพิ่มเติม..."></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-1">ลิงก์ URL</label>
+              <input type="url" id="item-link"
+                class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-teal transition-all text-sm"
+                placeholder="https://example.com/more-info" />
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Image Upload -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">รูปภาพประกอบ</label>
+                <div class="space-y-2">
+                  <input type="file" id="item-image-file" accept="image/*"
+                    class="block w-full text-xs text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[rgba(0,134,117,0.08)] file:text-[#008675] hover:file:bg-[rgba(0,134,117,0.15)]" />
+                  <input type="url" id="item-image-url"
+                    class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-teal text-xs"
+                    placeholder="หรือระบุลิงก์รูปภาพ..." />
+                  <div id="image-upload-status" class="hidden text-xs text-brand-teal font-semibold">
+                    <div class="flex items-center gap-1.5">
+                      <div class="w-3 h-3 border-2 border-t-brand-teal rounded-full animate-spin"></div>
+                      กำลังอัปโหลดภาพ...
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- File Upload -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">ไฟล์เอกสารแนบ (เช่น PDF, Word)</label>
+                <div class="space-y-2">
+                  <input type="file" id="item-file-file" accept=".pdf,.doc,.docx,.xls,.xlsx,.zip"
+                    class="block w-full text-xs text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[rgba(85,187,176,0.08)] file:text-[#008675] hover:file:bg-[rgba(85,187,176,0.15)]" />
+                  <input type="url" id="item-file-url"
+                    class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-teal text-xs"
+                    placeholder="หรือระบุลิงก์ไฟล์เอกสาร..." />
+                  <div id="file-upload-status" class="hidden text-xs text-[#55bbb0] font-semibold">
+                    <div class="flex items-center gap-1.5">
+                      <div class="w-3 h-3 border-2 border-t-[#55bbb0] rounded-full animate-spin"></div>
+                      กำลังอัปโหลดไฟล์...
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-3">
+              <button type="button" id="btn-cancel-form"
+                class="px-5 py-2.5 border border-gray-200 text-gray-600 font-semibold rounded-xl text-sm hover:bg-gray-50 transition-all">ยกเลิก</button>
+              <button type="submit" id="btn-save-item"
+                class="px-6 py-2.5 bg-brand-teal text-white font-bold rounded-xl text-sm hover:shadow-md hover:bg-[#007062] transition-all">บันทึกข้อมูล</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Items Table Container -->
+        <div id="items-list-container" class="flex-grow flex flex-col justify-center">
+          <div class="flex flex-col items-center justify-center py-16 gap-3 text-gray-400 text-center">
+            <i class="fi fi-rr-hand-pointer text-4xl"></i>
+            <p class="text-sm font-medium">เลือกหัวข้อด้านซ้ายเพื่อดูและจัดการข้อมูล</p>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const CATEGORIES = {
+      "news_sbr": "ข่าวสารจาก สบร.",
+      "index_files": "ดัชนีรวม / ดัชนีประจำแฟ้ม",
+      "m7_1": "มาตรา 7 (1) โครงสร้างและการจัดองค์กร",
+      "m7_2": "มาตรา 7 (2) สรุปอำนาจหน้าที่",
+      "m7_3": "มาตรา 7 (3) สถานที่ติดต่อขอข้อมูล",
+      "m7_4": "มาตรา 7 (4) กฎ มติ ครม. ระเบียบ",
+      "m9_1": "มาตรา 9 (1) ผลการพิจารณา",
+      "m9_2": "มาตรา 9 (2) นโยบายการตีความ",
+      "m9_3": "มาตรา 9 (3) แผนงาน โครงการ งบประมาณ",
+      "m9_4": "มาตรา 9 (4) คู่มือวิธีปฏิบัติงานเจ้าหน้าที่",
+      "m9_5": "มาตรา 9 (5) สิ่งพิมพ์ที่อ้างถึงตาม ม.7",
+      "m9_6": "มาตรา 9 (6) สัญญาสัมปทาน/ร่วมทุน",
+      "m9_7": "มาตรา 9 (7) มติคณะรัฐมนตรี/มติบอร์ด",
+      "m9_8": "มาตรา 9 (8) ข้อมูลข่าวสารอื่นที่กำหนด",
+      "eval_form": "เเบบฟอร์มสำรวจความพึงพอใจ",
+      "eval_summary": "สรุปความพึงพอใจ",
+      "eval_stats": "สถิติผู้ใช้บริการ",
+      "eval_faq": "กระดานถาม-ตอบ / ข้อคิดเห็น",
+      "article_sbr": "บทความ สขร.",
+      "contact": "ติดต่อหน่วยงาน (Contact Us)",
+      "privacy": "นโยบายคุ้มครองข้อมูลส่วนบุคคล"
+    };
+
+    let activeCategory = null;
+    let isEditing = false;
+
+    // Run on startup
+    document.addEventListener("DOMContentLoaded", async () => {
+      setupAuthListener();
+      setupFormListeners();
+    });
+
+    // Authenticate and Toggle View
+    function setupAuthListener() {
+      // Check current session
+      checkSession();
+
+      // Login form submission
+      document.getElementById("login-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("login-email").value.trim();
+        const password = document.getElementById("login-password").value;
+        const errorEl = document.getElementById("login-error");
+
+        errorEl.classList.add("hidden");
+
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+        if (error) {
+          console.error("Supabase Auth Error:", error);
+          errorEl.classList.remove("hidden");
+          document.getElementById("login-error-msg").textContent = error.message;
+        } else {
+          checkSession();
+        }
+      });
+
+      // Logout button
+      document.getElementById("btn-logout").addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        checkSession();
+      });
+    }
+
+    async function checkSession() {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      const authContainer = document.getElementById("auth-container");
+      const dashboard = document.getElementById("admin-dashboard");
+
+      if (session) {
+        authContainer.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+        document.getElementById("admin-user-email").textContent = session.user.email;
+        initDashboard();
+      } else {
+        authContainer.classList.remove("hidden");
+        dashboard.classList.add("hidden");
+        activeCategory = null;
+      }
+    }
+
+    // Initialize Dashboard UI
+    function initDashboard() {
+      const catNav = document.getElementById("admin-categories");
+      catNav.innerHTML = "";
+
+      const groups = [
+        { id: "news_sbr", title: "ข่าวสารจาก สขร.", type: "single" },
+        { id: "index_files", title: "ดัชนีรวม / ดัชนีประจำแฟ้ม", type: "single" },
+        {
+          title: "ข้อมูลข่าวสารตามมาตรา 7",
+          type: "group",
+          items: ["m7_1", "m7_2", "m7_3", "m7_4"]
+        },
+        {
+          title: "ข้อมูลข่าวสารตามมาตรา 9",
+          type: "group",
+          items: ["m9_1", "m9_2", "m9_3", "m9_4", "m9_5", "m9_6", "m9_7", "m9_8"]
+        },
+        {
+          title: "ประเมินผลการให้บริการศูนย์ / ถาม-ตอบ",
+          type: "group",
+          items: ["eval_form", "eval_summary", "eval_stats", "eval_faq"]
+        },
+        { id: "article_sbr", title: "บทความ สขร.", type: "single" },
+        { id: "contact", title: "ติดต่อหน่วยงาน (Contact Us)", type: "single" },
+        { id: "privacy", title: "นโยบายคุ้มครองข้อมูลส่วนบุคคล", type: "single" }
+      ];
+
+      groups.forEach(group => {
+        if (group.type === "single") {
+          const btn = createCategoryButton(group.id, CATEGORIES[group.id], "fi-rr-document");
+          catNav.appendChild(btn);
+        } else if (group.type === "group") {
+          const details = document.createElement("details");
+          details.className = "group mb-1";
+
+          const summary = document.createElement("summary");
+          summary.className = "flex items-center gap-2 px-3 py-2 text-sm font-bold text-gray-700 cursor-pointer hover:text-brand-teal select-none rounded-xl hover:bg-gray-50 transition-colors";
+          summary.innerHTML = `<i class="fi fi-rr-folder-open text-brand-teal"></i> <span class="truncate">${group.title}</span>`;
+
+          const itemsContainer = document.createElement("div");
+          itemsContainer.className = "flex flex-col gap-1 pl-4 mt-1 border-l-2 border-gray-100 ml-4";
+
+          group.items.forEach(itemId => {
+            const btn = createCategoryButton(itemId, CATEGORIES[itemId], "fi-rr-document", true);
+            itemsContainer.appendChild(btn);
+          });
+
+          details.appendChild(summary);
+          details.appendChild(itemsContainer);
+          catNav.appendChild(details);
+        }
+      });
+
+      if (activeCategory) {
+        selectCategory(activeCategory);
+      }
+    }
+
+    function createCategoryButton(id, title, icon, isNested = false) {
+      const btn = document.createElement("button");
+      btn.className = `w-full text-left px-4 py-2.5 text-sm font-medium rounded-xl hover:bg-brand-teal/5 hover:text-brand-teal transition-all flex items-start gap-2 ${isNested ? 'text-xs' : ''}`;
+      btn.setAttribute("data-cat", id);
+      btn.innerHTML = `<i class="fi ${icon} ${isNested ? 'text-[10px] mt-0.5' : 'text-xs mt-0.5'} shrink-0"></i> <span class="leading-tight text-left">${title}</span>`;
+
+      btn.addEventListener("click", () => {
+        selectCategory(id);
+      });
+      return btn;
+    }
+
+    // Select active category to manage
+    function selectCategory(key) {
+      activeCategory = key;
+
+      // Update UI active indicator
+      document.querySelectorAll("#admin-categories button").forEach(btn => {
+        btn.classList.remove("bg-brand-teal", "text-white", "hover:bg-brand-teal");
+        if (btn.getAttribute("data-cat") === key) {
+          btn.classList.add("bg-brand-teal", "text-white");
+
+          // ถ้าปุ่มนี้อยู่ในกลุ่ม <details> ให้สั่งกางออกด้วย
+          const details = btn.closest("details");
+          if (details) {
+            details.open = true;
+          }
+        }
+      });
+
+      document.getElementById("active-category-title").textContent = CATEGORIES[key];
+      document.getElementById("btn-add-item").classList.remove("hidden");
+
+      closeForm();
+      loadItems();
+    }
+
+    // Load category items from database
+    async function loadItems() {
+      const container = document.getElementById("items-list-container");
+
+      container.innerHTML = `
+        <div class="flex flex-col items-center justify-center py-16 gap-3 text-gray-500">
+          <div class="w-8 h-8 border-3 border-t-brand-teal rounded-full animate-spin"></div>
+          <p class="text-xs">กำลังโหลดข้อมูล...</p>
+        </div>
+      `;
+
+      try {
+        const { data: items, error } = await supabase
+          .from("items")
+          .select("*")
+          .eq("category", activeCategory)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        renderItemsTable(items);
+      } catch (err) {
+        console.error("Error loading items:", err);
+        container.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-16 gap-3 text-red-500 text-center">
+            <i class="fi fi-rr-triangle-warning text-3xl"></i>
+            <p class="text-sm font-semibold">โหลดข้อมูลไม่สำเร็จ</p>
+          </div>
+        `;
+      }
+    }
+
+    // Render loaded items table
+    function renderItemsTable(items) {
+      const container = document.getElementById("items-list-container");
+
+      if (!items || items.length === 0) {
+        container.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-16 gap-3 text-gray-400 text-center">
+            <i class="fi fi-rr-inbox text-4xl"></i>
+            <p class="text-sm font-medium">ยังไม่มีข้อมูลในหัวข้อนี้</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = `
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-gray-100 text-gray-400 text-xs uppercase font-semibold">
+                <th class="py-3 px-2">รูปภาพ</th>
+                <th class="py-3 px-4">หัวเรื่อง / รายละเอียด</th>
+                <th class="py-3 px-2">ลิงก์/ไฟล์แนบ</th>
+                <th class="py-3 px-4 text-right">เครื่องมือ</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+      `;
+
+      items.forEach(item => {
+        const imageHtml = item.image_url
+          ? `<img src="${item.image_url}" class="w-16 h-12 rounded-lg object-cover border border-gray-100" />`
+          : `<div class="w-16 h-12 rounded-lg bg-gray-50 flex items-center justify-center border border-gray-100 text-gray-300"><i class="fi fi-rr-picture text-lg"></i></div>`;
+
+        const attachmentHtml = `
+          <div class="flex gap-2 text-base">
+            ${item.link ? `<a href="${item.link}" target="_blank" title="ดูลิงก์" class="text-brand-teal hover:scale-110 transition-transform"><i class="fi fi-rr-link"></i></a>` : ''}
+            ${item.file_url ? `<a href="${item.file_url}" target="_blank" title="ดาวน์โหลดไฟล์" class="text-brand-mint hover:scale-110 transition-transform"><i class="fi fi-rr-document-signed"></i></a>` : ''}
+          </div>
+        `;
+
+        html += `
+          <tr class="hover:bg-gray-50/50 transition-colors">
+            <td class="py-4 px-2">${imageHtml}</td>
+            <td class="py-4 px-4 max-w-xs md:max-w-md">
+              <div class="font-bold text-gray-800 truncate" title="${item.title}">${item.title}</div>
+              <div class="text-xs text-gray-500 line-clamp-2 mt-1 whitespace-pre-line">${item.description || '-'}</div>
+            </td>
+            <td class="py-4 px-2">${attachmentHtml}</td>
+            <td class="py-4 px-4 text-right space-x-2 whitespace-nowrap">
+              <button onclick="editItem('${item.id}')" class="px-3 py-1.5 border border-gray-200 text-gray-600 text-xs font-semibold rounded-lg hover:border-brand-teal hover:text-brand-teal transition-all">
+                แก้ไข
+              </button>
+              <button onclick="deleteItem('${item.id}')" class="px-3 py-1.5 border border-red-100 text-red-500 text-xs font-semibold rounded-lg hover:bg-red-50 transition-all">
+                ลบ
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += `
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    // Set up form show/hide actions
+    function setupFormListeners() {
+      const btnAdd = document.getElementById("btn-add-item");
+      const btnCancel = document.getElementById("btn-cancel-form");
+      const formBox = document.getElementById("form-container");
+      const form = document.getElementById("item-form");
+
+      btnAdd.addEventListener("click", () => {
+        isEditing = false;
+        form.reset();
+        document.getElementById("item-id").value = "";
+        document.getElementById("form-title").textContent = "เพิ่มข้อมูลข่าวสาร";
+        formBox.classList.remove("hidden");
+        formBox.scrollIntoView({ behavior: "smooth" });
+      });
+
+      btnCancel.addEventListener("click", () => {
+        closeForm();
+      });
+
+      // Handle file uploads during form submission
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const btnSave = document.getElementById("btn-save-item");
+        btnSave.disabled = true;
+        btnSave.textContent = "กำลังบันทึก...";
+
+        try {
+          const id = document.getElementById("item-id").value;
+          const title = document.getElementById("item-title").value;
+          const description = document.getElementById("item-desc").value;
+          const link = document.getElementById("item-link").value;
+
+          let imageUrl = document.getElementById("item-image-url").value;
+          let fileUrl = document.getElementById("item-file-url").value;
+
+          // Upload image file if selected
+          const imageFile = document.getElementById("item-image-file").files[0];
+          if (imageFile) {
+            document.getElementById("image-upload-status").classList.remove("hidden");
+            const fileExt = imageFile.name.split('.').pop();
+            const fileName = `${Date.now()}_img.${fileExt}`;
+            const { data, error } = await supabase.storage
+              .from("ico-bucket")
+              .upload(fileName, imageFile);
+
+            if (error) throw error;
+
+            // Get public URL
+            const { data: { publicUrl } } = supabase.storage
+              .from("ico-bucket")
+              .getPublicUrl(fileName);
+
+            imageUrl = publicUrl;
+            document.getElementById("image-upload-status").classList.add("hidden");
+          }
+
+          // Upload document file if selected
+          const docFile = document.getElementById("item-file-file").files[0];
+          if (docFile) {
+            document.getElementById("file-upload-status").classList.remove("hidden");
+            const fileExt = docFile.name.split('.').pop();
+            const fileName = `${Date.now()}_doc.${fileExt}`;
+            const { data, error } = await supabase.storage
+              .from("ico-bucket")
+              .upload(fileName, docFile);
+
+            if (error) throw error;
+
+            // Get public URL
+            const { data: { publicUrl } } = supabase.storage
+              .from("ico-bucket")
+              .getPublicUrl(fileName);
+
+            fileUrl = publicUrl;
+            document.getElementById("file-upload-status").classList.add("hidden");
+          }
+
+          const itemData = {
+            category: activeCategory,
+            title,
+            description,
+            link,
+            image_url: imageUrl,
+            file_url: fileUrl
+          };
+
+          if (id) {
+            // Edit Mode
+            const { error } = await supabase
+              .from("items")
+              .update(itemData)
+              .eq("id", id);
+
+            if (error) throw error;
+          } else {
+            // Add Mode
+            const { error } = await supabase
+              .from("items")
+              .insert([itemData]);
+
+            if (error) throw error;
+          }
+
+          closeForm();
+          loadItems();
+        } catch (err) {
+          console.error("Error saving item:", err);
+          alert("ไม่สามารถบันทึกข้อมูลได้: " + err.message);
+        } finally {
+          btnSave.disabled = false;
+          btnSave.textContent = "บันทึกข้อมูล";
+        }
+      });
+    }
+
+    function closeForm() {
+      document.getElementById("form-container").classList.add("hidden");
+      document.getElementById("item-form").reset();
+      document.getElementById("image-upload-status").classList.add("hidden");
+      document.getElementById("file-upload-status").classList.add("hidden");
+    }
+
+    // Load selected item data into form for editing
+    window.editItem = async (id) => {
+      isEditing = true;
+      document.getElementById("form-title").textContent = "แก้ไขข้อมูลข่าวสาร";
+
+      const formBox = document.getElementById("form-container");
+      formBox.classList.remove("hidden");
+      formBox.scrollIntoView({ behavior: "smooth" });
+
+      try {
+        const { data: item, error } = await supabase
+          .from("items")
+          .select("*")
+          .eq("id", id)
+          .single();
+
+        if (error) throw error;
+
+        document.getElementById("item-id").value = item.id;
+        document.getElementById("item-title").value = item.title;
+        document.getElementById("item-desc").value = item.description || "";
+        document.getElementById("item-link").value = item.link || "";
+        document.getElementById("item-image-url").value = item.image_url || "";
+        document.getElementById("item-file-url").value = item.file_url || "";
+      } catch (err) {
+        console.error("Error loading item details:", err);
+        alert("ดึงข้อมูลมาแสดงไม่สำเร็จ: " + err.message);
+        closeForm();
+      }
+    };
+
+    // Delete item
+    window.deleteItem = async (id) => {
+      if (!confirm("คุณต้องการลบข้อมูลรายการนี้ใช่หรือไม่? การดำเนินการนี้ไม่สามารถย้อนกลับได้")) return;
+
+      try {
+        const { error } = await supabase
+          .from("items")
+          .delete()
+          .eq("id", id);
+
+        if (error) throw error;
+
+        loadItems();
+      } catch (err) {
+        console.error("Error deleting item:", err);
+        alert("ไม่สามารถลบข้อมูลได้: " + err.message);
+      }
+    };
+  </script>
+</body>
+
+</html>
