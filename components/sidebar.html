@@ -1,6 +1,105 @@
-<aside class="sidebar">
-  <div class="sidebar-header">รายการข้อมูล</div>
+<style>
+  /* ============================================================
+     SLIDING LEFT DOCK SIDEBAR (User Original Style + Pop-out Hover)
+     ============================================================ */
+
+  .sidebar {
+    position: fixed;
+    top: 95px;
+    left: 0;
+    z-index: 9990;
+    width: 320px;
+    max-height: calc(100vh - 115px);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 134, 117, 0.16);
+    border-left: none;
+    border-radius: 0 20px 20px 0;
+    box-shadow: 8px 12px 35px rgba(0, 0, 0, 0.15);
+    overflow: visible !important;
+    transition: transform 0.35s cubic-bezier(0.34, 1.25, 0.64, 1), box-shadow 0.3s ease;
+
+    /* Hidden tucked to the left edge by default */
+    transform: translateX(calc(-100% + 10px));
+  }
+
+  /* Slide out to full view when mouse hovers, receives focus, or pinned */
+  .sidebar:hover,
+  .sidebar:focus-within,
+  .sidebar.is-pinned {
+    transform: translateX(0) !important;
+    box-shadow: 12px 18px 45px rgba(0, 134, 117, 0.22);
+  }
+
+  /* Edge Pull-Tab Handle visible on left screen edge */
+  .sidebar-edge-handle {
+    position: absolute;
+    top: 30px;
+    right: -130px;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: visible;
+    transition: all 0.25s ease;
+  }
+
+  .sidebar-edge-handle dotlottie-wc {
+    transform: rotate(90deg);
+    transition: transform 0.3s ease;
+    margin-top: 48px;
+    margin-right: -42px;
+  }
+
+  .sidebar:hover .sidebar-edge-handle dotlottie-wc,
+  .sidebar.is-pinned .sidebar-edge-handle dotlottie-wc {
+    transform: rotate(0deg);
+  }
+
+  /* Scrollable Nav Area inside Sidebar */
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.75rem 1rem 1.25rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 180px);
+  }
+
+  .sidebar-nav::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(0, 134, 117, 0.2);
+    border-radius: 10px;
+  }
+</style>
+
+<!-- User Original Sidebar Markup with Left Slide-out Floating Feature -->
+<aside id="sidebar-dock" class="sidebar">
+  
+  <!-- Right Edge Handle Tab with Lottie Animation -->
+  <div class="sidebar-edge-handle" onclick="toggleSidebarPin()" title="คลิกเพื่อเปิด/ปิดค้างไว้">
+    <dotlottie-wc src="https://lottie.host/49af6f59-a219-4a98-bee7-9b7fa300be95/LP3icBUQET.json" autoplay loop mode="bounce" style="width: 150px; height: 150px; transform: rotate(90deg);"></dotlottie-wc>
+  </div>
+
+  <div class="sidebar-header flex items-center justify-between">
+    <span>รายการข้อมูล</span>
+    <button onclick="toggleSidebarPin()" class="text-xs text-gray-600 hover:text-teal-700 p-1" title="ปักหมุดเปิดค้างไว้">
+    </button>
+  </div>
+
   <nav class="sidebar-nav">
+    <a href="#home" class="sidebar-link" data-id="home">
+      <span class="sidebar-icon"><i class="fi fi-rr-home"></i></span>
+      หน้าแรก
+    </a>
+    <div class="sidebar-divider"></div>
     <a href="#news_sbr" class="sidebar-link" data-id="news_sbr">
       <span class="sidebar-icon"><i class="fi fi-rr-document"></i></span>
       ข่าวสารจาก สขร.
@@ -37,7 +136,6 @@
       </nav>
     </details>
     <div class="sidebar-divider"></div>
-
 
     <details class="sidebar-group">
       <summary class="sidebar-link">
@@ -80,7 +178,6 @@
       </nav>
     </details>
 
-
     <div class="sidebar-divider"></div>
     <details class="sidebar-group">
       <summary class="sidebar-link">
@@ -98,7 +195,7 @@
         </a>
         <a href="#eval_stats" class="sidebar-link nested" data-id="eval_stats">
           <span class="sidebar-icon"><i class="fi fi-rr-document"></i></span>
-          สถิติผ้ใช้บริการ
+          สถิติผู้ใช้บริการ
         </a>
         <a href="#eval_faq" class="sidebar-link nested" data-id="eval_faq">
           <span class="sidebar-icon"><i class="fi fi-rr-document"></i></span>
@@ -123,3 +220,11 @@
     </a>
   </nav>
 </aside>
+
+<script>
+  function toggleSidebarPin() {
+    const el = document.getElementById("sidebar-dock");
+    if (!el) return;
+    el.classList.toggle("is-pinned");
+  }
+</script>

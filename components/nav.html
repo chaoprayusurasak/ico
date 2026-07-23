@@ -1,154 +1,491 @@
-<section class="banner-section">
-  <header class="site-header px-4 pt-4 sm:px-6">
-    <nav class="main-nav">
-      <input id="nav-toggle" type="checkbox" class="peer hidden" />
-      <div class="flex h-20 w-full items-center justify-between px-6 sm:px-8 lg:px-10">
-        <a href="#" class="brand-lockup">
-          <img src="./assets/logo.png" alt="Logo" class="brand-logo" width="70" height="60" />
-          <div class="flex flex-col leading-tight">
-            <span class="brand-title mb-1px">
-              ศูนย์ข้อมูลข่าวสารอิเล็กทรอนิกส์ของราชการ
-            </span>
-            <span class="brand-subtitle">
-              เทศบาลนครเจ้าพระยาสุรศักดิ์
-            </span>
-          </div>
-        </a>
+<style>
+  /* ============================================================
+     NAVBAR STYLES (Self-contained in components/nav.html)
+     Matching Silpakorn Floating Card Nav Bar with Rounded Bottom Corners
+     Fully Responsive on all devices (Desktop, Laptop, Tablet, Mobile)
+     ============================================================ */
 
-        <div class="hidden items-center gap-7 md:flex">
-          <div class="nav-item">
-            <a href="#index_files" class="nav-link is-active">หน้าแรก</a>
-            <div class="nav-dropdown">
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>ข่าวประชาสัมพันธ์</a>
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>ประกาศล่าสุด</a>
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>บริการยอดนิยม</a>
-            </div>
-          </div>
+  .site-header-wrapper {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 9999;
+    padding: 0 1rem;
+    pointer-events: none;
+  }
 
-          <div class="nav-item">
-            <a href="#" class="nav-link">เกี่ยวกับศูนย์ข้อมูลข่าวสาร</a>
-            <div class="nav-dropdown">
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>ประวัติความเป็นมา</a>
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>ผู้บริหาร</a>
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>เจ้าหน้าที่ผู้รับผิดชอบ</a>
-            </div>
-          </div>
+  @media (min-width: 640px) {
+    .site-header-wrapper {
+      padding: 0 1.5rem;
+    }
+  }
 
-          <div class="nav-item">
-            <a href="#" class="nav-link">สำหรับหน่วยงานราชการ</a>
-            <div class="nav-dropdown">
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>แบบฟอร์มรายงานการปฏิบัติตาม พ.ร.บ.
-                ข้อมูลข่าวสาร พ.ศ. 2540</a>
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>ระบบรายงาน Template ศูนย์ข้อมูลข่าวสาร
-                พ.ศ. 2540</a>
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>สมัครเข้าร่วมโครงการประกวดศูนย์ข้อมูลโดดเด่น</a>
-            </div>
-          </div>
+  /* Floating Navbar Card with Rounded Bottom Corners */
+  .main-nav-card {
+    pointer-events: auto;
+    max-width: 1440px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 10px 30px rgba(0, 86, 117, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+    border-left: 1px solid rgba(0, 134, 117, 0.08);
+    border-right: 1px solid rgba(0, 134, 117, 0.08);
+    border-bottom: 1px solid rgba(0, 134, 117, 0.12);
+    transition: all 0.3s ease;
+  }
 
-          <div class="nav-item">
-            <a href="#" class="nav-link">สำหรับประชาชน</a>
-            <div class="nav-dropdown">
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>ระบบร้องเรียน/อุทรณ์ออนไลน์</a>
-            </div>
-          </div>
+  .nav-inner-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    padding: 0 1.25rem;
+  }
 
-          <div class="nav-item">
-            <a href="#" class="nav-link">เชื่อมโยงศูนย์ข้อมูลข่าวสารอื่น ๆ</a>
-            <div class="nav-dropdown nav-dropdown-wide">
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>หน่วยงานที่มีศูนย์ข้อมูลข่าวสาร</a>
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>หน่วยงานที่ใช้ INFOCENTER</a>
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>ระบบทดสอบความรู้ตาม พ.ร.บ. ข้อมูลฯ</a>
-            </div>
-          </div>
+  @media (min-width: 768px) {
+    .nav-inner-container {
+      height: 78px;
+      padding: 0 2rem;
+    }
+  }
 
-          <div class="nav-item">
-            <a href="#" class="nav-link">อื่น ๆ</a>
-            <div class="nav-dropdown nav-dropdown-right">
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>ดาวน์โหลดเอกสาร</a>
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>แผนผังเว็บไซต์</a>
-              <a href="#" class="triangle-right"><span
-                  style="font-size: 12px; margin-right: 6px;">&#9654;</span>ติดต่อเรา</a>
-            </div>
+  /* Brand Lockup */
+  .brand-lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    flex-shrink: 0;
+    margin-right: 2.5rem;
+    /* Generous gap between agency title and nav links */
+  }
+
+  .brand-logo {
+    height: 44px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  @media (min-width: 768px) {
+    .brand-logo {
+      height: 48px;
+    }
+  }
+
+  .brand-text-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.2;
+  }
+
+  .brand-title {
+    color: #008675;
+    font-size: 0.9rem;
+    font-weight: 800;
+    font-family: 'Prompt', 'Kanit', sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  .brand-subtitle {
+    color: #008675;
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: 'Prompt', 'Kanit', sans-serif;
+  }
+
+  @media (min-width: 640px) {
+    .brand-title {
+      font-size: 0.98rem;
+    }
+
+    .brand-subtitle {
+      font-size: 0.84rem;
+    }
+  }
+
+  /* Desktop / Tablet Horizontal Menu */
+  .nav-menu-desktop {
+    display: none;
+    align-items: center;
+    gap: 1.25rem;
+    height: 100%;
+    flex-wrap: nowrap;
+  }
+
+  @media (min-width: 1024px) {
+    .nav-menu-desktop {
+      display: flex;
+      gap: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .nav-menu-desktop {
+      gap: 2rem;
+    }
+  }
+
+  .nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
+  .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 100%;
+    color: #334155;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0 4px;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+  }
+
+  /* Active & Hover Green Underline Indicator (Matching Reference Image) */
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2.5px;
+    background-color: #008675;
+    border-radius: 2px 2px 0 0;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .nav-link:hover,
+  .nav-item:hover .nav-link,
+  .nav-link.is-active {
+    color: #008675;
+  }
+
+  .nav-link:hover::after,
+  .nav-item:hover .nav-link::after,
+  .nav-link.is-active::after {
+    transform: scaleX(1);
+  }
+
+  /* Dropdown Submenu Cards */
+  .nav-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    min-width: 230px;
+    padding: 8px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 134, 117, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.09);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .nav-dropdown-wide {
+    min-width: 310px;
+  }
+
+  .nav-dropdown-right {
+    left: auto;
+    right: 0;
+    transform: translateY(8px);
+  }
+
+  .nav-item:hover .nav-dropdown {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .nav-item:hover .nav-dropdown-right {
+    transform: translateY(0);
+  }
+
+  .nav-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: 10px;
+    color: #334155;
+    font-size: 0.86rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .nav-dropdown a:hover {
+    background: #e6f3f1;
+    color: #008675;
+    transform: translateX(3px);
+  }
+
+  .nav-dropdown a .triangle-icon {
+    font-size: 0.65rem;
+    color: #008675;
+    opacity: 0.7;
+  }
+
+  /* Mobile Hamburger Button */
+  .mobile-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    color: #008675;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .mobile-toggle-btn:hover {
+    background: #e2e8f0;
+  }
+
+  @media (min-width: 1024px) {
+    .mobile-toggle-btn {
+      display: none;
+    }
+  }
+
+  /* Mobile Drawer Menu */
+  .mobile-drawer-container {
+    background: #ffffff;
+    border-top: 1px solid rgba(0, 134, 117, 0.08);
+    border-radius: 0 0 20px 20px;
+    padding: 1rem 1.25rem 1.5rem;
+  }
+
+  .mobile-menu-item {
+    margin-bottom: 0.5rem;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    background: #f8fafc;
+    overflow: hidden;
+  }
+
+  .mobile-menu-item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1e293b;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .mobile-menu-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mobile-submenu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem 0.75rem 0.75rem;
+    background: #ffffff;
+  }
+
+  .mobile-submenu-list a {
+    padding: 0.65rem 0.85rem;
+    border-radius: 8px;
+    color: #475569;
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .mobile-submenu-list a:hover {
+    background: #e6f3f1;
+    color: #008675;
+  }
+</style>
+
+<!-- Floating Header Wrapper with Rounded Bottom Navbar Card -->
+<header class="site-header-wrapper">
+  <div class="main-nav-card">
+    <nav class="nav-inner-container">
+
+      <!-- Left: Brand Logo & Title -->
+      <a href="#home" class="brand-lockup">
+        <img src="./assets/logo.png" alt="Logo เทศบาลนครเจ้าพระยาสุรศักดิ์" class="brand-logo" />
+        <div class="brand-text-container">
+          <span class="brand-title">ศูนย์ข้อมูลข่าวสารอิเล็กทรอนิกส์ของราชการ</span>
+          <span class="brand-subtitle">เทศบาลนครเจ้าพระยาสุรศักดิ์</span>
+        </div>
+      </a>
+
+      <!-- Right: Desktop Navigation Links -->
+      <div class="nav-menu-desktop">
+
+        <!-- 1. หน้าแรก -->
+        <div class="nav-item">
+          <a href="#home" class="nav-link is-active">
+            หน้าแรก
+            <i class="fi fi-rr-angle-small-down text-xs ml-0.5 opacity-60"></i>
+          </a>
+          <div class="nav-dropdown">
+            <a href="#index_files"><span class="triangle-icon">▶</span> ดัชนีรวม / ดัชนีประจำแฟ้ม</a>
+            <a href="#news_sbr"><span class="triangle-icon">▶</span> ข่าวประชาสัมพันธ์</a>
+            <a href="#announcements"><span class="triangle-icon">▶</span> ประกาศล่าสุด</a>
+            <a href="#popular_services"><span class="triangle-icon">▶</span> บริการยอดนิยม</a>
           </div>
         </div>
 
-        <label for="nav-toggle" class="mobile-toggle md:hidden" aria-label="เปิดเมนู">
-          <span></span>
-          <span></span>
-          <span></span>
-        </label>
-      </div>
-
-      <div class="mobile-menu hidden peer-checked:block md:hidden rounded-b-3xl">
-        <div class="grid gap-3">
-          <details class="mobile-menu-group">
-            <summary>หน้าแรก<span aria-hidden="true">⌄</span></summary>
-            <div class="mobile-submenu">
-              <a href="#">ข่าวประชาสัมพันธ์</a>
-              <a href="#">ประกาศล่าสุด</a>
-              <a href="#">บริการยอดนิยม</a>
-            </div>
-          </details>
-
-          <details class="mobile-menu-group">
-            <summary>เกี่ยวกับศูนย์ข้อมูลข่าวสาร<span aria-hidden="true">⌄</span></summary>
-            <div class="mobile-submenu">
-              <a href="#">ประวัติความเป็นมา</a>
-              <a href="#">ผู้บริหาร</a>
-              <a href="#">เจ้าหน้าที่ผู้รับผิดชอบ</a>
-            </div>
-          </details>
-
-          <details class="mobile-menu-group">
-            <summary>สำหรับหน่วยงานราชการ<span aria-hidden="true">⌄</span></summary>
-            <div class="mobile-submenu">
-              <a href="#">แบบฟอร์มรายงานการปฏิบัติตาม พ.ร.บ. ข้อมูลข่าวสาร พ.ศ. 2540</a>
-              <a href="#">ระบบรายงาน Template ศูนย์ข้อมูลข่าวสาร พ.ศ. 2540</a>
-              <a href="#">สมัครเข้าร่วมโครงการประกวดศูนย์ข้อมูลโดดเด่น</a>
-            </div>
-          </details>
-
-          <details class="mobile-menu-group">
-            <summary>สำหรับประชาชน<span aria-hidden="true">⌄</span></summary>
-            <div class="mobile-submenu">
-              <a href="#">ระบบร้องเรียน/อุทรณ์ออนไลน์</a>
-            </div>
-          </details>
-
-          <details class="mobile-menu-group">
-            <summary>เชื่อมโยงศูนย์ข้อมูลข่าวสารอื่น ๆ<span aria-hidden="true">⌄</span></summary>
-            <div class="mobile-submenu">
-              <a href="#">หน่วยงานที่มีศูนย์ข้อมูลข่าวสาร</a>
-              <a href="#">หน่วยงานที่ใช้ INFOCENTER</a>
-              <a href="#">ระบบทดสอบความรู้ตาม พ.ร.บ. ข้อมูลฯ</a>
-            </div>
-          </details>
-
-          <details class="mobile-menu-group">
-            <summary>อื่น ๆ<span aria-hidden="true">⌄</span></summary>
-            <div class="mobile-submenu">
-              <a href="#">ดาวน์โหลดเอกสาร</a>
-              <a href="#">แผนผังเว็บไซต์</a>
-              <a href="#">ติดต่อเรา</a>
-            </div>
-          </details>
+        <!-- 2. เกี่ยวกับศูนย์ข้อมูลข่าวสาร -->
+        <div class="nav-item">
+          <a href="#about_history" class="nav-link">
+            เกี่ยวกับศูนย์ข้อมูลข่าวสาร
+            <i class="fi fi-rr-angle-small-down text-xs ml-0.5 opacity-60"></i>
+          </a>
+          <div class="nav-dropdown">
+            <a href="#about_history"><span class="triangle-icon">▶</span> ประวัติความเป็นมา</a>
+            <a href="#executives"><span class="triangle-icon">▶</span> ผู้บริหาร</a>
+            <a href="#officers"><span class="triangle-icon">▶</span> เจ้าหน้าที่ผู้รับผิดชอบ</a>
+          </div>
         </div>
+
+        <!-- 3. สำหรับหน่วยงานราชการ -->
+        <div class="nav-item">
+          <a href="#agency_form" class="nav-link">
+            สำหรับหน่วยงานราชการ
+            <i class="fi fi-rr-angle-small-down text-xs ml-0.5 opacity-60"></i>
+          </a>
+          <div class="nav-dropdown nav-dropdown-wide">
+            <a href="#agency_form"><span class="triangle-icon">▶</span> แบบฟอร์มรายงาน พ.ร.บ. ข้อมูลข่าวสาร 2540</a>
+            <a href="#agency_report"><span class="triangle-icon">▶</span> ระบบรายงาน Template ศูนย์ข้อมูลข่าวสาร</a>
+            <a href="#agency_contest"><span class="triangle-icon">▶</span>
+              สมัครเข้าร่วมโครงการประกวดศูนย์ข้อมูลโดดเด่น</a>
+          </div>
+        </div>
+
+        <!-- 4. สำหรับประชาชน -->
+        <div class="nav-item">
+          <a href="#public_complaint" class="nav-link">
+            สำหรับประชาชน
+            <i class="fi fi-rr-angle-small-down text-xs ml-0.5 opacity-60"></i>
+          </a>
+          <div class="nav-dropdown">
+            <a href="#public_complaint"><span class="triangle-icon">▶</span> ระบบร้องเรียน/อุทธรณ์ออนไลน์</a>
+          </div>
+        </div>
+
+        <!-- 5. เชื่อมโยงศูนย์ข้อมูลข่าวสารอื่น ๆ -->
+        <div class="nav-item">
+          <a href="#link_agencies" class="nav-link">
+            เชื่อมโยงศูนย์ข้อมูลข่าวสารอื่น ๆ
+            <i class="fi fi-rr-angle-small-down text-xs ml-0.5 opacity-60"></i>
+          </a>
+          <div class="nav-dropdown nav-dropdown-wide">
+            <a href="#link_agencies"><span class="triangle-icon">▶</span> หน่วยงานที่มีศูนย์ข้อมูลข่าวสาร</a>
+            <a href="#link_infocenter"><span class="triangle-icon">▶</span> หน่วยงานที่ใช้ INFOCENTER</a>
+            <a href="#link_testing"><span class="triangle-icon">▶</span> ระบบทดสอบความรู้ตาม พ.ร.บ. ข้อมูลฯ</a>
+          </div>
+        </div>
+
+        <!-- 6. อื่น ๆ -->
+        <!-- <div class="nav-item">
+          <a href="#contact" class="nav-link">
+            อื่น ๆ
+            <i class="fi fi-rr-angle-small-down text-xs ml-0.5 opacity-60"></i>
+          </a>
+          <div class="nav-dropdown nav-dropdown-right">
+            <a href="#downloads"><span class="triangle-icon">▶</span> ดาวน์โหลดเอกสาร</a>
+            <a href="#sitemap"><span class="triangle-icon">▶</span> แผนผังเว็บไซต์</a>
+            <a href="#contact"><span class="triangle-icon">▶</span> ติดต่อเรา</a>
+          </div>
+        </div> -->
+
       </div>
+
+      <!-- Mobile Hamburger Toggle Input & Button -->
+      <input id="mobile-nav-toggle" type="checkbox" class="peer hidden" />
+      <label for="mobile-nav-toggle" class="mobile-toggle-btn lg:hidden" aria-label="เปิดเมนู">
+        <i class="fi fi-rr-menu-burger text-lg"></i>
+      </label>
+
     </nav>
-  </header>
-</section>
+
+    <!-- Mobile Responsive Slide-down Drawer -->
+    <div class="mobile-drawer-container hidden peer-checked:block lg:hidden">
+      <div class="grid gap-2">
+        <details class="mobile-menu-item">
+          <summary>หน้าแรก <span>⌄</span></summary>
+          <div class="mobile-submenu-list">
+            <a href="#index_files">ดัชนีรวม / ดัชนีประจำแฟ้ม</a>
+            <a href="#news_sbr">ข่าวประชาสัมพันธ์</a>
+            <a href="#announcements">ประกาศล่าสุด</a>
+            <a href="#popular_services">บริการยอดนิยม</a>
+          </div>
+        </details>
+
+        <details class="mobile-menu-item">
+          <summary>เกี่ยวกับศูนย์ข้อมูลข่าวสาร <span>⌄</span></summary>
+          <div class="mobile-submenu-list">
+            <a href="#about_history">ประวัติความเป็นมา</a>
+            <a href="#executives">ผู้บริหาร</a>
+            <a href="#officers">เจ้าหน้าที่ผู้รับผิดชอบ</a>
+          </div>
+        </details>
+
+        <details class="mobile-menu-item">
+          <summary>สำหรับหน่วยงานราชการ <span>⌄</span></summary>
+          <div class="mobile-submenu-list">
+            <a href="#agency_form">แบบฟอร์มรายงาน พ.ร.บ. ข้อมูลข่าวสาร 2540</a>
+            <a href="#agency_report">ระบบรายงาน Template ศูนย์ข้อมูลข่าวสาร</a>
+            <a href="#agency_contest">สมัครเข้าร่วมโครงการประกวดศูนย์ข้อมูลโดดเด่น</a>
+          </div>
+        </details>
+
+        <details class="mobile-menu-item">
+          <summary>สำหรับประชาชน <span>⌄</span></summary>
+          <div class="mobile-submenu-list">
+            <a href="#public_complaint">ระบบร้องเรียน/อุทธรณ์ออนไลน์</a>
+          </div>
+        </details>
+
+        <details class="mobile-menu-item">
+          <summary>เชื่อมโยงศูนย์ข้อมูลข่าวสารอื่น ๆ <span>⌄</span></summary>
+          <div class="mobile-submenu-list">
+            <a href="#link_agencies">หน่วยงานที่มีศูนย์ข้อมูลข่าวสาร</a>
+            <a href="#link_infocenter">หน่วยงานที่ใช้ INFOCENTER</a>
+            <a href="#link_testing">ระบบทดสอบความรู้ตาม พ.ร.บ. ข้อมูลฯ</a>
+          </div>
+        </details>
+
+        <details class="mobile-menu-item">
+          <summary>อื่น ๆ <span>⌄</span></summary>
+          <div class="mobile-submenu-list">
+            <a href="#downloads">ดาวน์โหลดเอกสาร</a>
+            <a href="#sitemap">แผนผังเว็บไซต์</a>
+            <a href="#contact">ติดต่อเรา</a>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+</header>

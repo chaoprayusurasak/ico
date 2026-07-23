@@ -128,10 +128,16 @@
             <h2 id="active-category-title" class="text-xl font-bold text-gray-800">กรุณาเลือกหัวข้อ...</h2>
             <p class="text-xs text-gray-400 mt-1">จัดการข้อมูลและไฟล์แนบประจำหัวข้อ</p>
           </div>
-          <button id="btn-add-item"
-            class="hidden px-5 py-3 bg-brand-teal text-white text-sm font-bold rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-1.5">
-            <i class="fi fi-rr-add"></i> เพิ่มข้อมูลใหม่
-          </button>
+          <div class="flex items-center gap-2">
+            <button id="btn-seed-executives"
+              class="hidden px-4 py-2.5 bg-emerald-600 text-white text-xs font-bold rounded-2xl shadow-md hover:bg-emerald-700 transition-all inline-flex items-center gap-1.5">
+              <i class="fi fi-rr-cloud-download"></i> ดึงชุดข้อมูลผู้บริหารเริ่มต้น (10 รายชื่อ)
+            </button>
+            <button id="btn-add-item"
+              class="hidden px-5 py-2.5 bg-brand-teal text-white text-xs font-bold rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all inline-flex items-center gap-1.5">
+              <i class="fi fi-rr-add"></i> เพิ่มข้อมูลใหม่
+            </button>
+          </div>
         </div>
 
         <!-- Add/Edit Form Box -->
@@ -201,6 +207,43 @@
               </div>
             </div>
 
+            <!-- Executive Specific Fields -->
+            <div id="executive-fields" class="hidden space-y-4 border-t border-b border-brand-teal/20 py-4 my-2">
+              <div class="font-bold text-sm text-brand-teal flex items-center gap-1.5">
+                <i class="fi fi-rr-user-tie"></i> ข้อมูลสำหรับผังผู้บริหาร
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-1">ตำแหน่ง</label>
+                  <input type="text" id="exec-position"
+                    class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-teal transition-all text-sm"
+                    placeholder="เช่น นายกเทศมนตรีนครเจ้าพระยาสุรศักดิ์" />
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-1">กำกับดูแลสำนัก / กอง</label>
+                  <input type="text" id="exec-department"
+                    class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-teal transition-all text-sm"
+                    placeholder="เช่น กำกับดูแลสำนักช่าง, สำนักการศึกษา" />
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-1">เบอร์โทรศัพท์ติดต่อ</label>
+                  <input type="text" id="exec-phone"
+                    class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-teal transition-all text-sm"
+                    placeholder="เช่น 038-123-456 ต่อ 101" />
+                </div>
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-1">ระดับในผังองค์กร</label>
+                  <select id="exec-level"
+                    class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-teal transition-all text-sm">
+                    <option value="1">ระดับ 1: ผู้บริหารสูงสุด (นายกเทศมนตรี / ปลัดเทศบาล)</option>
+                    <option value="2">ระดับ 2: รองผู้บริหาร (รองนายกเทศมนตรี / รองปลัดเทศบาล)</option>
+                    <option value="3">ระดับ 3: คณะที่ปรึกษา / เลขานุการ</option>
+                    <option value="4">ระดับ 4: ผู้อำนวยการสำนัก / หัวหน้ากอง</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
             <div class="flex justify-end gap-3 pt-3">
               <button type="button" id="btn-cancel-form"
                 class="px-5 py-2.5 border border-gray-200 text-gray-600 font-semibold rounded-xl text-sm hover:bg-gray-50 transition-all">ยกเลิก</button>
@@ -223,7 +266,26 @@
 
   <script>
     const CATEGORIES = {
-      "news_sbr": "ข่าวสารจาก สบร.",
+      // 1. Navbar Menu Categories
+      "news_sbr": "ข่าวสารจาก สขร.",
+      "announcements": "ประกาศล่าสุด",
+      "popular_services": "บริการยอดนิยม",
+      "about_history": "ประวัติความเป็นมา",
+      "executives": "คณะผู้บริหาร",
+      "officers": "เจ้าหน้าที่ผู้รับผิดชอบ",
+      "agency_form": "แบบฟอร์มรายงาน พ.ร.บ. 2540",
+      "agency_report": "ระบบรายงาน Template พ.ร.บ. 2540",
+      "agency_contest": "สมัครเข้าร่วมโครงการประกวดศูนย์ข้อมูล",
+      "public_complaint": "ระบบร้องเรียน/อุทธรณ์ออนไลน์",
+      "link_agencies": "หน่วยงานที่มีศูนย์ข้อมูลข่าวสาร",
+      "link_infocenter": "หน่วยงานที่ใช้ INFOCENTER",
+      "link_testing": "ระบบทดสอบความรู้ตาม พ.ร.บ. ข้อมูลฯ",
+      "downloads": "ดาวน์โหลดเอกสาร",
+      "sitemap": "แผนผังเว็บไซต์",
+      "contact": "ติดต่อหน่วยงาน (Contact Us)",
+      "privacy": "นโยบายคุ้มครองข้อมูลส่วนบุคคล",
+
+      // 2. Main Section & Legal Index Categories
       "index_files": "ดัชนีรวม / ดัชนีประจำแฟ้ม",
       "m7_1": "มาตรา 7 (1) โครงสร้างและการจัดองค์กร",
       "m7_2": "มาตรา 7 (2) สรุปอำนาจหน้าที่",
@@ -241,9 +303,7 @@
       "eval_summary": "สรุปความพึงพอใจ",
       "eval_stats": "สถิติผู้ใช้บริการ",
       "eval_faq": "กระดานถาม-ตอบ / ข้อคิดเห็น",
-      "article_sbr": "บทความ สขร.",
-      "contact": "ติดต่อหน่วยงาน (Contact Us)",
-      "privacy": "นโยบายคุ้มครองข้อมูลส่วนบุคคล"
+      "article_sbr": "บทความ สขร."
     };
 
     let activeCategory = null;
@@ -310,53 +370,100 @@
       const catNav = document.getElementById("admin-categories");
       catNav.innerHTML = "";
 
-      const groups = [
-        { id: "news_sbr", title: "ข่าวสารจาก สขร.", type: "single" },
-        { id: "index_files", title: "ดัชนีรวม / ดัชนีประจำแฟ้ม", type: "single" },
+      const sections = [
         {
-          title: "ข้อมูลข่าวสารตามมาตรา 7",
-          type: "group",
-          items: ["m7_1", "m7_2", "m7_3", "m7_4"]
+          sectionHeader: "🌐 1. จัดการเนื้อหาตามเมนู Navbar",
+          groups: [
+            {
+              title: "หน้าแรก",
+              type: "group",
+              items: ["announcements", "popular_services"]
+            },
+            {
+              title: "เกี่ยวกับศูนย์ข้อมูลข่าวสาร",
+              type: "group",
+              items: ["about_history", "executives", "officers"]
+            },
+            {
+              title: "สำหรับหน่วยงานราชการ",
+              type: "group",
+              items: ["agency_form", "agency_report", "agency_contest"]
+            },
+            {
+              title: "สำหรับประชาชน",
+              type: "group",
+              items: ["public_complaint"]
+            },
+            {
+              title: "เชื่อมโยงศูนย์ข่าวสารอื่น ๆ",
+              type: "group",
+              items: ["link_agencies", "link_infocenter", "link_testing"]
+            },
+            {
+              title: "เมนูอื่น ๆ",
+              type: "group",
+              items: ["downloads", "sitemap"]
+            }
+          ]
         },
         {
-          title: "ข้อมูลข่าวสารตามมาตรา 9",
-          type: "group",
-          items: ["m9_1", "m9_2", "m9_3", "m9_4", "m9_5", "m9_6", "m9_7", "m9_8"]
-        },
-        {
-          title: "ประเมินผลการให้บริการศูนย์ / ถาม-ตอบ",
-          type: "group",
-          items: ["eval_form", "eval_summary", "eval_stats", "eval_faq"]
-        },
-        { id: "article_sbr", title: "บทความ สขร.", type: "single" },
-        { id: "contact", title: "ติดต่อหน่วยงาน (Contact Us)", type: "single" },
-        { id: "privacy", title: "นโยบายคุ้มครองข้อมูลส่วนบุคคล", type: "single" }
+          sectionHeader: "📁 2. จัดการแฟ้มข้อมูลตามมาตรา & สถิติ",
+          groups: [
+            { id: "news_sbr", title: "ข่าวสารจาก สขร.", type: "single" },
+            { id: "index_files", title: "ดัชนีรวม / ดัชนีประจำแฟ้ม", type: "single" },
+            {
+              title: "ข้อมูลข่าวสารตามมาตรา 7",
+              type: "group",
+              items: ["m7_1", "m7_2", "m7_3", "m7_4"]
+            },
+            {
+              title: "ข้อมูลข่าวสารตามมาตรา 9",
+              type: "group",
+              items: ["m9_1", "m9_2", "m9_3", "m9_4", "m9_5", "m9_6", "m9_7", "m9_8"]
+            },
+            {
+              title: "ประเมินผลการให้บริการ / ถาม-ตอบ",
+              type: "group",
+              items: ["eval_form", "eval_summary", "eval_stats", "eval_faq"]
+            },
+            { id: "article_sbr", title: "บทความ สขร.", type: "single" },
+            { id: "contact", title: "ติดตามหน่วยงาน (Contact Us)", type: "single" },
+            { id: "privacy", title: "นโยบายคุ้มครองข้อมูลส่วนบุคคล", type: "single" }
+          ]
+        }
       ];
 
-      groups.forEach(group => {
-        if (group.type === "single") {
-          const btn = createCategoryButton(group.id, CATEGORIES[group.id], "fi-rr-document");
-          catNav.appendChild(btn);
-        } else if (group.type === "group") {
-          const details = document.createElement("details");
-          details.className = "group mb-1";
+      sections.forEach(sec => {
+        const headerDiv = document.createElement("div");
+        headerDiv.className = "px-3 pt-3 pb-1 text-xs font-extrabold text-brand-teal uppercase tracking-wider bg-gray-50/80 rounded-lg mt-2 mb-1 border-l-4 border-brand-teal";
+        headerDiv.textContent = sec.sectionHeader;
+        catNav.appendChild(headerDiv);
 
-          const summary = document.createElement("summary");
-          summary.className = "flex items-center gap-2 px-3 py-2 text-sm font-bold text-gray-700 cursor-pointer hover:text-brand-teal select-none rounded-xl hover:bg-gray-50 transition-colors";
-          summary.innerHTML = `<i class="fi fi-rr-folder-open text-brand-teal"></i> <span class="truncate">${group.title}</span>`;
+        sec.groups.forEach(group => {
+          if (group.type === "single") {
+            const btn = createCategoryButton(group.id, CATEGORIES[group.id], "fi-rr-document");
+            catNav.appendChild(btn);
+          } else if (group.type === "group") {
+            const details = document.createElement("details");
+            details.className = "group mb-1";
 
-          const itemsContainer = document.createElement("div");
-          itemsContainer.className = "flex flex-col gap-1 pl-4 mt-1 border-l-2 border-gray-100 ml-4";
+            const summary = document.createElement("summary");
+            summary.className = "flex items-center gap-2 px-3 py-2 text-sm font-bold text-gray-700 cursor-pointer hover:text-brand-teal select-none rounded-xl hover:bg-gray-50 transition-colors";
+            summary.innerHTML = `<i class="fi fi-rr-folder-open text-brand-teal"></i> <span class="truncate">${group.title}</span>`;
 
-          group.items.forEach(itemId => {
-            const btn = createCategoryButton(itemId, CATEGORIES[itemId], "fi-rr-document", true);
-            itemsContainer.appendChild(btn);
-          });
+            const itemsContainer = document.createElement("div");
+            itemsContainer.className = "flex flex-col gap-1 pl-4 mt-1 border-l-2 border-gray-100 ml-4";
 
-          details.appendChild(summary);
-          details.appendChild(itemsContainer);
-          catNav.appendChild(details);
-        }
+            group.items.forEach(itemId => {
+              const btn = createCategoryButton(itemId, CATEGORIES[itemId], "fi-rr-document", true);
+              itemsContainer.appendChild(btn);
+            });
+
+            details.appendChild(summary);
+            details.appendChild(itemsContainer);
+            catNav.appendChild(details);
+          }
+        });
       });
 
       if (activeCategory) {
@@ -396,6 +503,13 @@
 
       document.getElementById("active-category-title").textContent = CATEGORIES[key];
       document.getElementById("btn-add-item").classList.remove("hidden");
+
+      const btnSeed = document.getElementById("btn-seed-executives");
+      if (key === "executives") {
+        btnSeed.classList.remove("hidden");
+      } else {
+        btnSeed.classList.add("hidden");
+      }
 
       closeForm();
       loadItems();
@@ -513,13 +627,139 @@
         isEditing = false;
         form.reset();
         document.getElementById("item-id").value = "";
-        document.getElementById("form-title").textContent = "เพิ่มข้อมูลข่าวสาร";
+        document.getElementById("form-title").textContent = "เพิ่มข้อมูลใหม่";
+
+        const execFields = document.getElementById("executive-fields");
+        if (activeCategory === "executives") {
+          execFields.classList.remove("hidden");
+        } else {
+          execFields.classList.add("hidden");
+        }
+
         formBox.classList.remove("hidden");
         formBox.scrollIntoView({ behavior: "smooth" });
       });
 
       btnCancel.addEventListener("click", () => {
         closeForm();
+      });
+
+      const btnSeed = document.getElementById("btn-seed-executives");
+      btnSeed.addEventListener("click", async () => {
+        if (!confirm("ต้องการดึงข้อมูลผู้บริหารเริ่มต้น (10 รายชื่อจากเทศบาลนครเจ้าพระยาสุรศักดิ์) เข้าสู่ระบบใช่หรือไม่?")) return;
+
+        btnSeed.disabled = true;
+        btnSeed.textContent = "กำลังนำเข้าข้อมูล...";
+
+        try {
+          const seedData = window.DEFAULT_EXECUTIVES || [
+            {
+              title: "นายอาคมเจตน์ พันเฉลิมชัยโชค",
+              pos: "นายกเทศมนตรีนครเจ้าพระยาสุรศักดิ์",
+              dept: "ควบคุม กำกับดูแล สำนักปลัดเทศบาล, กองช่าง, กองการเจ้าหน้าที่ และหน่วยตรวจสอบภายใน",
+              phone: "0-3834-8205-6",
+              level: 1,
+              image_url: "./assets/executives/person_153.jpg"
+            },
+            {
+              title: "นายมานะ ฉิมชา",
+              pos: "รองนายกเทศมนตรีนครเจ้าพระยาสุรศักดิ์",
+              dept: "กำกับดูแล กองสาธารณสุขและสิ่งแวดล้อม",
+              phone: "0-3834-8205-6 ต่อ 308",
+              level: 2,
+              image_url: "./assets/executives/person_154.jpg"
+            },
+            {
+              title: "นางนัยนา จุ่งพิวัฒน์",
+              pos: "รองนายกเทศมนตรีนครเจ้าพระยาสุรศักดิ์",
+              dept: "กำกับดูแล สำนักคลัง และกองยุทธศาสตร์และงบประมาณ",
+              phone: "0-3834-8205-6 ต่อ 403",
+              level: 2,
+              image_url: "./assets/executives/person_194.jpg"
+            },
+            {
+              title: "นายสมเจตร พันธ์เฉลิมชัย",
+              pos: "รองนายกเทศมนตรีนครเจ้าพระยาสุรศักดิ์",
+              dept: "กำกับดูแล กองการศึกษา",
+              phone: "0-3834-8205-6 ต่อ 403",
+              level: 2,
+              image_url: "./assets/executives/person_157.jpg"
+            },
+            {
+              title: "นายสงกรานต์ ภาชนะ",
+              pos: "รองนายกเทศมนตรีนครเจ้าพระยาสุรศักดิ์",
+              dept: "กำกับดูแล กองสวัสดิการสังคม",
+              phone: "0-3834-8205-6 ต่อ 308",
+              level: 2,
+              image_url: "./assets/executives/person_192.jpg"
+            },
+            {
+              title: "นายเสริมชาติ ลออคุณูปการ",
+              pos: "เลขานุการนายกเทศมนตรี",
+              dept: "",
+              phone: "0-3834-8205-6",
+              level: 3,
+              image_url: "./assets/executives/person_162.png"
+            },
+            {
+              title: "นางจีรนันท์ เกตุสาลี",
+              pos: "ที่ปรึกษานายกเทศมนตรี",
+              dept: "",
+              phone: "0-3834-8205-6",
+              level: 3,
+              image_url: "./assets/executives/person_158.png"
+            },
+            {
+              title: "นายสมชาย ทองศิริ",
+              pos: "ที่ปรึกษานายกเทศมนตรี",
+              dept: "",
+              phone: "0-3834-8205-6",
+              level: 3,
+              image_url: "./assets/executives/person_160.png"
+            },
+            {
+              title: "นายประชุม เปรมอ่อน",
+              pos: "ที่ปรึกษานายกเทศมนตรี",
+              dept: "",
+              phone: "0-3834-8205-6",
+              level: 3,
+              image_url: "./assets/executives/person_159.png"
+            },
+            {
+              title: "นายประโยชน์ คงทน",
+              pos: "ที่ปรึกษานายกเทศมนตรี",
+              dept: "",
+              phone: "0-3834-8205-6",
+              level: 3,
+              image_url: "./assets/executives/person_193.png"
+            }
+          ];
+
+          const itemsToInsert = seedData.map(item => ({
+            category: "executives",
+            title: item.title,
+            description: JSON.stringify({
+              position: item.pos,
+              department: item.dept,
+              phone: item.phone,
+              level: item.level,
+              bio: ""
+            }),
+            image_url: item.image_url
+          }));
+
+          const { error } = await supabase.from("items").insert(itemsToInsert);
+          if (error) throw error;
+
+          alert("ดึงและบันทึกข้อมูลผู้บริหาร 10 รายชื่อเข้าสู่ฐานข้อมูลสำเร็จ!");
+          loadItems();
+        } catch (err) {
+          console.error("Error seeding executives:", err);
+          alert("ไม่สามารถดึงข้อมูลได้: " + err.message);
+        } finally {
+          btnSeed.disabled = false;
+          btnSeed.innerHTML = `<i class="fi fi-rr-cloud-download"></i> ดึงชุดข้อมูลผู้บริหารเริ่มต้น (10 รายชื่อ)`;
+        }
       });
 
       // Handle file uploads during form submission
@@ -533,8 +773,18 @@
         try {
           const id = document.getElementById("item-id").value;
           const title = document.getElementById("item-title").value;
-          const description = document.getElementById("item-desc").value;
+          let description = document.getElementById("item-desc").value;
           const link = document.getElementById("item-link").value;
+
+          if (activeCategory === "executives") {
+            const position = document.getElementById("exec-position").value.trim();
+            const department = document.getElementById("exec-department").value.trim();
+            const phone = document.getElementById("exec-phone").value.trim();
+            const level = parseInt(document.getElementById("exec-level").value) || 1;
+            const bio = description;
+
+            description = JSON.stringify({ position, department, phone, level, bio });
+          }
 
           let imageUrl = document.getElementById("item-image-url").value;
           let fileUrl = document.getElementById("item-file-url").value;
@@ -621,6 +871,7 @@
 
     function closeForm() {
       document.getElementById("form-container").classList.add("hidden");
+      document.getElementById("executive-fields").classList.add("hidden");
       document.getElementById("item-form").reset();
       document.getElementById("image-upload-status").classList.add("hidden");
       document.getElementById("file-upload-status").classList.add("hidden");
@@ -629,9 +880,17 @@
     // Load selected item data into form for editing
     window.editItem = async (id) => {
       isEditing = true;
-      document.getElementById("form-title").textContent = "แก้ไขข้อมูลข่าวสาร";
+      document.getElementById("form-title").textContent = "แก้ไขข้อมูล";
 
       const formBox = document.getElementById("form-container");
+      const execFields = document.getElementById("executive-fields");
+
+      if (activeCategory === "executives") {
+        execFields.classList.remove("hidden");
+      } else {
+        execFields.classList.add("hidden");
+      }
+
       formBox.classList.remove("hidden");
       formBox.scrollIntoView({ behavior: "smooth" });
 
@@ -646,10 +905,25 @@
 
         document.getElementById("item-id").value = item.id;
         document.getElementById("item-title").value = item.title;
-        document.getElementById("item-desc").value = item.description || "";
         document.getElementById("item-link").value = item.link || "";
         document.getElementById("item-image-url").value = item.image_url || "";
         document.getElementById("item-file-url").value = item.file_url || "";
+
+        if (activeCategory === "executives" && item.description) {
+          try {
+            const parsed = JSON.parse(item.description);
+            document.getElementById("exec-position").value = parsed.position || "";
+            document.getElementById("exec-department").value = parsed.department || "";
+            document.getElementById("exec-phone").value = parsed.phone || "";
+            document.getElementById("exec-level").value = parsed.level || "1";
+            document.getElementById("item-desc").value = parsed.bio || "";
+          } catch (e) {
+            document.getElementById("exec-position").value = item.description || "";
+            document.getElementById("item-desc").value = item.description || "";
+          }
+        } else {
+          document.getElementById("item-desc").value = item.description || "";
+        }
       } catch (err) {
         console.error("Error loading item details:", err);
         alert("ดึงข้อมูลมาแสดงไม่สำเร็จ: " + err.message);

@@ -1,0 +1,966 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Banner</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
+  <script>
+    window.tailwind = window.tailwind || {};
+    window.tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            prompt: ["Prompt", "sans-serif"],
+          },
+          colors: {
+            brand: {
+              teal: "#008675",
+              mint: "#55bbb0",
+              mist: "#f4f5f6",
+              ink: "#101314",
+            },
+          },
+        },
+      },
+    };
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="./src/styles.css" />
+  <style>
+    /* Lottie sidebar icon sizing */
+    .sidebar-icon dotlottie-wc {
+      display: inline-flex;
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+
+    /* Pause animation by default, play on hover */
+    .sidebar-link dotlottie-wc {
+      transition: opacity 0.2s;
+    }
+
+    .sidebar-link:not(:hover) dotlottie-wc {
+      filter: grayscale(40%);
+      opacity: 0.75;
+    }
+
+    .sidebar-link:hover dotlottie-wc,
+    .sidebar-link.active dotlottie-wc {
+      filter: none;
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body class="font-prompt">
+  <!-- Nav Component (loaded from components/nav.html) -->
+  <div data-component="./components/nav.html"></div>
+
+  <div class="parent">
+    <!-- Sidebar Component (loaded from components/sidebar.html) -->
+    <div data-component="./components/sidebar.html"></div>
+
+    <main class="content">
+      <h1 class="content-title">หน้าแรก</h1>
+
+      <!-- ตัวโหลด Lottie Animation -->
+      <div id="page-loader" style="display: flex; justify-content: center; align-items: center; min-height: 400px;">
+        <dotlottie-wc src="./assets/icons/Loading.json" autoplay loop
+          style="width: 200px; height: 200px;"></dotlottie-wc>
+      </div>
+
+      <!-- ข้อมูลที่จะแสดงหลังโหลดเสร็จ (ซ่อนไว้ก่อนด้วย display: none) -->
+      <div class="content-box p-0 overflow-hidden rounded-3xl" id="page-content" style="display: none;">
+        <!-- LANDMARK 2.5D ANIMATED SECTION -->
+        <div class="relative w-full bg-gradient-to-b overflow-hidden py-10 px-4 select-none">
+          <!-- Header Landmark Title -->
+          <div class="relative z-20 text-center " >
+            <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-red-600 tracking-wider" style="justify-content: start; align-items: start; display: flex;">
+              LANDMARK
+            </h2>
+            <p class="text-xl sm:text-xl md:text-2xl font-bold text-grey-600 mt-1" style="justify-content: start; align-items: start; display: flex;">
+              เทศบาลนครเจ้าพระยาสุรศักดิ์
+            </p>
+          </div>
+
+          <!-- Floating Island Container -->
+          <div class="relative max-w-5xl mx-auto z-10 py-1">
+            <!-- Animated Island Wrapper -->
+            <div class="relative w-full animate-float-island">
+              <!-- Base Map Image -->
+              <img src="./assets/land.png" alt="เทศบาลนครเจ้าพระยาสุรศักดิ์ Landmark Map"
+                class="w-full h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,40,80,0.35)] rounded-2xl">
+
+              <!-- INTERACTIVE LANDMARK PINS -->
+
+              <!-- 1. เทศบาลนครเจ้าพระยาสุรศักดิ์ (Top Right) -->
+              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                style="top: 10%; right: 5%; animation-delay: 0s;">
+                <div
+                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                  <span class="w-2.5 h-2.5 rounded-full bg-yellow-300 animate-ping absolute -top-1 -left-1"></span>
+                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
+                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">เทศบาลนครเจ้าพระยาสุรศักดิ์</span>
+                </div>
+              </div>
+
+              <!-- 2. ศรีราชาฮาร์เบอร์ (Top Left - Port Area) -->
+              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                style="top: 28%; left: 24%; animation-delay: 0.4s;">
+                <div
+                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
+                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">ศรีราชาฮาร์เบอร์</span>
+                </div>
+              </div>
+
+              <!-- 3. สวนเฉลิมพระเกียรติ (Center Top) -->
+              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                style="top: 44%; left: 46%; animation-delay: 0.8s;">
+                <div
+                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
+                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">สวนเฉลิมพระเกียรติ</span>
+                </div>
+              </div>
+
+              <!-- 4. วัดเขาช่องลม (Center Right) -->
+              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                style="top: 28%; right: 24%; animation-delay: 1.2s;">
+                <div
+                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
+                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">วัดเขาช่องลม</span>
+                </div>
+              </div>
+
+              <!-- 5. วัดหนองยายบู่ (Mid Left) -->
+              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                style="top: 54%; left: 22%; animation-delay: 1.6s;">
+                <div
+                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
+                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">วัดหนองยายบู่</span>
+                </div>
+              </div>
+
+              <!-- 6. เจพาร์ค นิฮอนมูระ (Center Bottom) -->
+              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                style="top: 60%; left: 42%; animation-delay: 2.0s;">
+                <div
+                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
+                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">เจพาร์ค นิฮอนมูระ</span>
+                </div>
+              </div>
+
+              <!-- 7. วัดเขาตะแบก (Bottom Right) -->
+              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                style="top: 48%; right: 22%; animation-delay: 2.4s;">
+                <div
+                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
+                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">วัดเขาตะแบก</span>
+                </div>
+              </div>
+
+              <!-- 8. วัดหนองปรือ (Bottom South) -->
+              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                style="top: 76%; left: 49%; animation-delay: 2.8s;">
+                <div
+                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
+                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">วัดหนองปรือ</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Animated Train Section (Right to Left Loop) -->
+  <div class="train-section" id="train-section">
+    <!-- Sky/Background -->
+    <div class="train-sky"></div>
+
+    <!-- Station Sign -->
+    <div class="station-sign">
+      <div class="sign-pole"></div>
+      <div class="sign-board">
+        <span class="sign-text-th">เทศบาลนครเจ้าพระยาสุรศักดิ์</span>
+        <span class="sign-text-en">Chaophraya Surasak</span>
+      </div>
+      <div class="sign-number">🏛️</div>
+    </div>
+
+    <!-- Rail Track -->
+    <div class="rail-track">
+      <div class="rail-line"></div>
+      <div class="rail-ties"></div>
+      <!-- Train Container (moves right to left) -->
+      <div class="train-wrapper">
+        <div class="train-body">
+          <!-- Shinkansen Nose (หัวรถแหลม) -->
+          <div class="shinkansen-nose">
+            <div class="nose-cone"></div>
+            <div class="nose-stripe"></div>
+            <div class="shinkansen-lights">
+              <div class="shinkansen-light-left"></div>
+              <div class="shinkansen-light-right"></div>
+            </div>
+            <div class="nose-window"></div>
+          </div>
+
+          <!-- Shinkansen First Car (หัวรถ) -->
+          <div class="train-car shinkansen-car shinkansen-first">
+            <div class="shinkansen-stripe"></div>
+            <div class="shinkansen-windows">
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+            </div>
+            <div class="shinkansen-door"></div>
+            <div class="train-wheels">
+              <div class="wheel"></div>
+              <div class="wheel"></div>
+            </div>
+          </div>
+
+          <!-- Shinkansen Car 2 -->
+          <div class="train-car shinkansen-car">
+            <div class="shinkansen-stripe"></div>
+            <div class="shinkansen-windows">
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+            </div>
+            <div class="shinkansen-door"></div>
+            <div class="train-wheels">
+              <div class="wheel"></div>
+              <div class="wheel"></div>
+            </div>
+          </div>
+
+          <!-- Shinkansen Car 3 -->
+          <div class="train-car shinkansen-car">
+            <div class="shinkansen-stripe"></div>
+            <div class="shinkansen-windows">
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+            </div>
+            <div class="shinkansen-door"></div>
+            <div class="train-wheels">
+              <div class="wheel"></div>
+              <div class="wheel"></div>
+            </div>
+          </div>
+
+          <!-- Shinkansen Car 4 -->
+          <div class="train-car shinkansen-car">
+            <div class="shinkansen-stripe"></div>
+            <div class="shinkansen-windows">
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+            </div>
+            <div class="shinkansen-door"></div>
+            <div class="train-wheels">
+              <div class="wheel"></div>
+              <div class="wheel"></div>
+            </div>
+          </div>
+
+          <!-- Shinkansen Tail Car (รถท้าย) -->
+          <div class="train-car shinkansen-car shinkansen-tail">
+            <div class="shinkansen-stripe"></div>
+            <div class="shinkansen-windows">
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+              <div class="shinkansen-window">
+                <div class="window-reflection"></div>
+              </div>
+            </div>
+            <div class="shinkansen-door"></div>
+            <div class="train-wheels">
+              <div class="wheel"></div>
+              <div class="wheel"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Train Shadow -->
+      <div class="train-shadow"></div>
+    </div>
+
+    <!-- Bridge Pillars -->
+    <div class="bridge">
+      <div class="bridge-beam"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+      <div class="pillar"></div>
+    </div>
+
+    <!-- Bushes -->
+    <div class="bushes">
+      <div class="bush bush-1"></div>
+      <div class="bush bush-2"></div>
+      <div class="bush bush-3"></div>
+      <div class="bush bush-4"></div>
+      <div class="bush bush-5"></div>
+    </div>
+  </div>
+
+  <style>
+    .train-section {
+      position: relative;
+      width: 100%;
+      height: 240px;
+      overflow: hidden;
+      user-select: none;
+      background: linear-gradient(to bottom, #e0f2f1 0%, #b2dfdb 50%, #a1887f 100%);
+    }
+
+    /* Sky background */
+    .train-sky {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60%;
+      background: linear-gradient(to bottom, #87ceeb 0%, #e0f6ff 50%, transparent 100%);
+      z-index: 1;
+    }
+
+    /* Station Sign */
+    .station-sign {
+      position: absolute;
+      left: 12%;
+      top: 20px;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.2));
+    }
+    .sign-pole {
+      width: 5px;
+      height: 60px;
+      background: linear-gradient(to right, #5a5a5a, #7a7a7a, #5a5a5a);
+      border-radius: 3px;
+    }
+    .sign-board {
+      background: linear-gradient(135deg, #1e3a5f, #2d5a8f);
+      color: #fff;
+      padding: 8px 22px;
+      border-radius: 6px;
+      text-align: center;
+      font-family: 'Prompt', sans-serif;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.2);
+      position: relative;
+      top: -2px;
+      border: 2px solid #0f2844;
+    }
+    .sign-text-th {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .sign-text-en {
+      display: block;
+      font-size: 9px;
+      font-weight: 400;
+      opacity: 0.9;
+      margin-top: 2px;
+    }
+    .sign-number {
+      margin-top: 6px;
+      font-size: 18px;
+      filter: drop-shadow(1px 2px 4px rgba(0,0,0,0.2));
+    }
+
+    /* Rail Track */
+    .rail-track {
+      position: absolute;
+      top: 85px;
+      left: 0;
+      right: 0;
+      height: 80px;
+      z-index: 10;
+    }
+
+    .rail-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: linear-gradient(to bottom, #5a5555, #4a4444, #3a3333);
+      border-top: 2px solid #6b7280;
+      border-bottom: 2px solid #1f1f1f;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    }
+
+    /* Rail Ties */
+    .rail-ties {
+      position: absolute;
+      bottom: 8px;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background-image: repeating-linear-gradient(
+        90deg,
+        #6b4423 0px,
+        #6b4423 20px,
+        transparent 20px,
+        transparent 28px
+      );
+      z-index: 5;
+    }
+
+    /* Train */
+    .train-wrapper {
+      position: absolute;
+      bottom: 8px;
+      animation: trainMove 14s linear infinite;
+      will-change: left, transform;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.25));
+    }
+
+    @keyframes trainMove {
+      0% { left: 110%; transform: translateX(0); }
+      100% { left: 0%; transform: translateX(-100%); }
+    }
+
+    .train-body {
+      display: flex;
+      gap: 0;
+    }
+
+    /* ===== SHINKANSEN DESIGN ===== */
+
+    /* Shinkansen Nose (หัวรถแหลม) */
+    .shinkansen-nose {
+      position: relative;
+      width: 70px;
+      height: 50px;
+      z-index: 20;
+    }
+
+    .nose-cone {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-left: 35px solid transparent;
+      border-right: 0px solid transparent;
+      border-bottom: 50px solid;
+      border-bottom-color: white;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+
+    .nose-cone::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -35px;
+      width: 35px;
+      height: 50px;
+      background: linear-gradient(to right, #f0f0f0, #e8e8e8);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .nose-stripe {
+      position: absolute;
+      top: 8px;
+      left: 0;
+      width: 65px;
+      height: 3px;
+      background: linear-gradient(to right, #1e40af, #3b82f6, #1e40af);
+      border-radius: 2px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .nose-window {
+      position: absolute;
+      top: 18px;
+      left: 12px;
+      width: 45px;
+      height: 18px;
+      background: linear-gradient(135deg, #87ceeb, #5dade2);
+      border-radius: 4px;
+      border: 2px solid #2c5aa0;
+      box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.4);
+    }
+
+    .nose-window::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), transparent);
+      border-radius: 3px 3px 0 0;
+    }
+
+    .shinkansen-lights {
+      position: absolute;
+      top: 40px;
+      left: 8px;
+      display: flex;
+      gap: 20px;
+    }
+
+    .shinkansen-light-left,
+    .shinkansen-light-right {
+      width: 6px;
+      height: 6px;
+      background: #ffeb3b;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #ffeb3b, 0 0 10px rgba(255, 235, 59, 0.6);
+    }
+
+    /* Shinkansen Passenger Cars */
+    .shinkansen-car {
+      width: 120px !important;
+      height: 50px;
+      background: linear-gradient(to bottom, #ffffff 0%, #f5f5f5 50%, #e8e8e8 100%) !important;
+      border: 2px solid #bfbfbf;
+      border-radius: 4px;
+      position: relative;
+      box-shadow: 
+        inset 0 2px 6px rgba(255,255,255,0.6),
+        0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .shinkansen-car.shinkansen-first {
+      border-radius: 4px 2px 2px 4px;
+    }
+
+    .shinkansen-car.shinkansen-tail {
+      border-radius: 2px 4px 4px 2px;
+    }
+
+    .shinkansen-stripe {
+      position: absolute;
+      top: 6px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(to right, #1e40af, #3b82f6, #1e40af, #3b82f6);
+      background-size: 40px 100%;
+      border-radius: 2px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .shinkansen-windows {
+      display: flex;
+      gap: 5px;
+      padding: 14px 8px 0;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .shinkansen-window {
+      width: 22px;
+      height: 20px;
+      background: linear-gradient(135deg, #87ceeb, #5dade2);
+      border-radius: 3px;
+      border: 1.5px solid #2c5aa0;
+      position: relative;
+      box-shadow: 
+        inset 0 1px 3px rgba(255,255,255,0.4),
+        0 2px 4px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+
+    /* Door */
+    .shinkansen-door {
+      position: absolute;
+      bottom: 3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 14px;
+      background: linear-gradient(to right, #a8d8ea, #90c4d8);
+      border-radius: 3px;
+      border: 1px solid #5a8fa3;
+      box-shadow: 
+        inset 0 1px 2px rgba(255,255,255,0.3),
+        0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    .shinkansen-door::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+
+
+    /* Windows */
+    .train-windows {
+      display: flex;
+      gap: 6px;
+      padding: 14px 8px 0;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .train-window {
+      width: 16px;
+      height: 18px;
+      background: linear-gradient(135deg, #87ceeb, #5dade2);
+      border-radius: 2px;
+      border: 1px solid #4a7fa8;
+      position: relative;
+      box-shadow: 
+        inset 0 1px 2px rgba(255,255,255,0.3),
+        0 2px 4px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+
+    .train-window.lg-window {
+      width: 24px;
+    }
+
+    .window-reflection {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 40%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.1));
+      border-radius: 2px 2px 0 0;
+      pointer-events: none;
+    }
+
+    /* Wheels */
+    .train-wheels {
+      position: absolute;
+      bottom: -8px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      justify-content: space-between;
+      z-index: -1;
+    }
+
+    .wheel {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #4a4a4a, #1a1a1a);
+      border: 2px solid #0a0a0a;
+      box-shadow: 
+        inset 0 1px 2px rgba(0,0,0,0.5),
+        0 2px 4px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .wheel::before {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #555;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Train Shadow */
+    .train-shadow {
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(to right, transparent, rgba(0,0,0,0.3), transparent);
+      animation: trainMove 14s linear infinite;
+      z-index: 9;
+    }
+
+    /* Bridge */
+    .bridge {
+      position: absolute;
+      top: 165px;
+      left: 0;
+      right: 0;
+      height: 75px;
+      z-index: 5;
+    }
+
+    .bridge-beam {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 12px;
+      background: linear-gradient(to bottom, #a89968, #8b7355);
+      border-bottom: 3px solid #5a4a3a;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .pillar {
+      position: absolute;
+      top: 12px;
+      width: 18px;
+      height: 63px;
+      background: linear-gradient(to right, #9b8b7e, #b5a89b, #9b8b7e);
+      border-radius: 0 0 4px 4px;
+      border: 1px solid #6b5a52;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+    }
+
+    .pillar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: rgba(0,0,0,0.2);
+    }
+
+    .pillar:nth-child(2) { left: 8%; }
+    .pillar:nth-child(3) { left: 22%; }
+    .pillar:nth-child(4) { left: 38%; }
+    .pillar:nth-child(5) { left: 52%; }
+    .pillar:nth-child(6) { left: 66%; }
+    .pillar:nth-child(7) { left: 80%; }
+    .pillar:nth-child(8) { left: 93%; }
+
+    /* Bushes */
+    .bushes {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      z-index: 3;
+    }
+
+    .bush {
+      position: absolute;
+      bottom: 0;
+      border-radius: 50% 50% 20% 20%;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .bush-1 {
+      left: 15%;
+      width: 60px;
+      height: 45px;
+      background: radial-gradient(ellipse at 40% 30%, #4ade80, #22c55e, #15803d);
+      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .bush-2 {
+      left: 20%;
+      width: 45px;
+      height: 36px;
+      background: radial-gradient(ellipse at 35% 25%, #34d399, #10b981, #059669);
+      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .bush-3 {
+      left: 45%;
+      width: 55px;
+      height: 42px;
+      background: radial-gradient(ellipse at 45% 35%, #6ee7b7, #34d399, #10b981);
+      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .bush-4 {
+      left: 50%;
+      width: 40px;
+      height: 32px;
+      background: radial-gradient(ellipse at 40% 30%, #4ade80, #22c55e, #16a34a);
+      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .bush-5 {
+      left: 75%;
+      width: 50px;
+      height: 40px;
+      background: radial-gradient(ellipse at 40% 35%, #34d399, #10b981, #059669);
+      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+    }
+
+    @media (max-width: 640px) {
+      .train-section { 
+        height: 180px; 
+      }
+      
+      .shinkansen-nose {
+        width: 50px;
+        height: 38px;
+      }
+
+      .nose-cone {
+        border-left: 25px solid transparent;
+        border-bottom: 38px solid white;
+      }
+
+      .nose-cone::before {
+        left: -25px;
+        height: 38px;
+      }
+
+      .shinkansen-car {
+        width: 90px !important;
+        height: 38px;
+      }
+
+      .shinkansen-stripe {
+        top: 5px;
+        height: 3px;
+      }
+
+      .shinkansen-windows { 
+        padding: 10px 5px 0; 
+        gap: 3px; 
+      }
+
+      .shinkansen-window { 
+        width: 16px; 
+        height: 15px; 
+      }
+
+      .shinkansen-door {
+        width: 16px;
+        height: 10px;
+        bottom: 2px;
+      }
+
+      .train-wheels {
+        left: 8px;
+        right: 8px;
+      }
+
+      .wheel { 
+        width: 10px; 
+        height: 10px; 
+        border-width: 1.5px;
+      }
+
+      .station-sign { left: 5%; }
+
+      .sign-board { 
+        padding: 4px 12px; 
+        font-size: 9px;
+      }
+
+      .sign-text-th { font-size: 8px; }
+      .sign-text-en { font-size: 7px; }
+
+      .rail-track { top: 60px; }
+
+      .bridge { top: 120px; }
+
+      .pillar { 
+        height: 50px; 
+        width: 14px; 
+      }
+
+      .nose-window {
+        width: 35px;
+        height: 14px;
+        top: 14px;
+        left: 8px;
+      }
+
+      .shinkansen-lights {
+        top: 32px;
+        gap: 15px;
+      }
+
+      .shinkansen-light-left,
+      .shinkansen-light-right {
+        width: 4px;
+        height: 4px;
+      }
+    }
+  </style>
+
+  <!-- Footer Component -->
+  <div data-component="./components/footer.html"></div>
+
+  <!-- Component Loader -->
+  <script src="./components/loader.js"></script>
+  <!-- Supabase config & app code -->
+  <script src="./src/config.js"></script>
+  <script src="./src/complaints.js"></script>
+  <script src="./src/executives.js"></script>
+  <script src="./src/app.js"></script>
+  <!-- Lottie Sidebar Icons -->
+  <script src="./assets/lottie-icons.js"></script>
+
+  <!-- Script จัดการเวลาโหลด -->
+  <script>
+    window.addEventListener("load", function () {
+      // เมื่อเว็บโหลดเสร็จ ให้รออีก 2 วินาที (2000 ms) ค่อยแสดงข้อมูล
+      setTimeout(function () {
+        document.getElementById("page-loader").style.display = "none";
+        document.getElementById("page-content").style.display = ""; // ลบ display: none ออกเพื่อให้แสดงผลตาม CSS ปกติ
+      }, 1000);
+    });
+  </script>
+</body>
+
+</html>
