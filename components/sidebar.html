@@ -25,6 +25,14 @@
     transform: translateX(calc(-100% + 10px));
   }
 
+  @media (max-width: 640px) {
+    .sidebar {
+      width: 280px;
+      top: 75px;
+      max-height: calc(100vh - 85px);
+    }
+  }
+
   /* Slide out to full view when mouse hovers, receives focus, or pinned */
   .sidebar:hover,
   .sidebar:focus-within,
@@ -95,10 +103,10 @@
   </div>
 
   <nav class="sidebar-nav">
-    <a href="#home" class="sidebar-link" data-id="home">
+    <!-- <a href="#home" class="sidebar-link" data-id="home">
       <span class="sidebar-icon"><i class="fi fi-rr-home"></i></span>
       หน้าแรก
-    </a>
+    </a> -->
     <div class="sidebar-divider"></div>
     <a href="#news_sbr" class="sidebar-link" data-id="news_sbr">
       <span class="sidebar-icon"><i class="fi fi-rr-document"></i></span>

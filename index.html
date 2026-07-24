@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Banner</title>
+  <title>เทศบาลนครเจ้าพระยาสุรศักดิ์</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -81,126 +81,126 @@
           style="width: 200px; height: 200px;"></dotlottie-wc>
       </div>
 
-      <!-- ข้อมูลที่จะแสดงหลังโหลดเสร็จ (ซ่อนไว้ก่อนด้วย display: n  -->
-      <div class="relative w-full bg-gradient-to-b overflow-hidden py-8 px-4 sm:px-6 select-none">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+      <!-- ข้อมูลที่จะแสดงหลังโหลดเสร็จ (ซ่อนไว้ก่อนด้วย display: none) -->
+      <div class="content-box p-0 overflow-hidden rounded-3xl" id="page-content" style="display: none;">
+        <div class="relative w-full bg-gradient-to-b overflow-hidden py-8 px-4 sm:px-6 select-none">
+          <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
 
-          <!-- Left Column: LANDMARK Title & Info -->
-          <div class="lg:col-span-4 flex flex-col justify-center items-start text-left z-20 space-y-3 lg:pr-2">
-            <h2 class="text-4xl sm:text-5xl md:text-6xl font-black text-red-600 tracking-wider leading-none">
-              LANDMARK
-            </h2>
-            <p class="text-xl sm:text-2xl font-bold text-gray-700 leading-snug">
-              เทศบาลนครเจ้าพระยาสุรศักดิ์
-            </p>
+            <!-- Left Column: LANDMARK Title & Info -->
+            <div class="lg:col-span-4 flex flex-col justify-center items-start text-left z-20 space-y-3 lg:pr-2">
+              <h2 class="text-4xl sm:text-5xl md:text-6xl font-black text-red-600 tracking-wider leading-none">
+                LANDMARK
+              </h2>
+              <p class="text-xl sm:text-2xl font-bold text-gray-700 leading-snug">
+                เทศบาลนครเจ้าพระยาสุรศักดิ์
+              </p>
 
 
-            <!-- Quick Info Badges -->
-            <div class="grid grid-cols-2 gap-3 pt-3 w-full max-w-sm">
-              <div
-                class=" backdrop-blur-sm p-3 rounded-2flex items-center gap-3">
+              <!-- Quick Info Badges -->
+              <div class="grid grid-cols-2 gap-3 pt-3 w-full max-w-sm">
+                <div class=" backdrop-blur-sm p-3 rounded-2flex items-center gap-3">
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Right Column: Floating Island Map (land.png) -->
-          <div class="lg:col-span-8 relative w-full flex justify-center items-center">
-            <div class="relative w-full max-w-5xl animate-float-island">
-              <!-- Base Map Image -->
-              <img src="./assets/land.png" alt="เทศบาลนครเจ้าพระยาสุรศักดิ์ Landmark Map"
-                class="w-full h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,40,80,0.35)] rounded-2xl">
+            <!-- Right Column: Floating Island Map (land.png) -->
+            <div class="lg:col-span-8 relative w-full flex justify-center items-center">
+              <div class="relative w-full max-w-5xl animate-float-island">
+                <!-- Base Map Image -->
+                <img src="./assets/land.png" alt="เทศบาลนครเจ้าพระยาสุรศักดิ์ Landmark Map"
+                  class="w-full h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,40,80,0.35)] rounded-2xl">
 
-              <!-- INTERACTIVE LANDMARK PINS -->
+                <!-- INTERACTIVE LANDMARK PINS -->
 
-              <!-- 1. เทศบาลนครเจ้าพระยาสุรศักดิ์ (Top Right) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 10%; right: 5%; animation-delay: 0s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <span class="w-2 h-2 rounded-full bg-yellow-300 animate-ping absolute -top-1 -left-1"></span>
-                  <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
-                  <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">เทศบาลนครเจ้าพระยาสุรศักดิ์</span>
+                <!-- 1. เทศบาลนครเจ้าพระยาสุรศักดิ์ (Top Right) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 10%; right: 5%; animation-delay: 0s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <span class="w-2 h-2 rounded-full bg-yellow-300 animate-ping absolute -top-1 -left-1"></span>
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">เทศบาลนครเจ้าพระยาสุรศักดิ์</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 2. ศรีราชาฮาร์เบอร์ (Top Left - Port Area) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 28%; left: 24%; animation-delay: 0.4s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
-                  <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">ศรีราชาฮาร์เบอร์</span>
+                <!-- 2. ศรีราชาฮาร์เบอร์ (Top Left - Port Area) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 28%; left: 24%; animation-delay: 0.4s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">ศรีราชาฮาร์เบอร์</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 3. สวนเฉลิมพระเกียรติ (Center Top) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 44%; left: 46%; animation-delay: 0.8s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
-                  <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">สวนเฉลิมพระเกียรติ</span>
+                <!-- 3. สวนเฉลิมพระเกียรติ (Center Top) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 44%; left: 46%; animation-delay: 0.8s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">สวนเฉลิมพระเกียรติ</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 4. วัดเขาช่องลม (Center Right) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 28%; right: 24%; animation-delay: 1.2s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
-                  <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">วัดเขาช่องลม</span>
+                <!-- 4. วัดเขาช่องลม (Center Right) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 28%; right: 24%; animation-delay: 1.2s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">วัดเขาช่องลม</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 5. วัดหนองยายบู่ (Mid Left) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 54%; left: 22%; animation-delay: 1.6s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
-                  <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">วัดหนองยายบู่</span>
+                <!-- 5. วัดหนองยายบู่ (Mid Left) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 54%; left: 22%; animation-delay: 1.6s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">วัดหนองยายบู่</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 6. เจพาร์ค นิฮอนมูระ (Center Bottom) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 60%; left: 42%; animation-delay: 2.0s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
-                  <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">เจพาร์ค นิฮอนมูระ</span>
+                <!-- 6. เจพาร์ค นิฮอนมูระ (Center Bottom) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 60%; left: 42%; animation-delay: 2.0s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">เจพาร์ค นิฮอนมูระ</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 7. วัดเขาตะแบก (Bottom Right) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 48%; right: 22%; animation-delay: 2.4s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
-                  <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">วัดเขาตะแบก</span>
+                <!-- 7. วัดเขาตะแบก (Bottom Right) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 48%; right: 22%; animation-delay: 2.4s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">วัดเขาตะแบก</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 8. วัดหนองปรือ (Bottom South) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 76%; left: 49%; animation-delay: 2.8s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
-                  <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">วัดหนองปรือ</span>
+                <!-- 8. วัดหนองปรือ (Bottom South) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 76%; left: 49%; animation-delay: 2.8s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">วัดหนองปรือ</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
     </main>
   </div>
 
   <!-- Animated BTS Train Section (Soft Pastels, Dynamic Speed, Fluffy Cloud Trees) -->
-  <div class="spu-train-container">
+  <div class="spu-train-container ">
     <!-- Station Sign Board (Muted Slate Blue Box + Dual Posts + Circle Badge) -->
     <div class="spu-station-sign">
       <div class="spu-sign-board">
@@ -216,6 +216,12 @@
       </div>
     </div>
 
+    <!-- Image 2.png after Station Sign Board (Shifted Higher Up) -->
+    <div class="flex justify-center items-center -mt-10 sm:-mt-24 md:-mt-30 z-10 relative pointer-events-none">
+      <img src="./assets/2.png" alt="เทศบาลนครเจ้าพระยาสุรศักดิ์"
+        class="max-w-xs sm:max-w-sm md:max-w-md h-auto object-contain drop-shadow-lg transition-transform pointer-events-auto mt-15">
+    </div>
+
     <!-- Animated BTS Train (Vector SVG with Soft Pastel Tones) -->
     <div class="spu-train-track-area">
       <!-- Concrete Beam Track (Softer Muted Tones) -->
@@ -224,7 +230,13 @@
       <div class="spu-track-beam-shadow"></div>
 
       <!-- Moving Train Wrapper (Dynamic Speed Animation) -->
-      <div class="spu-train-wrapper">
+      <div class="spu-train-wrapper relative">
+        
+        <!-- Animated Lottie Monkey sitting on train roof -->
+        <div class="absolute -top-9 left-[75px] z-30 pointer-events-none drop-shadow-md">
+          <dotlottie-wc src="https://lottie.host/6c20eade-75f1-455c-934f-fcf9df865fe7/zlzAfw5TEo.json" autoplay loop style="width: 80px; height: 80px; margin-bottom: 100px;"></dotlottie-wc>
+        </div>
+
         <svg class="spu-bts-svg" viewBox="0 0 520 54" fill="none" xmlns="http://www.w3.org/2000/svg">
           <!-- CAR 1 (HEAD CAR) -->
           <g id="head-car">
@@ -486,7 +498,8 @@
     .spu-train-container {
       position: relative;
       width: 100%;
-      height: 108px;
+      height: 130px;
+      margin-top: 10px;
       background-color: transparent;
       overflow: hidden;
       user-select: none;
@@ -498,7 +511,7 @@
       position: absolute;
       left: 100px;
       top: 18px;
-      z-index: 30;
+      z-index: 10;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -567,7 +580,7 @@
     /* 2. ELEVATED TRACK BEAM (Muted Soft Slate Tones) */
     .spu-train-track-area {
       position: absolute;
-      top: 92px;
+      top: 102px;
       left: 0;
       width: 100%;
       height: 40px;
@@ -612,7 +625,7 @@
       height: 54px;
       animation: spuTrainVariableSpeed 18s cubic-bezier(0.35, 0, 0.25, 1) infinite;
       will-change: transform;
-      z-index: 25;
+      z-index: 35;
     }
 
     /* Keyframes for Variable Speed (Fast -> Slow -> Fast) */
@@ -776,6 +789,8 @@
   <script src="./src/config.js"></script>
   <script src="./src/complaints.js"></script>
   <script src="./src/executives.js"></script>
+  <script src="./src/index_files.js"></script>
+  <script src="./src/contact.js"></script>
   <script src="./src/app.js"></script>
   <!-- Lottie Sidebar Icons -->
   <script src="./assets/lottie-icons.js"></script>

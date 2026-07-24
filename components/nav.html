@@ -12,7 +12,7 @@
     right: 0;
     width: 100%;
     z-index: 9999;
-    padding: 0 1rem;
+    padding: 0 0.5rem;
     pointer-events: none;
   }
 
@@ -26,6 +26,7 @@
   .main-nav-card {
     pointer-events: auto;
     max-width: 1440px;
+    width: 100%;
     margin: 0 auto;
     background: #ffffff;
     border-radius: 0 0 20px 20px;
@@ -40,14 +41,16 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 72px;
-    padding: 0 1.25rem;
+    height: 64px;
+    padding: 0 0.75rem;
+    gap: 0.5rem;
   }
 
   @media (min-width: 768px) {
     .nav-inner-container {
       height: 78px;
       padding: 0 2rem;
+      gap: 1rem;
     }
   }
 
@@ -55,17 +58,32 @@
   .brand-lockup {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     text-decoration: none;
-    flex-shrink: 0;
-    margin-right: 2.5rem;
-    /* Generous gap between agency title and nav links */
+    flex-shrink: 1;
+    min-width: 0;
+    margin-right: 0.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .brand-lockup {
+      gap: 12px;
+      margin-right: 2.5rem;
+      flex-shrink: 0;
+    }
   }
 
   .brand-logo {
-    height: 44px;
+    height: 36px;
     width: auto;
     object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 640px) {
+    .brand-logo {
+      height: 44px;
+    }
   }
 
   @media (min-width: 768px) {
@@ -78,22 +96,39 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    line-height: 1.2;
+    line-height: 1.15;
+    min-width: 0;
+    overflow: hidden;
   }
 
   .brand-title {
     color: #008675;
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     font-weight: 800;
     font-family: 'Prompt', 'Kanit', sans-serif;
     letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .brand-subtitle {
     color: #008675;
-    font-size: 0.78rem;
+    font-size: 0.68rem;
     font-weight: 600;
     font-family: 'Prompt', 'Kanit', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (min-width: 480px) {
+    .brand-title {
+      font-size: 0.85rem;
+    }
+    .brand-subtitle {
+      font-size: 0.75rem;
+    }
   }
 
   @media (min-width: 640px) {
@@ -250,13 +285,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 12px;
     background: #f1f5f9;
     color: #008675;
     cursor: pointer;
     border: none;
+    flex-shrink: 0;
     transition: background-color 0.2s ease;
   }
 
@@ -328,6 +364,9 @@
 <!-- Floating Header Wrapper with Rounded Bottom Navbar Card -->
 <header class="site-header-wrapper">
   <div class="main-nav-card">
+    <!-- Mobile Hamburger Toggle Input (Sibling of nav & mobile-drawer-container for Tailwind peer selector) -->
+    <input id="mobile-nav-toggle" type="checkbox" class="peer hidden" />
+
     <nav class="nav-inner-container">
 
       <!-- Left: Brand Logo & Title -->
@@ -407,23 +446,9 @@
           </div>
         </div>
 
-        <!-- 6. อื่น ๆ -->
-        <!-- <div class="nav-item">
-          <a href="#contact" class="nav-link">
-            อื่น ๆ
-            <i class="fi fi-rr-angle-small-down text-xs ml-0.5 opacity-60"></i>
-          </a>
-          <div class="nav-dropdown nav-dropdown-right">
-            <a href="#downloads"><span class="triangle-icon">▶</span> ดาวน์โหลดเอกสาร</a>
-            <a href="#sitemap"><span class="triangle-icon">▶</span> แผนผังเว็บไซต์</a>
-            <a href="#contact"><span class="triangle-icon">▶</span> ติดต่อเรา</a>
-          </div>
-        </div> -->
-
       </div>
 
-      <!-- Mobile Hamburger Toggle Input & Button -->
-      <input id="mobile-nav-toggle" type="checkbox" class="peer hidden" />
+      <!-- Mobile Hamburger Toggle Button -->
       <label for="mobile-nav-toggle" class="mobile-toggle-btn lg:hidden" aria-label="เปิดเมนู">
         <i class="fi fi-rr-menu-burger text-lg"></i>
       </label>

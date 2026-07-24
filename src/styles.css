@@ -64,7 +64,13 @@ a {
   width: 100%;
   max-width: 1360px;
   margin: 0 auto;
-  padding: 1.25rem 1.5rem;
+  padding: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .parent {
+    padding: 1.25rem 1.5rem;
+  }
 }
 
 .sidebar-header {
@@ -169,6 +175,29 @@ a {
   display: inline-flex;
   align-items: center;
   font-family: 'Prompt', 'Kanit', sans-serif;
+}
+
+.typewriter-text {
+  background: linear-gradient(135deg, #678f7e, #2d937a, #008675, #10b981, #0d9488, #678f7e);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  animation: gradientTextShift 5s ease infinite;
+  display: inline-block;
+}
+
+@keyframes gradientTextShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .typewriter-cursor {
@@ -502,4 +531,53 @@ a {
   will-change: left, transform;
   pointer-events: none;
   z-index: 25;
+}
+
+/* ===== GLOBAL RESPONSIVE MEDIA QUERIES ===== */
+@media (max-width: 640px) {
+  /* 1. Station Sign position on Mobile */
+  .spu-station-sign {
+    left: 12px !important;
+    top: 10px !important;
+    transform: scale(0.82);
+    transform-origin: left top;
+  }
+
+  /* 2. Landmark Pins Scaling on Small Screens */
+  .landmark-pin-hover {
+    transform: scale(0.85);
+  }
+  .landmark-pin-hover:hover {
+    transform: scale(1.05) translateY(-4px);
+  }
+  
+  /* 3. Mobile Train Beam Height Adjustments */
+  .spu-train-container {
+    height: 145px !important;
+  }
+  .spu-train-track-area {
+    top: 92px !important;
+  }
+
+  /* 4. Content Card Spacing for Mobile */
+  .content-title {
+    font-size: 1.5rem !important;
+  }
+
+  /* 5. Cookie Consent Banner Mobile Position */
+  #cookie-consent-banner {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .spu-station-sign {
+    left: 40px !important;
+    transform: scale(0.9);
+    transform-origin: left top;
+  }
 }

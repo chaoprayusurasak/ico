@@ -5,8 +5,8 @@ const CATEGORY_NAMES = {
   "news_sbr": "ข่าวสารจาก สขร.",
   "announcements": "ประกาศล่าสุด",
   "popular_services": "บริการยอดนิยม",
-  "about_history": "ประวัติความเป็นมา",
-  "executives": "คณะผู้บริหาร",
+  "about_history": "ประวัติความเป็นมาเทศบาลนครเจ้าพระยาสุรศักดิ์",
+  "executives": "คณะผู้บริหารเทศบาลนครเจ้าพระยาสุรศักดิ์",
   "officers": "เจ้าหน้าที่ผู้รับผิดชอบ",
   "agency_form": "แบบฟอร์มรายงาน พ.ร.บ. ข้อมูลข่าวสาร 2540",
   "agency_report": "ระบบรายงาน Template ศูนย์ข้อมูลข่าวสาร 2540",
@@ -18,7 +18,7 @@ const CATEGORY_NAMES = {
   "downloads": "ดาวน์โหลดเอกสาร",
   "sitemap": "แผนผังเว็บไซต์",
   "contact": "ติดตามหน่วยงาน (Contact Us)",
-  "privacy": "นโยบายการคุ้มครองข้อมูลส่วนบุคคล",
+  "privacy": "Privacy Policy นโยบายการคุ้มครองข้อมูลส่วนบุคคล",
 
   // Main Section Categories (Sidebar & Index)
   "index_files": "ดัชนีรวม / ดัชนีประจำแฟ้ม",
@@ -49,16 +49,30 @@ document.addEventListener("componentsLoaded", () => {
   const titleEl = document.querySelector(".content-title");
   const boxEl = document.querySelector(".content-box");
 
-  if (titleEl && boxEl) {
+  if (titleEl && boxEl && !defaultContentBoxHTML) {
     defaultContentTitle = titleEl.innerHTML;
     defaultContentBoxHTML = boxEl.innerHTML;
   }
 
-  // Setup routing listener
-  window.addEventListener("hashchange", handleRouting);
-
   // Initial route handling
   handleRouting();
+
+  // Initialize Visitor Counter Statistics
+  initVisitorCounter();
+
+  // Initialize Cookie Consent Banner
+  initCookieConsent();
+});
+
+// Setup routing listener
+window.addEventListener("hashchange", handleRouting);
+
+// Auto-close mobile drawer when clicking a mobile navigation link
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".mobile-submenu-list a") || e.target.closest(".mobile-drawer-container a")) {
+    const toggle = document.getElementById("mobile-nav-toggle");
+    if (toggle) toggle.checked = false;
+  }
 });
 
 let currentItems = [];
@@ -180,7 +194,7 @@ async function handleRouting() {
   // ตั้งค่าจำนวนรายการต่อหน้า (ข่าวสารใช้ 6 รายการ เพื่อให้เป็น 2 แถว แถวละ 3)
   ITEMS_PER_PAGE = hash === "news_sbr" ? 6 : 8;
 
-  // Highlight active sidebar link
+  // Highlight active sidebar and top nav links
   highlightSidebarLink(hash);
 
   const titleEl = document.querySelector(".content-title");
@@ -188,13 +202,28 @@ async function handleRouting() {
 
   if (!titleEl || !boxEl) return;
 
+  // Hide page loader if visible and show content box immediately
+  const pageLoader = document.getElementById("page-loader");
+  if (pageLoader) pageLoader.style.display = "none";
+  boxEl.style.display = "";
+
   // Set title with Typewriter Animation
   const thaiTitle = CATEGORY_NAMES[hash] || "หน้าแรก";
   typewriterEffect(titleEl, thaiTitle, 55);
 
   // If home, render Animated Landmark Map component
-  if (hash === "home" && defaultContentBoxHTML) {
-    boxEl.innerHTML = defaultContentBoxHTML;
+  if (hash === "home") {
+    if (defaultContentBoxHTML) {
+      boxEl.innerHTML = defaultContentBoxHTML;
+    }
+    return;
+  }
+
+  // If contact, delegate to standalone src/contact.js module
+  if (hash === "contact") {
+    if (typeof renderContactView === "function") {
+      renderContactView(boxEl);
+    }
     return;
   }
 
@@ -214,11 +243,44 @@ async function handleRouting() {
     return;
   }
 
+  // Helper to safely get initialized Supabase client
+  const sb = (typeof window !== "undefined" && window.supabase) ? window.supabase : (typeof supabase !== "undefined" ? supabase : null);
+
+  // If index_files, delegate to standalone src/index_files.js module
+  if (hash === "index_files") {
+    renderLoading(boxEl);
+    try {
+      if (sb && typeof sb.from === "function") {
+        const { data, error } = await sb
+          .from("items")
+          .select("*")
+          .eq("category", "index_files")
+          .order("created_at", { ascending: false });
+
+        currentItems = (!error && data) ? data : [];
+      } else {
+        currentItems = [];
+      }
+      if (typeof renderIndexFilesView === "function") {
+        renderIndexFilesView(boxEl, currentItems);
+      }
+    } catch (err) {
+      if (typeof renderIndexFilesView === "function") {
+        renderIndexFilesView(boxEl, []);
+      }
+    }
+    return;
+  }
+
+
+
   // Fetch dynamic items from Supabase
   renderLoading(boxEl);
 
   try {
-    const { data: items, error } = await supabase
+    if (!sb || typeof sb.from !== "function") throw new Error("Supabase client is not initialized");
+
+    const { data: items, error } = await sb
       .from("items")
       .select("*")
       .eq("category", hash)
@@ -241,7 +303,7 @@ async function handleRouting() {
         image_url: item.image_url
       }));
 
-      const { data: inserted, error: insertErr } = await supabase
+      const { data: inserted, error: insertErr } = await sb
         .from("items")
         .insert(seedData)
         .select("*");
@@ -264,7 +326,7 @@ async function handleRouting() {
   }
 }
 
-// Highlight Sidebar Link
+// Highlight Sidebar Link & Top Navigation Links
 function highlightSidebarLink(hash) {
   const links = document.querySelectorAll(".sidebar-link");
   links.forEach(link => {
@@ -272,6 +334,15 @@ function highlightSidebarLink(hash) {
     const linkId = link.getAttribute("data-id");
     if (linkId === hash) {
       link.classList.add("active");
+    }
+  });
+
+  const navLinks = document.querySelectorAll(".nav-link");
+  navLinks.forEach(link => {
+    link.classList.remove("is-active");
+    const href = link.getAttribute("href");
+    if (href === `#${hash}`) {
+      link.classList.add("is-active");
     }
   });
 }
@@ -300,102 +371,6 @@ function renderError(container, message) {
 function renderItems(container) {
   const hash = window.location.hash.replace("#", "") || "home";
   let items = currentItems;
-
-  // Dedicated Index Directory Catalog View for #index_files
-  if (hash === "index_files") {
-    let html = `
-      <div class="flex flex-col gap-6 py-2">
-        <div class="bg-gradient-to-r from-brand-teal to-teal-800 text-white p-6 rounded-2xl shadow-md">
-          <h2 class="text-xl font-bold mb-1 flex items-center gap-2">
-            <i class="fi fi-rr-folder-open"></i> สารบัญดัชนีข่าวสารราชการ ประจำศูนย์ข้อมูลข่าวสาร
-          </h2>
-          <p class="text-xs text-teal-100 opacity-90 leading-relaxed">
-            เลือกหัวข้อดัชนีประจำแฟ้มเพื่อเข้าถึงรายการข้อมูลข่าวสารตาม พ.ร.บ. ข้อมูลข่าวสารของราชการ พ.ศ. 2540
-          </p>
-        </div>
-
-        <!-- Section 7 Category Cards -->
-        <div>
-          <h3 class="font-bold text-gray-800 text-base mb-3 flex items-center gap-2 border-b border-gray-200 pb-2">
-            <span class="w-3 h-3 rounded-full bg-brand-teal inline-block"></span> ดัชนีข่าวสารตามมาตรา 7
-          </h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <a href="#m7_1" class="p-4 bg-white border border-gray-100 hover:border-brand-teal rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-3 group">
-              <div class="w-10 h-10 rounded-xl bg-brand-teal/10 text-brand-teal flex items-center justify-center font-bold text-sm shrink-0 group-hover:bg-brand-teal group-hover:text-white transition-colors">7(1)</div>
-              <div>
-                <div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">โครงสร้างและการจัดองค์กร</div>
-                <div class="text-xs text-gray-500">การดำเนินงาน และแผนผังหน่วยงาน</div>
-              </div>
-            </a>
-            <a href="#m7_2" class="p-4 bg-white border border-gray-100 hover:border-brand-teal rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-3 group">
-              <div class="w-10 h-10 rounded-xl bg-brand-teal/10 text-brand-teal flex items-center justify-center font-bold text-sm shrink-0 group-hover:bg-brand-teal group-hover:text-white transition-colors">7(2)</div>
-              <div>
-                <div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">สรุปอำนาจหน้าที่สำคัญ</div>
-                <div class="text-xs text-gray-500">และวิธีการดำเนินงานของราชการ</div>
-              </div>
-            </a>
-            <a href="#m7_3" class="p-4 bg-white border border-gray-100 hover:border-brand-teal rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-3 group">
-              <div class="w-10 h-10 rounded-xl bg-brand-teal/10 text-brand-teal flex items-center justify-center font-bold text-sm shrink-0 group-hover:bg-brand-teal group-hover:text-white transition-colors">7(3)</div>
-              <div>
-                <div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">สถานที่ติดต่อขอรับข้อมูล</div>
-                <div class="text-xs text-gray-500">ช่องทางการขอรับข้อมูลข่าวสาร</div>
-              </div>
-            </a>
-            <a href="#m7_4" class="p-4 bg-white border border-gray-100 hover:border-brand-teal rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-3 group">
-              <div class="w-10 h-10 rounded-xl bg-brand-teal/10 text-brand-teal flex items-center justify-center font-bold text-sm shrink-0 group-hover:bg-brand-teal group-hover:text-white transition-colors">7(4)</div>
-              <div>
-                <div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">กฎ มติ ครม. และคำสั่งระเบียบ</div>
-                <div class="text-xs text-gray-500">ที่เกี่ยวข้องโดยตรงกับการปฏิบัติงาน</div>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        <!-- Section 9 Category Cards -->
-        <div class="mt-2">
-          <h3 class="font-bold text-gray-800 text-base mb-3 flex items-center gap-2 border-b border-gray-200 pb-2">
-            <span class="w-3 h-3 rounded-full bg-teal-600 inline-block"></span> ดัชนีข่าวสารตามมาตรา 9
-          </h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-            <a href="#m9_1" class="p-3.5 bg-white border border-gray-100 hover:border-brand-teal rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col gap-1 group">
-              <span class="text-xs font-bold text-brand-teal">ม.9 (1)</span>
-              <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">ผลการพิจารณาอนุมัติ</span>
-            </a>
-            <a href="#m9_2" class="p-3.5 bg-white border border-gray-100 hover:border-brand-teal rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col gap-1 group">
-              <span class="text-xs font-bold text-brand-teal">ม.9 (2)</span>
-              <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">นโยบายและการตีความ</span>
-            </a>
-            <a href="#m9_3" class="p-3.5 bg-white border border-gray-100 hover:border-brand-teal rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col gap-1 group">
-              <span class="text-xs font-bold text-brand-teal">ม.9 (3)</span>
-              <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">แผนงาน/โครงการงบประมาณ</span>
-            </a>
-            <a href="#m9_4" class="p-3.5 bg-white border border-gray-100 hover:border-brand-teal rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col gap-1 group">
-              <span class="text-xs font-bold text-brand-teal">ม.9 (4)</span>
-              <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">คู่มือและคำสั่งการทำงาน</span>
-            </a>
-            <a href="#m9_5" class="p-3.5 bg-white border border-gray-100 hover:border-brand-teal rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col gap-1 group">
-              <span class="text-xs font-bold text-brand-teal">ม.9 (5)</span>
-              <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">สิ่งพิมพ์ราชการ</span>
-            </a>
-            <a href="#m9_6" class="p-3.5 bg-white border border-gray-100 hover:border-brand-teal rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col gap-1 group">
-              <span class="text-xs font-bold text-brand-teal">ม.9 (6)</span>
-              <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">สัญญาสัมปทาน / ร่วมทุน</span>
-            </a>
-            <a href="#m9_7" class="p-3.5 bg-white border border-gray-100 hover:border-brand-teal rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col gap-1 group">
-              <span class="text-xs font-bold text-brand-teal">ม.9 (7)</span>
-              <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">มติคณะรัฐมนตรี / คำสั่ง</span>
-            </a>
-            <a href="#m9_8" class="p-3.5 bg-white border border-gray-100 hover:border-brand-teal rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col gap-1 group">
-              <span class="text-xs font-bold text-brand-teal">ม.9 (8)</span>
-              <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">ข้อมูลข่าวสารอื่นที่กำหนด</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    `;
-    container.innerHTML = html;
-    return;
-  }
 
   if ((!items || items.length === 0) && hash === "executives") {
     items = DEFAULT_EXECUTIVES;
@@ -516,48 +491,49 @@ function renderItems(container) {
       `;
     });
   } else {
-    // Layout แบบ Grid Card ดีไซน์ใหม่ซ้อนทับ gradient ฟุ้งด้านล่าง
+    // Layout แบบ Grid Card ดีไซน์การ์ดทรงสูงสะอาดตา ไม่อึดอัด
     html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 py-2">`;
 
     itemsToShow.forEach(item => {
-      const defaultImg = "https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=800&q=80";
-      const img = item.image_url || defaultImg;
-      const formattedDate = new Date(item.created_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
+      const formattedDate = item.created_at ? new Date(item.created_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+      const img = item.image_url;
 
       html += `
-        <div class="relative rounded-3xl overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_45px_rgba(0,134,117,0.2)] hover:-translate-y-1.5 transition-all duration-500 group min-h-[300px] flex flex-col justify-end border border-gray-100/50">
-          <!-- Background Image -->
-          <img src="${img}" alt="${item.title}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out z-0">
+        <div class="bg-white border border-teal-900/10 rounded-3xl overflow-hidden shadow-[0_8px_25px_rgba(0,0,0,0.04)] hover:shadow-[0_15px_40px_rgba(0,134,117,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-full w-full">
           
-          <!-- Bottom Glow Gradient Overlay (เงาฟุ้งเฉพาะส่วนล่าง) -->
-          <div class="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[#002b26] via-[#004d43]/70 to-transparent z-10 transition-opacity duration-300"></div>
+          ${img ? `
+            <!-- Document / Photo Container (Edge-to-edge fit) -->
+            <div class="w-full h-64 sm:h-72 overflow-hidden border-b border-gray-100 relative group">
+              <img src="${img}" alt="${item.title}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+            </div>
+          ` : ''}
 
-          <!-- Content Box inside Overlay -->
-          <div class="relative z-20 p-6 text-white flex flex-col justify-end h-full">
-            <div class="mt-auto">
-              <div class="flex items-center gap-1.5 text-xs font-semibold text-teal-200 uppercase tracking-wider mb-2">
+          <!-- Content Body -->
+          <div class="p-8 sm:p-6 flex flex-col justify-between flex-1 gap-4">
+            <div>
+              <div class="flex items-center gap-1.5 text-xs font-semibold text-brand-teal mb-2">
                 <i class="fi fi-rr-clock text-[11px]"></i> ${formattedDate}
               </div>
-              <h3 class="text-lg sm:text-xl font-bold leading-snug text-white drop-shadow-sm line-clamp-2 group-hover:text-teal-100 transition-colors mb-2">${item.title}</h3>
-              ${item.description ? `<p class="text-xs text-teal-100/90 line-clamp-2 mb-4 font-normal leading-relaxed">${item.description}</p>` : ''}
-              
-              <div class="flex items-center gap-2 pt-3 border-t border-white/20">
-                ${item.link ? `
-                  <a href="${item.link}" target="_blank" class="flex-1 py-2 px-3 bg-white/20 hover:bg-white text-white hover:text-[#005a4e] backdrop-blur-md font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-sm">
-                    <i class="fi fi-rr-link"></i> ลิงก์ที่เกี่ยวข้อง
-                  </a>
-                ` : ''}
-                ${item.file_url ? `
-                  <a href="${item.file_url}" target="_blank" download class="flex-1 py-2 px-3 bg-brand-teal text-white hover:bg-white hover:text-[#005a4e] font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5">
-                    <i class="fi fi-rr-download"></i> ดาวน์โหลดไฟล์
-                  </a>
-                ` : ''}
-                ${!item.link && !item.file_url ? `
-                  <div class="flex-1 py-2 px-3 bg-white/10 text-white/50 font-medium text-xs rounded-xl flex items-center justify-center cursor-not-allowed">
-                    ไม่มีเอกสารแนบ
-                  </div>
-                ` : ''}
-              </div>
+              <h3 class="text-base sm:text-lg font-bold text-gray-800 leading-snug line-clamp-3 mb-2 hover:text-brand-teal transition-colors">${item.title}</h3>
+              ${item.description ? `<p class="text-xs sm:text-sm text-gray-600 line-clamp-3 leading-relaxed font-normal">${item.description}</p>` : ''}
+            </div>
+
+            <div class="flex items-center gap-2 pt-3 border-t border-gray-100 mt-auto">
+              ${item.link ? `
+                <a href="${item.link}" target="_blank" class="flex-1 py-2 px-3 bg-teal-50 text-brand-teal  hover:text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 border border-teal-100/80 shadow-2xs">
+                  <i class="fi fi-rr-link"></i> ลิงก์ที่เกี่ยวข้อง
+                </a>
+              ` : ''}
+              ${item.file_url ? `
+                <a href="${item.file_url}" target="_blank" download class="flex-1 py-2 px-3 bg-brand-teal text-black hover:bg-teal-700 font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5">
+                  <i class="fi fi-rr-download"></i> ดาวน์โหลดไฟล์
+                </a>
+              ` : ''}
+              ${!item.link && !item.file_url ? `
+                <div class="flex-1 py-2 px-3 bg-gray-50 text-gray-400 font-normal text-xs rounded-xl flex items-center justify-center cursor-not-allowed">
+                  ไม่มีเอกสารแนบ
+                </div>
+              ` : ''}
             </div>
           </div>
         </div>
@@ -638,5 +614,136 @@ window.toggleExecutiveMarquee = function (btn) {
   } else {
     el.style.animationPlayState = "running";
     icon.className = "fi fi-rr-pause";
+  }
+};
+
+// Real Website Visitor Counter Logic (Incremental Tracking starting from 1)
+async function initVisitorCounter() {
+  const totalEl = document.getElementById("visitor-total");
+  if (!totalEl) return;
+
+  // Clear old dummy base count (125,480) if present in localStorage
+  let savedLocal = localStorage.getItem("ico_real_visitor_count");
+  if (savedLocal && parseInt(savedLocal) > 10000) {
+    localStorage.removeItem("ico_real_visitor_count");
+    savedLocal = null;
+  }
+
+  let totalCount = parseInt(savedLocal) || 1;
+  const isNewVisit = !sessionStorage.getItem("ico_visit_session");
+
+  if (isNewVisit) {
+    totalCount = savedLocal ? totalCount + 1 : 1;
+    sessionStorage.setItem("ico_visit_session", "true");
+    localStorage.setItem("ico_real_visitor_count", String(totalCount));
+  }
+
+  // Render current count immediately
+  totalEl.textContent = totalCount.toLocaleString("th-TH");
+
+  // Sync with Supabase cloud database if available
+  try {
+    const sb = window.supabase;
+    if (sb) {
+      const { data, error } = await sb
+        .from("items")
+        .select("*")
+        .eq("category", "site_stats")
+        .eq("title", "visitor_count")
+        .maybeSingle();
+
+      if (!error && data && data.description) {
+        let cloudCount = parseInt(data.description) || 1;
+        if (cloudCount > 10000) cloudCount = 1; // Clear old dummy base count if in database
+
+        if (isNewVisit) {
+          cloudCount += 1;
+          sb.from("items")
+            .update({ description: String(cloudCount) })
+            .eq("id", data.id)
+            .then(() => { });
+        }
+        totalCount = Math.max(totalCount, cloudCount);
+      } else if (!error && !data) {
+        sb.from("items")
+          .insert([{ category: "site_stats", title: "visitor_count", description: String(totalCount) }])
+          .then(() => { });
+      }
+      localStorage.setItem("ico_real_visitor_count", String(totalCount));
+      totalEl.textContent = totalCount.toLocaleString("th-TH");
+    }
+  } catch (err) {
+    console.warn("Visitor counter error:", err);
+  }
+}
+
+// Expose globally and attach load handlers
+window.initVisitorCounter = initVisitorCounter;
+window.addEventListener("load", () => {
+  setTimeout(initVisitorCounter, 500);
+  setTimeout(initCookieConsent, 600);
+});
+
+// Cookie Consent Banner Implementation
+function initCookieConsent() {
+  const consent = localStorage.getItem("ico_cookie_consent");
+  if (consent === "accepted" || consent === "declined") return;
+
+  if (!document.getElementById("cookie-consent-banner")) {
+    const bannerHTML = `
+      <div id="cookie-consent-banner" class="fixed bottom-5 left-5 right-5 sm:left-6 sm:right-auto sm:max-w-md z-[99999] transition-all duration-500 transform translate-y-24 opacity-0 pointer-events-none">
+        <div class="bg-white/95 backdrop-blur-xl border border-[rgba(0,134,117,0.2)] rounded-3xl p-5 shadow-[0_20px_50px_rgba(0,86,117,0.2)] flex flex-col gap-4 text-gray-800">
+          <div class="flex items-start gap-3.5">
+            <div class="w-10 h-10 rounded-2xl bg-teal-50 text-[#008675] flex items-center justify-center text-xl shrink-0 shadow-sm border border-teal-100">
+              🍪
+            </div>
+            <div class="flex-1">
+              <h4 class="text-sm font-bold text-gray-900 mb-1 flex items-center gap-1.5 font-prompt">
+                การใช้งานคุกกี้ (Cookie Policy)
+              </h4>
+              <p class="text-xs text-gray-600 leading-relaxed font-normal font-prompt">
+                เว็บไซต์นี้ใช้คุกกี้เพื่อปรับปรุงประสบการณ์ในการเข้าใช้งานเว็บไซต์ของเราให้ดียิ่งขึ้น 
+                ท่านสามารถศึกษารายละเอียดเพิ่มเติมได้ที่ 
+                <a href="#privacy" class="text-[#008675] font-semibold underline hover:text-teal-700 transition-colors">นโยบายการคุ้มครองข้อมูลส่วนบุคคล</a>
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center justify-end gap-2.5 pt-1">
+            <button onclick="declineCookieConsent()" class="px-4 py-2 text-xs font-semibold text-gray-500 hover:text-gray-800 rounded-xl hover:bg-gray-100 transition-all font-prompt cursor-pointer">
+              ปฏิเสธ
+            </button>
+            <button onclick="acceptCookieConsent()" class="px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-[#008675] to-teal-700 hover:from-teal-700 hover:to-teal-800 rounded-xl  transition-all font-prompt cursor-pointer">
+              ยอมรับทั้งหมด
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML("beforeend", bannerHTML);
+  }
+
+  setTimeout(() => {
+    const banner = document.getElementById("cookie-consent-banner");
+    if (banner) {
+      banner.classList.remove("translate-y-24", "opacity-0", "pointer-events-none");
+    }
+  }, 300);
+}
+
+window.acceptCookieConsent = function () {
+  localStorage.setItem("ico_cookie_consent", "accepted");
+  const banner = document.getElementById("cookie-consent-banner");
+  if (banner) {
+    banner.classList.add("translate-y-24", "opacity-0", "pointer-events-none");
+    setTimeout(() => banner.remove(), 600);
+  }
+};
+
+window.declineCookieConsent = function () {
+  localStorage.setItem("ico_cookie_consent", "declined");
+  const banner = document.getElementById("cookie-consent-banner");
+  if (banner) {
+    banner.classList.add("translate-y-24", "opacity-0", "pointer-events-none");
+    setTimeout(() => banner.remove(), 600);
   }
 };

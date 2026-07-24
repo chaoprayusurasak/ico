@@ -8,6 +8,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet" /> -->
   <link
     href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
     rel="stylesheet">
@@ -82,858 +83,693 @@
 
       <!-- ข้อมูลที่จะแสดงหลังโหลดเสร็จ (ซ่อนไว้ก่อนด้วย display: none) -->
       <div class="content-box p-0 overflow-hidden rounded-3xl" id="page-content" style="display: none;">
-        <!-- LANDMARK 2.5D ANIMATED SECTION -->
-        <div class="relative w-full bg-gradient-to-b overflow-hidden py-10 px-4 select-none">
-          <!-- Header Landmark Title -->
-          <div class="relative z-20 text-center " >
-            <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-red-600 tracking-wider" style="justify-content: start; align-items: start; display: flex;">
-              LANDMARK
-            </h2>
-            <p class="text-xl sm:text-xl md:text-2xl font-bold text-grey-600 mt-1" style="justify-content: start; align-items: start; display: flex;">
-              เทศบาลนครเจ้าพระยาสุรศักดิ์
-            </p>
-          </div>
+        <div class="relative w-full bg-gradient-to-b overflow-hidden py-8 px-4 sm:px-6 select-none">
+          <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
 
-          <!-- Floating Island Container -->
-          <div class="relative max-w-5xl mx-auto z-10 py-1">
-            <!-- Animated Island Wrapper -->
-            <div class="relative w-full animate-float-island">
-              <!-- Base Map Image -->
-              <img src="./assets/land.png" alt="เทศบาลนครเจ้าพระยาสุรศักดิ์ Landmark Map"
-                class="w-full h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,40,80,0.35)] rounded-2xl">
+            <!-- Left Column: LANDMARK Title & Info -->
+            <div class="lg:col-span-4 flex flex-col justify-center items-start text-left z-20 space-y-3 lg:pr-2">
+              <h2 class="text-4xl sm:text-5xl md:text-6xl font-black text-red-600 tracking-wider leading-none">
+                LANDMARK
+              </h2>
+              <p class="text-xl sm:text-2xl font-bold text-gray-700 leading-snug">
+                เทศบาลนครเจ้าพระยาสุรศักดิ์
+              </p>
 
-              <!-- INTERACTIVE LANDMARK PINS -->
 
-              <!-- 1. เทศบาลนครเจ้าพระยาสุรศักดิ์ (Top Right) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 10%; right: 5%; animation-delay: 0s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <span class="w-2.5 h-2.5 rounded-full bg-yellow-300 animate-ping absolute -top-1 -left-1"></span>
-                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
-                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">เทศบาลนครเจ้าพระยาสุรศักดิ์</span>
+              <!-- Quick Info Badges -->
+              <div class="grid grid-cols-2 gap-3 pt-3 w-full max-w-sm">
+                <div class=" backdrop-blur-sm p-3 rounded-2flex items-center gap-3">
                 </div>
               </div>
+            </div>
 
-              <!-- 2. ศรีราชาฮาร์เบอร์ (Top Left - Port Area) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 28%; left: 24%; animation-delay: 0.4s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
-                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">ศรีราชาฮาร์เบอร์</span>
+            <!-- Right Column: Floating Island Map (land.png) -->
+            <div class="lg:col-span-8 relative w-full flex justify-center items-center">
+              <div class="relative w-full max-w-5xl animate-float-island">
+                <!-- Base Map Image -->
+                <img src="./assets/land.png" alt="เทศบาลนครเจ้าพระยาสุรศักดิ์ Landmark Map"
+                  class="w-full h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,40,80,0.35)] rounded-2xl">
+
+                <!-- INTERACTIVE LANDMARK PINS -->
+
+                <!-- 1. เทศบาลนครเจ้าพระยาสุรศักดิ์ (Top Right) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 10%; right: 5%; animation-delay: 0s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <span class="w-2 h-2 rounded-full bg-yellow-300 animate-ping absolute -top-1 -left-1"></span>
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">เทศบาลนครเจ้าพระยาสุรศักดิ์</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 3. สวนเฉลิมพระเกียรติ (Center Top) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 44%; left: 46%; animation-delay: 0.8s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
-                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">สวนเฉลิมพระเกียรติ</span>
+                <!-- 2. ศรีราชาฮาร์เบอร์ (Top Left - Port Area) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 28%; left: 24%; animation-delay: 0.4s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">ศรีราชาฮาร์เบอร์</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 4. วัดเขาช่องลม (Center Right) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 28%; right: 24%; animation-delay: 1.2s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
-                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">วัดเขาช่องลม</span>
+                <!-- 3. สวนเฉลิมพระเกียรติ (Center Top) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 44%; left: 46%; animation-delay: 0.8s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">สวนเฉลิมพระเกียรติ</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 5. วัดหนองยายบู่ (Mid Left) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 54%; left: 22%; animation-delay: 1.6s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
-                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">วัดหนองยายบู่</span>
+                <!-- 4. วัดเขาช่องลม (Center Right) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 28%; right: 24%; animation-delay: 1.2s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">วัดเขาช่องลม</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 6. เจพาร์ค นิฮอนมูระ (Center Bottom) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 60%; left: 42%; animation-delay: 2.0s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
-                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">เจพาร์ค นิฮอนมูระ</span>
+                <!-- 5. วัดหนองยายบู่ (Mid Left) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 54%; left: 22%; animation-delay: 1.6s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">วัดหนองยายบู่</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 7. วัดเขาตะแบก (Bottom Right) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 48%; right: 22%; animation-delay: 2.4s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
-                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">วัดเขาตะแบก</span>
+                <!-- 6. เจพาร์ค นิฮอนมูระ (Center Bottom) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 60%; left: 42%; animation-delay: 2.0s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">เจพาร์ค นิฮอนมูระ</span>
+                  </div>
                 </div>
-              </div>
 
-              <!-- 8. วัดหนองปรือ (Bottom South) -->
-              <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
-                style="top: 76%; left: 49%; animation-delay: 2.8s;">
-                <div
-                  class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg border border-white/80 cursor-pointer">
-                  <i class="fi fi-sr-marker text-xs text-yellow-300"></i>
-                  <span class="text-[11px] sm:text-xs font-bold whitespace-nowrap">วัดหนองปรือ</span>
+                <!-- 7. วัดเขาตะแบก (Bottom Right) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 48%; right: 22%; animation-delay: 2.4s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">วัดเขาตะแบก</span>
+                  </div>
+                </div>
+
+                <!-- 8. วัดหนองปรือ (Bottom South) -->
+                <div class="absolute z-30 landmark-pin-hover animate-pin-bounce"
+                  style="top: 76%; left: 49%; animation-delay: 2.8s;">
+                  <div
+                    class="relative flex items-center gap-1 bg-gradient-to-r from-red-600 to-rose-500 text-white px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full shadow-lg border border-white/80 cursor-pointer">
+                    <i class="fi fi-sr-marker text-[10px] sm:text-xs text-yellow-300"></i>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">วัดหนองปรือ</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
     </main>
   </div>
 
-  <!-- Animated Train Section (Right to Left Loop) -->
-  <div class="train-section" id="train-section">
-    <!-- Sky/Background -->
-    <div class="train-sky"></div>
-
-    <!-- Station Sign -->
-    <div class="station-sign">
-      <div class="sign-pole"></div>
-      <div class="sign-board">
-        <span class="sign-text-th">เทศบาลนครเจ้าพระยาสุรศักดิ์</span>
-        <span class="sign-text-en">Chaophraya Surasak</span>
-      </div>
-      <div class="sign-number">🏛️</div>
-    </div>
-
-    <!-- Rail Track -->
-    <div class="rail-track">
-      <div class="rail-line"></div>
-      <div class="rail-ties"></div>
-      <!-- Train Container (moves right to left) -->
-      <div class="train-wrapper">
-        <div class="train-body">
-          <!-- Shinkansen Nose (หัวรถแหลม) -->
-          <div class="shinkansen-nose">
-            <div class="nose-cone"></div>
-            <div class="nose-stripe"></div>
-            <div class="shinkansen-lights">
-              <div class="shinkansen-light-left"></div>
-              <div class="shinkansen-light-right"></div>
-            </div>
-            <div class="nose-window"></div>
-          </div>
-
-          <!-- Shinkansen First Car (หัวรถ) -->
-          <div class="train-car shinkansen-car shinkansen-first">
-            <div class="shinkansen-stripe"></div>
-            <div class="shinkansen-windows">
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-            </div>
-            <div class="shinkansen-door"></div>
-            <div class="train-wheels">
-              <div class="wheel"></div>
-              <div class="wheel"></div>
-            </div>
-          </div>
-
-          <!-- Shinkansen Car 2 -->
-          <div class="train-car shinkansen-car">
-            <div class="shinkansen-stripe"></div>
-            <div class="shinkansen-windows">
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-            </div>
-            <div class="shinkansen-door"></div>
-            <div class="train-wheels">
-              <div class="wheel"></div>
-              <div class="wheel"></div>
-            </div>
-          </div>
-
-          <!-- Shinkansen Car 3 -->
-          <div class="train-car shinkansen-car">
-            <div class="shinkansen-stripe"></div>
-            <div class="shinkansen-windows">
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-            </div>
-            <div class="shinkansen-door"></div>
-            <div class="train-wheels">
-              <div class="wheel"></div>
-              <div class="wheel"></div>
-            </div>
-          </div>
-
-          <!-- Shinkansen Car 4 -->
-          <div class="train-car shinkansen-car">
-            <div class="shinkansen-stripe"></div>
-            <div class="shinkansen-windows">
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-            </div>
-            <div class="shinkansen-door"></div>
-            <div class="train-wheels">
-              <div class="wheel"></div>
-              <div class="wheel"></div>
-            </div>
-          </div>
-
-          <!-- Shinkansen Tail Car (รถท้าย) -->
-          <div class="train-car shinkansen-car shinkansen-tail">
-            <div class="shinkansen-stripe"></div>
-            <div class="shinkansen-windows">
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-              <div class="shinkansen-window">
-                <div class="window-reflection"></div>
-              </div>
-            </div>
-            <div class="shinkansen-door"></div>
-            <div class="train-wheels">
-              <div class="wheel"></div>
-              <div class="wheel"></div>
-            </div>
-          </div>
+  <!-- Animated BTS Train Section (Soft Pastels, Dynamic Speed, Fluffy Cloud Trees) -->
+  <div class="spu-train-container ">
+    <!-- Station Sign Board (Muted Slate Blue Box + Dual Posts + Circle Badge) -->
+    <div class="spu-station-sign">
+      <div class="spu-sign-board">
+        <div class="spu-sign-text">
+          <div class="spu-sign-th">เทศบาลนครเจ้าพระยาสุรศักดิ์</div>
+          <div class="spu-sign-en">Chaophraya Surasak</div>
         </div>
+        <div class="spu-sign-badge">N1</div>
+      </div>
+      <div class="spu-sign-poles">
+        <div class="spu-pole"></div>
+        <div class="spu-pole"></div>
+      </div>
+    </div>
+
+    <!-- Image 2.png after Station Sign Board (Shifted Higher Up) -->
+    <div class="flex justify-center items-center -mt-10 sm:-mt-24 md:-mt-30 z-10 relative pointer-events-none">
+      <img src="./assets/2.png" alt="เทศบาลนครเจ้าพระยาสุรศักดิ์"
+        class="max-w-xs sm:max-w-sm md:max-w-md h-auto object-contain drop-shadow-lg transition-transform hover:scale-105 duration-300 pointer-events-auto mt-15">
+    </div>
+
+    <!-- Animated BTS Train (Vector SVG with Soft Pastel Tones) -->
+    <div class="spu-train-track-area">
+      <!-- Concrete Beam Track (Softer Muted Tones) -->
+      <div class="spu-track-beam-top"></div>
+      <div class="spu-track-beam-main"></div>
+      <div class="spu-track-beam-shadow"></div>
+
+      <!-- Moving Train Wrapper (Dynamic Speed Animation) -->
+      <div class="spu-train-wrapper">
+        <svg class="spu-bts-svg" viewBox="0 0 520 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- CAR 1 (HEAD CAR) -->
+          <g id="head-car">
+            <!-- Main Body (Soft Creamy White) -->
+            <path d="M45 4 H130 V42 H15 C15 42 5 35 5 22 C5 10 25 4 45 4 Z" fill="#F8FAFC" stroke="#CBD5E1"
+              stroke-width="1.5" />
+            <!-- Front Windshield (Soft Blue-Grey Tint) -->
+            <path d="M14 10 C22 7 38 6 42 6 L44 20 H18 C14 18 12 14 14 10 Z" fill="#334155" stroke="#1E293B"
+              stroke-width="1" />
+            <path d="M16 11 C23 8 36 7 40 7 L42 16 H20 Z" fill="#475569" />
+            <path d="M22 8 L32 7 L28 14 Z" fill="white" opacity="0.35" />
+            <!-- Soft Salmon/Pastel Red Stripe Nose -->
+            <path
+              d="M42 6 C35 6 18 8 13 11 C9 14 6 20 6 24 C6 26 12 28 20 28 L130 28 V31 L18 31 C8 31 4 25 4 22 C4 8 26 4 45 4 Z"
+              fill="#EF4444" opacity="0.85" />
+            <!-- Soft Sky Blue Side Window Stripe -->
+            <rect x="44" y="16" width="86" height="10" fill="#3B82F6" opacity="0.8" />
+            <!-- Windows Head Car -->
+            <rect x="48" y="14" width="18" height="11" rx="2" fill="#1E293B" stroke="#475569" />
+            <rect x="49" y="15" width="16" height="9" rx="1" fill="#334155" />
+            <rect x="72" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
+            <rect x="73" y="15" width="20" height="9" rx="1" fill="#334155" />
+            <rect x="100" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
+            <rect x="101" y="15" width="20" height="9" rx="1" fill="#334155" />
+            <!-- Door -->
+            <rect x="63" y="14" width="7" height="26" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8" />
+            <line x1="66.5" y1="14" x2="66.5" y2="40" stroke="#CBD5E1" stroke-width="0.8" />
+            <!-- Bottom Red Stripe -->
+            <rect x="15" y="38" width="115" height="3" fill="#EF4444" opacity="0.85" />
+            <!-- Wheels Bogies -->
+            <circle cx="35" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="35" cy="45" r="2" fill="#94A3B8" />
+            <circle cx="50" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="50" cy="45" r="2" fill="#94A3B8" />
+            <circle cx="105" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="105" cy="45" r="2" fill="#94A3B8" />
+            <circle cx="120" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="120" cy="45" r="2" fill="#94A3B8" />
+          </g>
+
+          <!-- Connector 1-2 -->
+          <rect x="130" y="10" width="4" height="30" fill="#475569" />
+
+          <!-- CAR 2 (MIDDLE CAR) -->
+          <g id="car-2">
+            <rect x="134" y="4" width="120" height="38" rx="2" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" />
+            <rect x="134" y="27" width="120" height="4" fill="#EF4444" opacity="0.85" />
+            <rect x="134" y="16" width="120" height="10" fill="#3B82F6" opacity="0.8" />
+            <!-- Windows -->
+            <rect x="140" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
+            <rect x="141" y="15" width="20" height="9" rx="1" fill="#334155" />
+            <rect x="180" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
+            <rect x="181" y="15" width="20" height="9" rx="1" fill="#334155" />
+            <rect x="220" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
+            <rect x="221" y="15" width="20" height="9" rx="1" fill="#334155" />
+            <!-- Doors -->
+            <rect x="166" y="14" width="10" height="26" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8" />
+            <line x1="171" y1="14" x2="171" y2="40" stroke="#CBD5E1" />
+            <rect x="206" y="14" width="10" height="26" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8" />
+            <line x1="211" y1="14" x2="211" y2="40" stroke="#CBD5E1" />
+            <!-- Bottom Red Accent Stripe -->
+            <rect x="134" y="38" width="120" height="3" fill="#EF4444" opacity="0.85" />
+            <!-- Wheels -->
+            <circle cx="150" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="150" cy="45" r="2" fill="#94A3B8" />
+            <circle cx="165" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="165" cy="45" r="2" fill="#94A3B8" />
+            <circle cx="225" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="225" cy="45" r="2" fill="#94A3B8" />
+            <circle cx="240" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="240" cy="45" r="2" fill="#94A3B8" />
+          </g>
+
+          <!-- Connector 2-3 -->
+          <rect x="254" y="10" width="4" height="30" fill="#475569" />
+
+          <!-- CAR 3 (MIDDLE CAR) -->
+          <g id="car-3">
+            <rect x="258" y="4" width="120" height="38" rx="2" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" />
+            <rect x="258" y="27" width="120" height="4" fill="#EF4444" opacity="0.85" />
+            <rect x="258" y="16" width="120" height="10" fill="#3B82F6" opacity="0.8" />
+            <!-- Windows -->
+            <rect x="264" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
+            <rect x="265" y="15" width="20" height="9" rx="1" fill="#334155" />
+            <rect x="304" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
+            <rect x="305" y="15" width="20" height="9" rx="1" fill="#334155" />
+            <rect x="344" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
+            <rect x="345" y="15" width="20" height="9" rx="1" fill="#334155" />
+            <!-- Doors -->
+            <rect x="290" y="14" width="10" height="26" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8" />
+            <line x1="295" y1="14" x2="295" y2="40" stroke="#CBD5E1" />
+            <rect x="330" y="14" width="10" height="26" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8" />
+            <line x1="335" y1="14" x2="335" y2="40" stroke="#CBD5E1" />
+            <!-- Bottom Red Accent Stripe -->
+            <rect x="258" y="38" width="120" height="3" fill="#EF4444" opacity="0.85" />
+            <!-- Wheels -->
+            <circle cx="274" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="274" cy="45" r="2" fill="#94A3B8" />
+            <circle cx="289" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="289" cy="45" r="2" fill="#94A3B8" />
+            <circle cx="349" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="349" cy="45" r="2" fill="#94A3B8" />
+            <circle cx="364" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="364" cy="45" r="2" fill="#94A3B8" />
+          </g>
+
+          <!-- Connector 3-4 -->
+          <rect x="378" y="10" width="4" height="30" fill="#475569" />
+
+          <!-- CAR 4 (TAIL CAR) -->
+          <g id="tail-car">
+            <rect x="382" y="4" width="125" height="38" rx="2" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" />
+            <rect x="382" y="27" width="125" height="4" fill="#EF4444" opacity="0.85" />
+            <rect x="382" y="16" width="125" height="10" fill="#3B82F6" opacity="0.8" />
+            <!-- Windows -->
+            <rect x="388" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
+            <rect x="389" y="15" width="20" height="9" rx="1" fill="#334155" />
+            <rect x="428" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
+            <rect x="429" y="15" width="20" height="9" rx="1" fill="#334155" />
+            <rect x="468" y="14" width="20" height="11" rx="2" fill="#1E293B" stroke="#475569" />
+            <rect x="469" y="15" width="18" height="9" rx="1" fill="#334155" />
+            <!-- Door -->
+            <rect x="414" y="14" width="10" height="26" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8" />
+            <line x1="419" y1="14" x2="419" y2="40" stroke="#CBD5E1" />
+            <!-- Bottom Red Accent Stripe -->
+            <rect x="382" y="38" width="125" height="3" fill="#EF4444" opacity="0.85" />
+            <!-- Wheels -->
+            <circle cx="398" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="398" cy="45" r="2" fill="#94A3B8" />
+            <circle cx="413" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="413" cy="45" r="2" fill="#94A3B8" />
+            <circle cx="473" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="473" cy="45" r="2" fill="#94A3B8" />
+            <circle cx="488" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
+            <circle cx="488" cy="45" r="2" fill="#94A3B8" />
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- T-shaped Concrete Pillars Structure (Muted Soft Slate Colors) -->
+    <div class="spu-pillars-container">
+      <div class="spu-t-pillar" style="left: 4%;">
+        <div class="spu-pillar-cap"></div>
+        <div class="spu-pillar-stem"></div>
+      </div>
+      <div class="spu-t-pillar" style="left: 18%;">
+        <div class="spu-pillar-cap"></div>
+        <div class="spu-pillar-stem"></div>
+      </div>
+      <div class="spu-t-pillar" style="left: 32%;">
+        <div class="spu-pillar-cap"></div>
+        <div class="spu-pillar-stem"></div>
+      </div>
+      <div class="spu-t-pillar" style="left: 46%;">
+        <div class="spu-pillar-cap"></div>
+        <div class="spu-pillar-stem"></div>
+      </div>
+      <div class="spu-t-pillar" style="left: 60%;">
+        <div class="spu-pillar-cap"></div>
+        <div class="spu-pillar-stem"></div>
+      </div>
+      <div class="spu-t-pillar" style="left: 74%;">
+        <div class="spu-pillar-cap"></div>
+        <div class="spu-pillar-stem"></div>
+      </div>
+      <div class="spu-t-pillar" style="left: 88%;">
+        <div class="spu-pillar-cap"></div>
+        <div class="spu-pillar-stem"></div>
+      </div>
+    </div>
+
+    <!-- FLUFFY CLOUD-SHAPED TREES & BUSHES (Multi-lobed Pastel Cloud Clusters) -->
+    <div class="spu-bushes-container">
+      <!-- Fluffy Cloud Bush Cluster 1 -->
+      <div class="cloud-bush-group" style="left: 0%; width: 220px; height: 60px;">
+        <svg viewBox="0 0 220 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="cloud-svg">
+          <path
+            d="M 0 60 C 0 45, 10 25, 30 22 C 38 8, 68 4, 85 16 C 98 2, 130 4, 142 18 C 158 8, 188 18, 192 34 C 208 30, 222 44, 215 60 Z"
+            fill="#2d6a4f" />
+          <path
+            d="M 5 60 C 5 48, 15 28, 35 26 C 42 12, 70 8, 86 20 C 98 6, 128 8, 138 22 C 154 12, 182 22, 186 38 C 200 34, 214 46, 208 60 Z"
+            fill="#40916c" />
+          <path d="M 38 28 C 45 16, 70 12, 84 24 C 98 10, 126 12, 134 26 C 148 16, 178 24, 182 40 Z" fill="#74c69d"
+            opacity="0.85" />
+          <circle cx="90" cy="18" r="10" fill="#b7e4c7" opacity="0.4" />
+          <circle cx="140" cy="20" r="8" fill="#b7e4c7" opacity="0.4" />
+        </svg>
       </div>
 
-      <!-- Train Shadow -->
-      <div class="train-shadow"></div>
-    </div>
+      <!-- Fluffy Cloud Tree 1 -->
+      <div class="cloud-tree-unit" style="left: 17%; bottom: 0;">
+        <div class="cloud-tree-head"></div>
+        <div class="tree-trunk"></div>
+      </div>
 
-    <!-- Bridge Pillars -->
-    <div class="bridge">
-      <div class="bridge-beam"></div>
-      <div class="pillar"></div>
-      <div class="pillar"></div>
-      <div class="pillar"></div>
-      <div class="pillar"></div>
-      <div class="pillar"></div>
-      <div class="pillar"></div>
-      <div class="pillar"></div>
-    </div>
+      <!-- Fluffy Cloud Bush Cluster 2 -->
+      <div class="cloud-bush-group" style="left: 23%; width: 200px; height: 58px;">
+        <svg viewBox="0 0 200 58" fill="none" xmlns="http://www.w3.org/2000/svg" class="cloud-svg">
+          <path
+            d="M 0 58 C 0 42, 12 24, 30 22 C 38 8, 65 4, 80 16 C 94 4, 122 6, 132 18 C 148 10, 175 20, 178 35 C 192 30, 204 44, 196 58 Z"
+            fill="#2d6a4f" />
+          <path
+            d="M 8 58 C 8 46, 18 28, 36 26 C 42 12, 68 8, 82 20 C 94 8, 120 10, 128 22 C 144 14, 168 24, 172 38 C 184 34, 196 46, 190 58 Z"
+            fill="#40916c" />
+          <path d="M 38 28 C 44 16, 68 12, 80 22 C 92 10, 116 12, 124 24 C 138 16, 162 24, 166 38 Z" fill="#52b788"
+            opacity="0.85" />
+          <circle cx="85" cy="18" r="9" fill="#b7e4c7" opacity="0.45" />
+        </svg>
+      </div>
 
-    <!-- Bushes -->
-    <div class="bushes">
-      <div class="bush bush-1"></div>
-      <div class="bush bush-2"></div>
-      <div class="bush bush-3"></div>
-      <div class="bush bush-4"></div>
-      <div class="bush bush-5"></div>
+      <!-- Fluffy Cloud Tree 2 -->
+      <div class="cloud-tree-unit" style="left: 42%; bottom: 0;">
+        <div class="cloud-tree-head lg"></div>
+        <div class="tree-trunk"></div>
+      </div>
+
+      <!-- Fluffy Cloud Bush Cluster 3 -->
+      <div class="cloud-bush-group" style="left: 48%; width: 230px; height: 62px;">
+        <svg viewBox="0 0 230 62" fill="none" xmlns="http://www.w3.org/2000/svg" class="cloud-svg">
+          <path
+            d="M 0 62 C 0 45, 12 25, 34 22 C 42 6, 75 2, 92 16 C 108 2, 140 4, 154 18 C 172 8, 202 18, 206 36 C 222 30, 235 46, 226 62 Z"
+            fill="#2d6a4f" />
+          <path
+            d="M 8 62 C 8 48, 18 28, 38 26 C 44 10, 72 6, 88 20 C 102 6, 132 8, 144 22 C 162 12, 192 22, 196 40 C 210 34, 224 48, 218 62 Z"
+            fill="#40916c" />
+          <path d="M 40 28 C 46 14, 72 10, 86 22 C 100 8, 128 10, 138 24 C 156 14, 184 24, 188 42 Z" fill="#74c69d"
+            opacity="0.9" />
+          <circle cx="92" cy="18" r="11" fill="#b7e4c7" opacity="0.4" />
+          <circle cx="145" cy="20" r="9" fill="#b7e4c7" opacity="0.4" />
+        </svg>
+      </div>
+
+      <!-- Fluffy Cloud Tree 3 -->
+      <div class="cloud-tree-unit" style="left: 71%; bottom: 0;">
+        <div class="cloud-tree-head"></div>
+        <div class="tree-trunk"></div>
+      </div>
+
+      <!-- Fluffy Cloud Bush Cluster 4 -->
+      <div class="cloud-bush-group" style="left: 77%; width: 210px; height: 58px;">
+        <svg viewBox="0 0 210 58" fill="none" xmlns="http://www.w3.org/2000/svg" class="cloud-svg">
+          <path
+            d="M 0 58 C 0 42, 10 24, 30 22 C 38 8, 65 4, 80 16 C 94 4, 122 6, 132 18 C 148 10, 175 20, 178 35 C 192 30, 204 44, 196 58 Z"
+            fill="#2d6a4f" />
+          <path
+            d="M 8 58 C 8 46, 18 28, 36 26 C 42 12, 68 8, 82 20 C 94 8, 120 10, 128 22 C 144 14, 168 24, 172 38 C 184 34, 196 46, 190 58 Z"
+            fill="#40916c" />
+          <path d="M 38 28 C 44 16, 68 12, 80 22 C 92 10, 116 12, 124 24 C 138 16, 162 24, 166 38 Z" fill="#52b788"
+            opacity="0.85" />
+          <circle cx="85" cy="18" r="9" fill="#b7e4c7" opacity="0.45" />
+        </svg>
+      </div>
     </div>
   </div>
 
   <style>
-    .train-section {
+    /* ===== SPU TRAIN SECTION - PASTEL SOFT COLORED, DYNAMIC SPEED & FLUFFY CLOUD TREES ===== */
+    .spu-train-container {
       position: relative;
       width: 100%;
-      height: 240px;
+      height: 130px;
+      margin-top: 10px;
+      background-color: transparent;
       overflow: hidden;
       user-select: none;
-      background: linear-gradient(to bottom, #e0f2f1 0%, #b2dfdb 50%, #a1887f 100%);
+      font-family: 'Prompt', sans-serif;
     }
 
-    /* Sky background */
-    .train-sky {
+    /* 1. STATION SIGN (Muted Soft Slate Blue Box + Dual Posts + Circle Badge) */
+    .spu-station-sign {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 60%;
-      background: linear-gradient(to bottom, #87ceeb 0%, #e0f6ff 50%, transparent 100%);
-      z-index: 1;
-    }
-
-    /* Station Sign */
-    .station-sign {
-      position: absolute;
-      left: 12%;
-      top: 20px;
-      z-index: 15;
+      left: 100px;
+      top: 18px;
+      z-index: 30;
       display: flex;
       flex-direction: column;
       align-items: center;
-      filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.2));
-    }
-    .sign-pole {
-      width: 5px;
-      height: 60px;
-      background: linear-gradient(to right, #5a5a5a, #7a7a7a, #5a5a5a);
-      border-radius: 3px;
-    }
-    .sign-board {
-      background: linear-gradient(135deg, #1e3a5f, #2d5a8f);
-      color: #fff;
-      padding: 8px 22px;
-      border-radius: 6px;
-      text-align: center;
-      font-family: 'Prompt', sans-serif;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.2);
-      position: relative;
-      top: -2px;
-      border: 2px solid #0f2844;
-    }
-    .sign-text-th {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-    .sign-text-en {
-      display: block;
-      font-size: 9px;
-      font-weight: 400;
-      opacity: 0.9;
-      margin-top: 2px;
-    }
-    .sign-number {
-      margin-top: 6px;
-      font-size: 18px;
-      filter: drop-shadow(1px 2px 4px rgba(0,0,0,0.2));
     }
 
-    /* Rail Track */
-    .rail-track {
-      position: absolute;
-      top: 85px;
-      left: 0;
-      right: 0;
-      height: 80px;
-      z-index: 10;
-    }
-
-    .rail-line {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 8px;
-      background: linear-gradient(to bottom, #5a5555, #4a4444, #3a3333);
-      border-top: 2px solid #6b7280;
-      border-bottom: 2px solid #1f1f1f;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-    }
-
-    /* Rail Ties */
-    .rail-ties {
-      position: absolute;
-      bottom: 8px;
-      left: 0;
-      right: 0;
-      height: 6px;
-      background-image: repeating-linear-gradient(
-        90deg,
-        #6b4423 0px,
-        #6b4423 20px,
-        transparent 20px,
-        transparent 28px
-      );
-      z-index: 5;
-    }
-
-    /* Train */
-    .train-wrapper {
-      position: absolute;
-      bottom: 8px;
-      animation: trainMove 14s linear infinite;
-      will-change: left, transform;
-      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.25));
-    }
-
-    @keyframes trainMove {
-      0% { left: 110%; transform: translateX(0); }
-      100% { left: 0%; transform: translateX(-100%); }
-    }
-
-    .train-body {
+    .spu-sign-board {
+      background: #1e293b;
+      color: #ffffff;
+      padding: 6px 14px 6px 16px;
+      border-radius: 8px;
       display: flex;
-      gap: 0;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+      border: 1px solid #334155;
     }
 
-    /* ===== SHINKANSEN DESIGN ===== */
+    .spu-sign-text {
+      display: flex;
+      flex-direction: column;
+    }
 
-    /* Shinkansen Nose (หัวรถแหลม) */
-    .shinkansen-nose {
-      position: relative;
-      width: 70px;
-      height: 50px;
+    .spu-sign-th {
+      font-weight: 700;
+      font-size: 13px;
+      color: #f8fafc;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .spu-sign-en {
+      font-size: 10px;
+      color: #94a3b8;
+      line-height: 1.1;
+      margin-top: 2px;
+      white-space: nowrap;
+    }
+
+    .spu-sign-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 11px;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .spu-sign-poles {
+      display: flex;
+      justify-content: space-between;
+      width: 65%;
+      height: 38px;
+    }
+
+    .spu-pole {
+      width: 3px;
+      height: 100%;
+      background: #cbd5e1;
+    }
+
+    /* 2. ELEVATED TRACK BEAM (Muted Soft Slate Tones) */
+    .spu-train-track-area {
+      position: absolute;
+      top: 92px;
+      left: 0;
+      width: 100%;
+      height: 40px;
       z-index: 20;
     }
 
-    .nose-cone {
-      position: absolute;
-      width: 0;
-      height: 0;
-      border-left: 35px solid transparent;
-      border-right: 0px solid transparent;
-      border-bottom: 50px solid;
-      border-bottom-color: white;
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-    }
-
-    .nose-cone::before {
-      content: '';
+    .spu-track-beam-top {
       position: absolute;
       top: 0;
-      left: -35px;
-      width: 35px;
-      height: 50px;
-      background: linear-gradient(to right, #f0f0f0, #e8e8e8);
-      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-    }
-
-    .nose-stripe {
-      position: absolute;
-      top: 8px;
       left: 0;
-      width: 65px;
+      width: 100%;
       height: 3px;
-      background: linear-gradient(to right, #1e40af, #3b82f6, #1e40af);
-      border-radius: 2px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      background: #94a3b8;
     }
 
-    .nose-window {
+    .spu-track-beam-main {
+      position: absolute;
+      top: 3px;
+      left: 0;
+      width: 100%;
+      height: 14px;
+      background: linear-gradient(to bottom, #cbd5e1, #94a3b8);
+      border-bottom: 1.5px solid #94a3b8;
+    }
+
+    .spu-track-beam-shadow {
       position: absolute;
       top: 18px;
-      left: 12px;
-      width: 45px;
-      height: 18px;
-      background: linear-gradient(135deg, #87ceeb, #5dade2);
-      border-radius: 4px;
-      border: 2px solid #2c5aa0;
-      box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.4);
-    }
-
-    .nose-window::after {
-      content: '';
-      position: absolute;
-      top: 0;
       left: 0;
       width: 100%;
-      height: 50%;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), transparent);
-      border-radius: 3px 3px 0 0;
-    }
-
-    .shinkansen-lights {
-      position: absolute;
-      top: 40px;
-      left: 8px;
-      display: flex;
-      gap: 20px;
-    }
-
-    .shinkansen-light-left,
-    .shinkansen-light-right {
-      width: 6px;
-      height: 6px;
-      background: #ffeb3b;
-      border-radius: 50%;
-      box-shadow: 0 0 6px #ffeb3b, 0 0 10px rgba(255, 235, 59, 0.6);
-    }
-
-    /* Shinkansen Passenger Cars */
-    .shinkansen-car {
-      width: 120px !important;
-      height: 50px;
-      background: linear-gradient(to bottom, #ffffff 0%, #f5f5f5 50%, #e8e8e8 100%) !important;
-      border: 2px solid #bfbfbf;
-      border-radius: 4px;
-      position: relative;
-      box-shadow: 
-        inset 0 2px 6px rgba(255,255,255,0.6),
-        0 6px 12px rgba(0,0,0,0.15);
-    }
-
-    .shinkansen-car.shinkansen-first {
-      border-radius: 4px 2px 2px 4px;
-    }
-
-    .shinkansen-car.shinkansen-tail {
-      border-radius: 2px 4px 4px 2px;
-    }
-
-    .shinkansen-stripe {
-      position: absolute;
-      top: 6px;
-      left: 0;
-      right: 0;
       height: 4px;
-      background: linear-gradient(to right, #1e40af, #3b82f6, #1e40af, #3b82f6);
-      background-size: 40px 100%;
-      border-radius: 2px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      background: #64748b;
+      opacity: 0.3;
     }
 
-    .shinkansen-windows {
-      display: flex;
-      gap: 5px;
-      padding: 14px 8px 0;
-      justify-content: center;
-      position: relative;
-      z-index: 2;
-    }
-
-    .shinkansen-window {
-      width: 22px;
-      height: 20px;
-      background: linear-gradient(135deg, #87ceeb, #5dade2);
-      border-radius: 3px;
-      border: 1.5px solid #2c5aa0;
-      position: relative;
-      box-shadow: 
-        inset 0 1px 3px rgba(255,255,255,0.4),
-        0 2px 4px rgba(0,0,0,0.15);
-      overflow: hidden;
-    }
-
-    /* Door */
-    .shinkansen-door {
+    /* 3. ANIMATED BTS TRAIN (DYNAMIC SPEED: FAST -> SLOW GLIDE -> ACCELERATE EXIT) */
+    .spu-train-wrapper {
       position: absolute;
-      bottom: 3px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 20px;
-      height: 14px;
-      background: linear-gradient(to right, #a8d8ea, #90c4d8);
-      border-radius: 3px;
-      border: 1px solid #5a8fa3;
-      box-shadow: 
-        inset 0 1px 2px rgba(255,255,255,0.3),
-        0 2px 4px rgba(0,0,0,0.15);
+      bottom: 20px;
+      left: 0;
+      width: 520px;
+      height: 54px;
+      animation: spuTrainVariableSpeed 18s cubic-bezier(0.35, 0, 0.25, 1) infinite;
+      will-change: transform;
+      z-index: 25;
     }
 
-    .shinkansen-door::before {
-      content: '';
+    /* Keyframes for Variable Speed (Fast -> Slow -> Fast) */
+    @keyframes spuTrainVariableSpeed {
+      0% {
+        transform: translateX(100vw);
+      }
+
+      25% {
+        transform: translateX(65vw);
+        /* Fast entry */
+      }
+
+      55% {
+        transform: translateX(30vw);
+        /* Slow smooth glide past station */
+      }
+
+      75% {
+        transform: translateX(5vw);
+        /* Gentle cruise */
+      }
+
+      100% {
+        transform: translateX(-560px);
+        /* Speeds up and exits */
+      }
+    }
+
+    .spu-bts-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.12));
+    }
+
+    /* 4. T-SHAPED CONCRETE PILLARS (Softer Muted Slate) */
+    .spu-pillars-container {
       position: absolute;
-      left: 50%;
+      top: 110px;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      z-index: 10;
+    }
+
+    .spu-t-pillar {
+      position: absolute;
       top: 0;
-      bottom: 0;
-      width: 1px;
-      background: rgba(0, 0, 0, 0.1);
-    }
-
-
-
-    /* Windows */
-    .train-windows {
       display: flex;
-      gap: 6px;
-      padding: 14px 8px 0;
-      justify-content: center;
-      position: relative;
-      z-index: 2;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .train-window {
+    .spu-pillar-cap {
+      width: 48px;
+      height: 8px;
+      background: #94a3b8;
+      border-radius: 1px;
+    }
+
+    .spu-pillar-stem {
       width: 16px;
-      height: 18px;
-      background: linear-gradient(135deg, #87ceeb, #5dade2);
-      border-radius: 2px;
-      border: 1px solid #4a7fa8;
-      position: relative;
-      box-shadow: 
-        inset 0 1px 2px rgba(255,255,255,0.3),
-        0 2px 4px rgba(0,0,0,0.15);
+      height: 60px;
+      background: linear-gradient(to right, #cbd5e1, #e2e8f0, #cbd5e1);
+    }
+
+    /* 5. FLUFFY CLOUD-SHAPED TREES & BUSHES */
+    .spu-bushes-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 65px;
+      z-index: 5;
       overflow: hidden;
     }
 
-    .train-window.lg-window {
-      width: 24px;
+    .cloud-bush-group {
+      position: absolute;
+      bottom: 0;
     }
 
-    .window-reflection {
-      position: absolute;
-      top: 0;
-      left: 0;
+    .cloud-svg {
       width: 100%;
-      height: 40%;
-      background: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.1));
-      border-radius: 2px 2px 0 0;
-      pointer-events: none;
+      height: 100%;
+      filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.12));
     }
 
-    /* Wheels */
-    .train-wheels {
+    /* Cloud-shaped Trees on Trunks */
+    .cloud-tree-unit {
       position: absolute;
-      bottom: -8px;
-      left: 12px;
-      right: 12px;
       display: flex;
-      justify-content: space-between;
-      z-index: -1;
+      flex-direction: column;
+      align-items: center;
+      z-index: 8;
     }
 
-    .wheel {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #4a4a4a, #1a1a1a);
-      border: 2px solid #0a0a0a;
-      box-shadow: 
-        inset 0 1px 2px rgba(0,0,0,0.5),
-        0 2px 4px rgba(0,0,0,0.3);
-      position: relative;
+    .tree-trunk {
+      width: 6px;
+      height: 24px;
+      background: linear-gradient(to right, #795548, #8d6e63, #6d4c41);
+      border-radius: 2px 2px 0 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
     }
 
-    .wheel::before {
-      content: '';
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: #555;
-      border-radius: 50%;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    /* Train Shadow */
-    .train-shadow {
-      position: absolute;
-      bottom: -8px;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(to right, transparent, rgba(0,0,0,0.3), transparent);
-      animation: trainMove 14s linear infinite;
-      z-index: 9;
-    }
-
-    /* Bridge */
-    .bridge {
-      position: absolute;
-      top: 165px;
-      left: 0;
-      right: 0;
-      height: 75px;
-      z-index: 5;
-    }
-
-    .bridge-beam {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 12px;
-      background: linear-gradient(to bottom, #a89968, #8b7355);
-      border-bottom: 3px solid #5a4a3a;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    }
-
-    .pillar {
-      position: absolute;
-      top: 12px;
-      width: 18px;
-      height: 63px;
-      background: linear-gradient(to right, #9b8b7e, #b5a89b, #9b8b7e);
-      border-radius: 0 0 4px 4px;
-      border: 1px solid #6b5a52;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.25);
-    }
-
-    .pillar::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: rgba(0,0,0,0.2);
-    }
-
-    .pillar:nth-child(2) { left: 8%; }
-    .pillar:nth-child(3) { left: 22%; }
-    .pillar:nth-child(4) { left: 38%; }
-    .pillar:nth-child(5) { left: 52%; }
-    .pillar:nth-child(6) { left: 66%; }
-    .pillar:nth-child(7) { left: 80%; }
-    .pillar:nth-child(8) { left: 93%; }
-
-    /* Bushes */
-    .bushes {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      z-index: 3;
-    }
-
-    .bush {
-      position: absolute;
-      bottom: 0;
-      border-radius: 50% 50% 20% 20%;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    }
-
-    .bush-1 {
-      left: 15%;
-      width: 60px;
-      height: 45px;
-      background: radial-gradient(ellipse at 40% 30%, #4ade80, #22c55e, #15803d);
-      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
-    }
-
-    .bush-2 {
-      left: 20%;
-      width: 45px;
+    .cloud-tree-head {
+      width: 48px;
       height: 36px;
-      background: radial-gradient(ellipse at 35% 25%, #34d399, #10b981, #059669);
-      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+      background: radial-gradient(circle at 35% 30%, #a7f3d0 0%, #34d399 50%, #059669 100%);
+      border-radius: 50% 50% 40% 40%;
+      box-shadow:
+        -12px 6px 0 -2px #6ee7b7,
+        12px 6px 0 -2px #10b981,
+        0 -8px 0 -2px #a7f3d0,
+        0 4px 8px rgba(0, 0, 0, 0.15);
+      margin-bottom: -4px;
     }
 
-    .bush-3 {
-      left: 45%;
-      width: 55px;
+    .cloud-tree-head.lg {
+      width: 58px;
       height: 42px;
-      background: radial-gradient(ellipse at 45% 35%, #6ee7b7, #34d399, #10b981);
-      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
     }
 
-    .bush-4 {
-      left: 50%;
-      width: 40px;
-      height: 32px;
-      background: radial-gradient(ellipse at 40% 30%, #4ade80, #22c55e, #16a34a);
-      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
-    }
-
-    .bush-5 {
-      left: 75%;
-      width: 50px;
-      height: 40px;
-      background: radial-gradient(ellipse at 40% 35%, #34d399, #10b981, #059669);
-      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
-    }
-
-    @media (max-width: 640px) {
-      .train-section { 
-        height: 180px; 
-      }
-      
-      .shinkansen-nose {
-        width: 50px;
-        height: 38px;
+    /* RESPONSIVE SCALING FOR MOBILE */
+    @media (max-width: 768px) {
+      .spu-train-container {
+        height: 185px;
       }
 
-      .nose-cone {
-        border-left: 25px solid transparent;
-        border-bottom: 38px solid white;
+      .spu-station-sign {
+        left: 20px;
+        top: 10px;
+        transform: scale(0.85);
+        transform-origin: top left;
       }
 
-      .nose-cone::before {
-        left: -25px;
-        height: 38px;
+      .spu-train-track-area {
+        top: 75px;
       }
 
-      .shinkansen-car {
-        width: 90px !important;
-        height: 38px;
+      .spu-pillars-container {
+        top: 92px;
       }
 
-      .shinkansen-stripe {
-        top: 5px;
-        height: 3px;
+      .spu-pillar-stem {
+        height: 48px;
       }
 
-      .shinkansen-windows { 
-        padding: 10px 5px 0; 
-        gap: 3px; 
-      }
-
-      .shinkansen-window { 
-        width: 16px; 
-        height: 15px; 
-      }
-
-      .shinkansen-door {
-        width: 16px;
-        height: 10px;
-        bottom: 2px;
-      }
-
-      .train-wheels {
-        left: 8px;
-        right: 8px;
-      }
-
-      .wheel { 
-        width: 10px; 
-        height: 10px; 
-        border-width: 1.5px;
-      }
-
-      .station-sign { left: 5%; }
-
-      .sign-board { 
-        padding: 4px 12px; 
-        font-size: 9px;
-      }
-
-      .sign-text-th { font-size: 8px; }
-      .sign-text-en { font-size: 7px; }
-
-      .rail-track { top: 60px; }
-
-      .bridge { top: 120px; }
-
-      .pillar { 
-        height: 50px; 
-        width: 14px; 
-      }
-
-      .nose-window {
-        width: 35px;
-        height: 14px;
-        top: 14px;
-        left: 8px;
-      }
-
-      .shinkansen-lights {
-        top: 32px;
-        gap: 15px;
-      }
-
-      .shinkansen-light-left,
-      .shinkansen-light-right {
-        width: 4px;
-        height: 4px;
+      .spu-bushes-container {
+        height: 50px;
       }
     }
   </style>
@@ -947,6 +783,7 @@
   <script src="./src/config.js"></script>
   <script src="./src/complaints.js"></script>
   <script src="./src/executives.js"></script>
+  <script src="./src/index_files.js"></script>
   <script src="./src/app.js"></script>
   <!-- Lottie Sidebar Icons -->
   <script src="./assets/lottie-icons.js"></script>
