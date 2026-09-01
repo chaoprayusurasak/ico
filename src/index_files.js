@@ -22,7 +22,6 @@ function renderIndexFilesView(container, items = []) {
               <h3 class="font-bold text-gray-900 text-base flex items-center gap-2">
                 รายการแฟ้มเอกสารดัชนีรวมประจำศูนย์
               </h3>
-              <p class="text-xs text-gray-500 font-normal">เอกสารข่าวสารที่เผยแพร่ล่าสุดสำหรับประชาชน</p>
             </div>
           </div>
           <span class="px-3 py-1 bg-teal-500/10 text-brand-teal font-bold text-xs rounded-full border border-teal-500/20 shrink-0">
@@ -50,9 +49,9 @@ function renderIndexFilesView(container, items = []) {
 
           <div class="flex items-center gap-2 pt-3 border-t border-gray-100">
             ${item.file_url ? `
-              <a href="${item.file_url}" target="_blank" download class="px-4 py-2 bg-gradient-to-r from-brand-teal to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-bold text-xs rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer">
+              <button onclick="downloadFile(event, '${(item.file_url || '').replace(/'/g, "\\'")}', '${(item.title || '').replace(/'/g, "\\'")}', '${item.id || ''}')" class="px-4 py-2 bg-gradient-to-r from-brand-teal to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-bold text-xs rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer">
                 <i class="fi fi-rr-download text-xs"></i> ดาวน์โหลดเอกสาร
-              </a>
+              </button>
             ` : ''}
             ${item.link ? `
               <a href="${item.link}" target="_blank" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all flex items-center gap-2 cursor-pointer">
@@ -76,7 +75,7 @@ function renderIndexFilesView(container, items = []) {
       <div class="bg-white border border-teal-900/10 rounded-3xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.03)] space-y-4">
         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
           <h3 class="font-bold text-gray-900 text-base flex items-center gap-2.5">
-            <span class="w-3.5 h-3.5 rounded-full bg-brand-teal shadow-sm inline-block"></span>
+            <span class="w-3.5 h-3.5 rounded-full bg-teal-600 shadow-sm inline-block"></span>
             ดัชนีข่าวสารตามมาตรา 7
           </h3>
           <span class="text-xs text-gray-400 font-normal">4 หมวดหมู่ย่อย</span>

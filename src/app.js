@@ -186,10 +186,17 @@ function typewriterEffect(element, text, speed = 55) {
   type();
 }
 
+let currentPublicParentId = null;
+let publicBreadcrumbStack = []; // [{ id, title }]
+
 // Route handler
 async function handleRouting() {
   let hash = window.location.hash.replace("#", "");
   if (!hash) hash = "home";
+
+  // Reset public folder level on hash navigation
+  currentPublicParentId = null;
+  publicBreadcrumbStack = [];
 
   // ตั้งค่าจำนวนรายการต่อหน้า (ข่าวสารใช้ 6 รายการ เพื่อให้เป็น 2 แถว แถวละ 3)
   ITEMS_PER_PAGE = hash === "news_sbr" ? 6 : 8;
@@ -207,9 +214,34 @@ async function handleRouting() {
   if (pageLoader) pageLoader.style.display = "none";
   boxEl.style.display = "";
 
-  // Set title with Typewriter Animation
+  // Manage top header banner display (Hide on home page and evaluation group pages)
+  const headerBanner = document.getElementById("page-header-banner");
+  if (headerBanner) {
+    if (hash === "home" || hash === "" || hash.startsWith("eval_")) {
+      headerBanner.style.display = "none";
+    } else {
+      headerBanner.style.display = "";
+    }
+  }
+
+  // Manage breadcrumb text line visibility (Hide specifically on news_sbr page, show on all other pages)
+  const breadcrumbEl = document.getElementById("content-breadcrumb");
+  if (breadcrumbEl) {
+    if (hash === "news_sbr") {
+      breadcrumbEl.style.display = "none";
+    } else {
+      breadcrumbEl.style.display = "";
+    }
+  }
+
+  // Set page header banner title & breadcrumbs matching reference image
   const thaiTitle = CATEGORY_NAMES[hash] || "หน้าแรก";
-  typewriterEffect(titleEl, thaiTitle, 55);
+  titleEl.textContent = thaiTitle;
+
+  const breadcrumbCurrent = document.getElementById("breadcrumb-current");
+  if (breadcrumbCurrent) {
+    breadcrumbCurrent.textContent = thaiTitle;
+  }
 
   // If home, render Animated Landmark Map component
   if (hash === "home") {
@@ -243,36 +275,69 @@ async function handleRouting() {
     return;
   }
 
-  // Helper to safely get initialized Supabase client
-  const sb = (typeof window !== "undefined" && window.supabase) ? window.supabase : (typeof supabase !== "undefined" ? supabase : null);
+  // If eval_form, delegate to standalone src/eval_form.js module
+  if (hash === "eval_form") {
+    if (typeof renderEvalFormView === "function") {
+      renderEvalFormView(boxEl);
+    }
+    return;
+  }
 
-  // If index_files, delegate to standalone src/index_files.js module
+  // If eval_summary, delegate to standalone src/eval_summary.js module
+  if (hash === "eval_summary") {
+    if (typeof renderEvalSummaryView === "function") {
+      renderEvalSummaryView(boxEl);
+    }
+    return;
+  }
+
+  // If eval_stats, delegate to standalone src/eval_stats.js module
+  if (hash === "eval_stats") {
+    if (typeof renderEvalStatsView === "function") {
+      renderEvalStatsView(boxEl);
+    }
+    return;
+  }
+
+  // If eval_faq, delegate to standalone src/eval_faq.js module
+  if (hash === "eval_faq") {
+    if (typeof renderEvalFaqView === "function") {
+      renderEvalFaqView(boxEl);
+    }
+    return;
+  }
+
+  // If index_files, delegate to standalone src/index_files.js module (Render immediately!)
   if (hash === "index_files") {
-    renderLoading(boxEl);
-    try {
+    if (typeof renderIndexFilesView === "function") {
+      renderIndexFilesView(boxEl, currentItems || []);
+      const sb = (typeof window !== "undefined" && window.supabase) ? window.supabase : (typeof supabase !== "undefined" ? supabase : null);
       if (sb && typeof sb.from === "function") {
-        const { data, error } = await sb
-          .from("items")
+        sb.from("items")
           .select("*")
           .eq("category", "index_files")
-          .order("created_at", { ascending: false });
-
-        currentItems = (!error && data) ? data : [];
-      } else {
-        currentItems = [];
-      }
-      if (typeof renderIndexFilesView === "function") {
-        renderIndexFilesView(boxEl, currentItems);
-      }
-    } catch (err) {
-      if (typeof renderIndexFilesView === "function") {
-        renderIndexFilesView(boxEl, []);
+          .order("created_at", { ascending: false })
+          .then(({ data, error }) => {
+            if (!error && data && data.length > 0) {
+              currentItems = data;
+              renderIndexFilesView(boxEl, data);
+            }
+          })
+          .catch(() => {});
       }
     }
     return;
   }
 
+  loadCategoryItems(hash);
+}
 
+// Fetch and load dynamic items from Supabase
+async function loadCategoryItems(hash) {
+  const boxEl = document.querySelector(".content-box");
+  if (!boxEl) return;
+
+  const sb = (typeof window !== "undefined" && window.supabase) ? window.supabase : (typeof supabase !== "undefined" ? supabase : null);
 
   // Fetch dynamic items from Supabase
   renderLoading(boxEl);
@@ -280,18 +345,63 @@ async function handleRouting() {
   try {
     if (!sb || typeof sb.from !== "function") throw new Error("Supabase client is not initialized");
 
-    const { data: items, error } = await sb
-      .from("items")
-      .select("*")
-      .eq("category", hash)
+    let items = [];
+
+    // 1. Try querying dedicated 'oic_documents' table first
+    let query = sb.from("oic_documents").select("*").eq("category", hash);
+    if (currentPublicParentId) {
+      query = query.eq("parent_id", currentPublicParentId);
+    } else {
+      query = query.is("parent_id", null);
+    }
+
+    const { data: oicData, error: oicErr } = await query
+      .order("is_folder", { ascending: false })
       .order("created_at", { ascending: false });
 
-    if (error) throw error;
+    if (!oicErr && oicData && oicData.length > 0) {
+      items = oicData;
+    } else {
+      // Fallback or check 'items' table if 'oic_documents' table has no records for this view
+      if (currentPublicParentId) {
+        const res = await sb
+          .from("items")
+          .select("*")
+          .eq("category", hash)
+          .eq("parent_id", currentPublicParentId)
+          .order("is_folder", { ascending: false })
+          .order("created_at", { ascending: false });
 
-    if ((!items || items.length === 0) && hash === "executives") {
+        items = (res.data && res.data.length > 0) ? res.data : (oicData || []);
+      } else {
+        const res1 = await sb
+          .from("items")
+          .select("*")
+          .eq("category", hash)
+          .is("parent_id", null)
+          .order("is_folder", { ascending: false })
+          .order("created_at", { ascending: false });
+
+        if (!res1.error && res1.data && res1.data.length > 0) {
+          items = res1.data;
+        } else {
+          const res2 = await sb
+            .from("items")
+            .select("*")
+            .eq("category", hash)
+            .order("created_at", { ascending: false });
+
+          items = (res2.data && res2.data.length > 0) ? res2.data : (oicData || []);
+        }
+      }
+    }
+
+    if ((!items || items.length === 0) && hash === "executives" && !currentPublicParentId) {
       // Auto seed real executives into Supabase database
       const seedData = DEFAULT_EXECUTIVES.map(item => ({
         category: "executives",
+        parent_id: null,
+        is_folder: false,
         title: item.title,
         description: JSON.stringify({
           position: item.pos,
@@ -313,10 +423,12 @@ async function handleRouting() {
       currentItems = items || [];
     }
 
-    currentPage = 1; // Reset to page 1 on new category
+    currentPage = 1; // Reset to page 1 on new folder view
+    boxEl.classList.remove("opacity-50", "pointer-events-none");
     renderItems(boxEl);
   } catch (err) {
     console.error("Error fetching items:", err);
+    boxEl.classList.remove("opacity-50", "pointer-events-none");
     if (hash === "executives") {
       currentItems = DEFAULT_EXECUTIVES;
       renderItems(boxEl);
@@ -347,14 +459,18 @@ function highlightSidebarLink(hash) {
   });
 }
 
-// Render Loading
+// Render Loading (Graceful transition without destroying existing DOM nodes)
 function renderLoading(container) {
-  container.innerHTML = `
-    <div class="flex flex-col items-center justify-center py-12 gap-3 text-gray-500">
-      <div class="w-10 h-10 border-4 border-[rgba(0,134,117,0.1)] border-t-[#008675] rounded-full animate-spin"></div>
-      <p class="text-sm font-medium">กำลังโหลดข้อมูล...</p>
-    </div>
-  `;
+  if (container && container.children && container.children.length > 0) {
+    container.classList.add("opacity-50", "pointer-events-none", "transition-opacity", "duration-200");
+  } else if (container) {
+    container.innerHTML = `
+      <div class="flex flex-col items-center justify-center py-16 gap-3 text-gray-400">
+        <div class="w-8 h-8 border-3 border-teal-100 border-t-[#008675] rounded-full animate-spin"></div>
+        <p class="text-xs font-medium text-gray-500">กำลังโหลดข้อมูล...</p>
+      </div>
+    `;
+  }
 }
 
 // Render Error
@@ -376,180 +492,56 @@ function renderItems(container) {
     items = DEFAULT_EXECUTIVES;
   }
 
-  if (!items || items.length === 0) {
-    container.innerHTML = `
-      <div class="flex flex-col items-center justify-center py-16 gap-3 text-gray-400 text-center">
-        <i class="fi fi-rr-inbox text-4xl"></i>
-        <p class="text-sm font-medium">ยังไม่มีข้อมูลในหัวข้อนี้</p>
-      </div>
-    `;
+  // 1. Delegate to modular renderer: news_sbr
+  if (hash === "news_sbr" && typeof renderNewsSbrView === "function") {
+    renderNewsSbrView(container, items, currentPage, ITEMS_PER_PAGE, publicBreadcrumbStack);
     return;
   }
 
-  const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const itemsToShow = items.slice(startIndex, endIndex);
-
-  let html = ``;
-
-  // เพิ่มแบนเนอร์ด้านบนสุดสำหรับหน้า ข่าวสาร สขร. (news_sbr)
-  if (hash === "news_sbr" && currentPage === 1) {
-    html += `
-      <div class="w-100 h-80 md:h-85 rounded-2xl overflow-hidden shadow-sm relative bg-gray-100">
-        <video src="./assets/Man_in_uniform_and_statue_202607091447.mp4" class="w-full h-80 object-cover object-top" autoplay loop muted playsinline></video>
-      </div>
-    `;
+  // 2. Delegate to modular renderer: announcements
+  if (hash === "announcements" && typeof renderAnnouncementsView === "function") {
+    renderAnnouncementsView(container, items, currentPage, ITEMS_PER_PAGE, publicBreadcrumbStack);
+    return;
   }
 
-  if (hash === "news_sbr") {
-    // Layout แบบ Grid 3 คอลัมน์ (สำหรับหน้าข่าวสาร)
-    html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-2">`;
-
-    itemsToShow.forEach(item => {
-      const defaultImg = "https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=800&q=80";
-      const img = item.image_url || defaultImg;
-      const formattedDate = new Date(item.created_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
-
-      html += `
-        <div class="relative rounded-3xl overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_45px_rgba(0,134,117,0.22)] hover:-translate-y-1.5 transition-all duration-500 group h-80 sm:h-96 flex flex-col justify-end border border-gray-100/50">
-          <!-- Background Image -->
-          <img src="${img}" alt="${item.title}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out z-0">
-          
-          <!-- Bottom Glow Gradient Overlay (เงาฟุ้งเฉพาะส่วนล่าง) -->
-          <div class="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[#002b26] via-[#004d43]/70 to-transparent z-10 transition-opacity duration-300"></div>
-
-          <!-- Content Box inside Overlay -->
-          <div class="relative z-20 p-5 sm:p-6 text-white flex flex-col justify-end h-full">
-            <div class="mt-auto">
-              <div class="flex items-center gap-1.5 text-xs font-semibold text-teal-200 uppercase tracking-wider mb-2">
-                <i class="fi fi-rr-calendar text-[11px]"></i> ${formattedDate}
-              </div>
-              <h3 class="text-lg sm:text-xl font-bold leading-snug text-white drop-shadow-sm line-clamp-2 group-hover:text-teal-100 transition-colors mb-2">${item.title}</h3>
-              ${item.description ? `<p class="text-xs text-teal-100/90 line-clamp-2 mb-4 font-normal leading-relaxed">${item.description}</p>` : ''}
-              
-              <div class="flex items-center gap-2 pt-3 border-t border-white/20">
-                ${item.link ? `
-                  <a href="${item.link}" target="_blank" class="flex-1 py-2 px-3 bg-white/20 hover:bg-white text-white hover:text-[#005a4e] backdrop-blur-md font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-sm">
-                    <i class="fi fi-rr-link"></i> ลิงก์
-                  </a>
-                ` : ''}
-                ${item.file_url ? `
-                  <a href="${item.file_url}" target="_blank" download class="flex-2 py-2 px-3 bg-brand-teal text-white hover:bg-white hover:text-[#005a4e] font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5">
-                    <i class="fi fi-rr-download"></i> ดาวน์โหลด
-                  </a>
-                ` : ''}
-                ${!item.link && !item.file_url ? `
-                  <div class="flex-1 py-2 px-3 bg-white/10 text-white/50 font-medium text-xs rounded-xl flex items-center justify-center cursor-not-allowed">
-                    ไม่มีเอกสารแนบ
-                  </div>
-                ` : ''}
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    });
-  } else if (hash === "about_history") {
-    // Layout แบบประวัติความเป็นมา (About / History articles)
-    html += `<div class="flex flex-col gap-8 py-2">`;
-
-    itemsToShow.forEach(item => {
-      html += `
-        <div class="bg-white border border-[rgba(0,134,117,0.15)] rounded-3xl p-6 md:p-8 shadow-[0_10px_35px_rgba(0,0,0,0.03)] hover:shadow-[0_15px_45px_rgba(0,134,117,0.08)] transition-all duration-300">
-          ${item.image_url ? `
-            <div class="w-full h-64 md:h-96 rounded-2xl overflow-hidden bg-gray-50 mb-6 border border-gray-100">
-              <img src="${item.image_url}" alt="${item.title}" class="w-full h-full object-cover">
-            </div>
-          ` : ''}
-          <div>
-            <div class="flex items-center gap-2 text-xs text-brand-teal font-bold mb-2 uppercase tracking-wider">
-              <i class="fi fi-rr-book-alt"></i> ประวัติและความเป็นมา
-            </div>
-            <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 leading-relaxed">${item.title}</h2>
-            <div class="text-gray-700 text-base leading-loose whitespace-pre-line mb-6 font-normal">
-              ${item.description || ''}
-            </div>
-            <div class="flex flex-wrap items-center gap-3 border-t border-gray-100 pt-4 mt-4">
-              ${item.link ? `
-                <a href="${item.link}" target="_blank" class="px-4 py-2.5 bg-[rgba(0,134,117,0.08)] text-brand-teal font-bold text-xs rounded-xl hover:bg-brand-teal hover:text-white transition-all inline-flex items-center gap-1.5">
-                  <i class="fi fi-rr-link"></i> อ่านเพิ่มเติม
-                </a>
-              ` : ''}
-              ${item.file_url ? `
-                <a href="${item.file_url}" target="_blank" download class="px-4 py-2.5 bg-brand-teal text-white font-bold text-xs rounded-xl hover:bg-[#007062] transition-all inline-flex items-center gap-1.5">
-                  <i class="fi fi-rr-download"></i> ดาวน์โหลดไฟล์ประวัติ
-                </a>
-              ` : ''}
-              <span class="text-xs text-gray-400 ml-auto inline-flex items-center gap-1">
-                <i class="fi fi-rr-clock"></i> 
-                ปรับปรุงเมื่อ: ${new Date(item.created_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })}
-              </span>
-            </div>
-          </div>
-        </div>
-      `;
-    });
-  } else {
-    // Layout แบบ Grid Card ดีไซน์การ์ดทรงสูงสะอาดตา ไม่อึดอัด
-    html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 py-2">`;
-
-    itemsToShow.forEach(item => {
-      const formattedDate = item.created_at ? new Date(item.created_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
-      const img = item.image_url;
-
-      html += `
-        <div class="bg-white border border-teal-900/10 rounded-3xl overflow-hidden shadow-[0_8px_25px_rgba(0,0,0,0.04)] hover:shadow-[0_15px_40px_rgba(0,134,117,0.12)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-full w-full">
-          
-          ${img ? `
-            <!-- Document / Photo Container (Edge-to-edge fit) -->
-            <div class="w-full h-64 sm:h-72 overflow-hidden border-b border-gray-100 relative group">
-              <img src="${img}" alt="${item.title}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
-            </div>
-          ` : ''}
-
-          <!-- Content Body -->
-          <div class="p-8 sm:p-6 flex flex-col justify-between flex-1 gap-4">
-            <div>
-              <div class="flex items-center gap-1.5 text-xs font-semibold text-brand-teal mb-2">
-                <i class="fi fi-rr-clock text-[11px]"></i> ${formattedDate}
-              </div>
-              <h3 class="text-base sm:text-lg font-bold text-gray-800 leading-snug line-clamp-3 mb-2 hover:text-brand-teal transition-colors">${item.title}</h3>
-              ${item.description ? `<p class="text-xs sm:text-sm text-gray-600 line-clamp-3 leading-relaxed font-normal">${item.description}</p>` : ''}
-            </div>
-
-            <div class="flex items-center gap-2 pt-3 border-t border-gray-100 mt-auto">
-              ${item.link ? `
-                <a href="${item.link}" target="_blank" class="flex-1 py-2 px-3 bg-teal-50 text-brand-teal  hover:text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 border border-teal-100/80 shadow-2xs">
-                  <i class="fi fi-rr-link"></i> ลิงก์ที่เกี่ยวข้อง
-                </a>
-              ` : ''}
-              ${item.file_url ? `
-                <a href="${item.file_url}" target="_blank" download class="flex-1 py-2 px-3 bg-brand-teal text-black hover:bg-teal-700 font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5">
-                  <i class="fi fi-rr-download"></i> ดาวน์โหลดไฟล์
-                </a>
-              ` : ''}
-              ${!item.link && !item.file_url ? `
-                <div class="flex-1 py-2 px-3 bg-gray-50 text-gray-400 font-normal text-xs rounded-xl flex items-center justify-center cursor-not-allowed">
-                  ไม่มีเอกสารแนบ
-                </div>
-              ` : ''}
-            </div>
-          </div>
-        </div>
-      `;
-    });
+  // 3. Delegate to modular renderer: about_history
+  if (hash === "about_history" && typeof renderAboutHistoryView === "function") {
+    renderAboutHistoryView(container, items);
+    return;
   }
 
-  html += `</div>`;
-
-  // Add Pagination Controls if needed
-  if (totalPages > 1) {
-    html += renderPaginationControls(totalPages);
+  // 4. Delegate to modular renderer: officers
+  if (hash === "officers" && typeof renderOfficersView === "function") {
+    renderOfficersView(container, items);
+    return;
   }
 
-  container.innerHTML = html;
+  // 6. Delegate legal sections & folder views to modular renderer: oic_sections
+  if (typeof renderOicSectionsView === "function") {
+    const categoryTitle = CATEGORY_NAMES[hash] || 'หน้าหลัก';
+    renderOicSectionsView(container, items, currentPage, ITEMS_PER_PAGE, publicBreadcrumbStack, hash, categoryTitle);
+    return;
+  }
 }
+
+window.openPublicFolder = function (folderId, folderTitle) {
+  const hash = window.location.hash.replace("#", "") || "home";
+  currentPublicParentId = folderId;
+  publicBreadcrumbStack.push({ id: folderId, title: folderTitle });
+  loadCategoryItems(hash);
+};
+
+window.navigateToPublicBreadcrumb = function (index) {
+  const hash = window.location.hash.replace("#", "") || "home";
+  if (index === -1) {
+    currentPublicParentId = null;
+    publicBreadcrumbStack = [];
+  } else {
+    publicBreadcrumbStack = publicBreadcrumbStack.slice(0, index + 1);
+    currentPublicParentId = publicBreadcrumbStack[publicBreadcrumbStack.length - 1].id;
+  }
+  loadCategoryItems(hash);
+};
 
 function renderPaginationControls(totalPages) {
   let controls = `<div class="flex justify-center items-center gap-2 mt-10 mb-4">`;

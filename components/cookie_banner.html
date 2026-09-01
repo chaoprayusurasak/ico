@@ -1,0 +1,113 @@
+<!-- Cookie Consent Banner Component -->
+<div id="cookie-banner" class="fixed bottom-0 left-0 right-0 z-[9999] bg-white/95 backdrop-blur-md border-t border-emerald-100 shadow-[0_-10px_30px_-10px_rgba(0,0,0,0.15)] py-3.5 px-4 md:px-8 font-prompt transform transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] translate-y-full opacity-0 pointer-events-none">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+    
+    <!-- Text Content -->
+    <div class="text-xs md:text-sm text-gray-700 leading-relaxed text-center md:text-left flex-1">
+      เราใช้คุกกี้เพื่อพัฒนาประสิทธิภาพ และประสบการณ์ที่ดีในการใช้เว็บไซต์ของคุณ คุณสามารถศึกษารายละเอียดได้ที่ 
+      <a href="#privacy" onclick="if(window.navigateToPrivacy) window.navigateToPrivacy(event);" class="text-emerald-700 underline hover:text-emerald-800 font-semibold transition-colors">นโยบายความเป็นส่วนตัว</a> 
+      และสามารถจัดการความเป็นส่วนตัวเองได้ของคุณได้เองโดยคลิกที่ ตั้งค่า
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex items-center gap-2 md:gap-2.5 shrink-0 flex-wrap justify-center">
+      <!-- ตั้งค่า (สีดำ) -->
+      <button onclick="openCookieSettings()" class="bg-[#242424] hover:bg-black active:scale-95 text-white px-4 py-2 rounded-lg text-xs md:text-sm font-semibold shadow-xs hover:shadow transition-all duration-200 cursor-pointer inline-flex items-center gap-1.5">
+        ตั้งค่า
+      </button>
+      
+      <!-- ไม่ยอมรับ (สีดำ) -->
+      <button onclick="rejectCookies()" class="bg-[#242424] hover:bg-black active:scale-95 text-white px-4 py-2 rounded-lg text-xs md:text-sm font-semibold shadow-xs hover:shadow transition-all duration-200 cursor-pointer inline-flex items-center gap-1.5">
+        ไม่ยอมรับ
+      </button>
+      
+      <!-- ยอมรับ (สีเขียว) -->
+      <button onclick="acceptAllCookies()" class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white px-5 py-2 rounded-lg text-xs md:text-sm font-bold shadow-md shadow-emerald-600/20 hover:shadow-lg transition-all duration-200 cursor-pointer inline-flex items-center gap-1.5">
+        ยอมรับ
+      </button>
+
+      <!-- ปิด (X) -->
+      <button onclick="closeCookieBanner()" class="text-gray-400 hover:text-gray-600 p-1.5 rounded-lg hover:bg-gray-100 transition-all duration-200 cursor-pointer ml-1 text-base leading-none" title="ปิด">
+        ✕
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Cookie Settings Modal -->
+<div id="cookie-settings-modal" class="fixed inset-0 z-[10000] bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 font-prompt transition-all duration-300 opacity-0 pointer-events-none">
+  <div id="cookie-modal-card" class="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[90vh] transform transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] scale-95 translate-y-4">
+    
+    <!-- Modal Header -->
+    <div class="px-6 py-4 border-b border-emerald-100 flex items-center justify-between bg-emerald-50/50">
+      <div class="flex items-center gap-2">
+        <i class="fi fi-rr-settings text-emerald-600 text-lg"></i>
+        <h3 class="font-bold text-gray-800 text-base md:text-lg">ตั้งค่าความเป็นส่วนตัวของคุกกี้</h3>
+      </div>
+      <button onclick="closeCookieSettings()" class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-200/60 transition-all cursor-pointer text-lg leading-none">
+        ✕
+      </button>
+    </div>
+
+    <!-- Modal Content -->
+    <div class="p-6 overflow-y-auto space-y-5 text-xs md:text-sm text-gray-600">
+      <p class="leading-relaxed">
+        เราใช้คุกกี้ประเภทต่างๆ เพื่อปรับปรุงประสบการณ์การใช้งานของคุณ คุณสามารถเลือกอนุญาตหรือไม่อนุญาตคุกกี้บางประเภทได้ตามความยินยอมของคุณ
+      </p>
+
+      <!-- Option 1: Necessary Cookies -->
+      <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-start justify-between gap-4">
+        <div>
+          <h4 class="font-bold text-gray-800 text-sm mb-1 flex items-center gap-1.5">
+            คุกกี้ที่จำเป็น (Strictly Necessary)
+            <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">เปิดใช้งานเสมอ</span>
+          </h4>
+          <p class="text-xs text-gray-500 leading-relaxed">
+            คุกกี้ที่จำเป็นต่อการทำงานของเว็บไซต์ เพื่อให้คุณสามารถใช้งานฟังก์ชันพื้นฐานได้อย่างเป็นปกติ ไม่สามารถปิดการใช้งานได้
+          </p>
+        </div>
+      </div>
+
+      <!-- Option 2: Analytics Cookies -->
+      <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-start justify-between gap-4">
+        <div class="pr-2">
+          <h4 class="font-bold text-gray-800 text-sm mb-1">คุกกี้เพื่อการวิเคราะห์ (Analytics & Performance)</h4>
+          <p class="text-xs text-gray-500 leading-relaxed">
+            ช่วยให้เราเข้าใจว่าผู้เยี่ยมชมมีปฏิสัมพันธ์กับเว็บไซต์อย่างไร เพื่อนำไปปรับปรุงประสิทธิภาพและประสบการณ์การใช้งาน
+          </p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
+          <input type="checkbox" id="cookie-opt-analytics" class="sr-only peer" checked>
+          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+        </label>
+      </div>
+
+      <!-- Option 3: Marketing Cookies -->
+      <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-start justify-between gap-4">
+        <div class="pr-2">
+          <h4 class="font-bold text-gray-800 text-sm mb-1">คุกกี้เพื่อการประชาสัมพันธ์ (Marketing)</h4>
+          <p class="text-xs text-gray-500 leading-relaxed">
+            ใช้ในการติดตามพฤติกรรมผู้ใช้ เพื่อนำเสนอข่าวสารและประชาสัมพันธ์ที่ตรงกับความสนใจของคุณมากที่สุด
+          </p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
+          <input type="checkbox" id="cookie-opt-marketing" class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+        </label>
+      </div>
+
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-3 bg-gray-50/50">
+      <button onclick="closeCookieSettings()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl text-xs font-semibold transition-all cursor-pointer">
+        ยกเลิก
+      </button>
+      <button onclick="saveCookieSettings()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow transition-all cursor-pointer">
+        บันทึกการตั้งค่า
+      </button>
+    </div>
+
+  </div>
+</div>

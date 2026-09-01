@@ -35,9 +35,9 @@ function renderPrivacyView(container, items = []) {
         </div>
         <div class="flex items-center gap-2 pt-3 border-t border-gray-100 mt-auto">
           ${item.file_url ? `
-            <a href="${item.file_url}" target="_blank" download class="px-4 py-2 bg-brand-teal text-white font-bold text-xs rounded-xl shadow-sm hover:bg-teal-700 transition-all inline-flex items-center gap-1.5 cursor-pointer">
+            <button onclick="downloadFile(event, '${(item.file_url || '').replace(/'/g, "\\'")}', '${(item.title || '').replace(/'/g, "\\'")}', '${item.id || ''}')" class="px-4 py-2 bg-brand-teal text-white font-bold text-xs rounded-xl shadow-sm hover:bg-teal-700 transition-all inline-flex items-center gap-1.5 cursor-pointer">
               <i class="fi fi-rr-download"></i> ดาวน์โหลดเอกสาร
-            </a>
+            </button>
           ` : ''}
           ${item.link ? `
             <a href="${item.link}" target="_blank" class="px-4 py-2 bg-gray-100 text-gray-700 font-bold text-xs rounded-xl hover:bg-gray-200 transition-all inline-flex items-center gap-1.5 cursor-pointer">

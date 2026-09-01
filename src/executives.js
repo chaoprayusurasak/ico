@@ -136,7 +136,7 @@ function renderExecutivesView(container, rawItems = []) {
     const img = item.image_url || "./assets/executives/person_153.jpg";
 
     return `
-      <div class="relative group cursor-pointer transition-all duration-300 hover:-translate-y-1.5 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl ${isMain ? 'w-52 sm:w-60 md:w-64 mx-auto aspect-[3/4]' : 'w-full max-w-[190px] sm:max-w-[210px] md:max-w-[220px] aspect-[3/4]'} bg-gray-900 flex flex-col justify-end">
+      <div class="relative group cursor-pointer transition-all duration-300 hover:-translate-y-1.5 rounded-tl-3xl overflow-hidden shadow-md hover:shadow-2xl ${isMain ? 'w-52 sm:w-60 md:w-64 mx-auto aspect-[3/4]' : 'w-full max-w-[190px] sm:max-w-[210px] md:max-w-[220px] aspect-[3/4]'} bg-gray-900 flex flex-col justify-end">
         
         <!-- Executive Portrait Image (Clear View from Top) -->
         <img src="${img}" alt="${item.title}" class="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105">

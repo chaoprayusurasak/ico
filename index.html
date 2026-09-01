@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>เทศบาลนครเจ้าพระยาสุรศักดิ์</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <!-- <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet" /> -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
   <link
-    href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-    rel="stylesheet">
+    href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
   <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
   <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
@@ -21,7 +21,10 @@
       theme: {
         extend: {
           fontFamily: {
-            prompt: ["Prompt", "sans-serif"],
+            noto: ["Noto Sans Thai", "sans-serif"],
+            kanit: ["Noto Sans Thai", "Kanit", "sans-serif"],
+            prompt: ["Noto Sans Thai", "Prompt", "sans-serif"],
+            sans: ["Noto Sans Thai", "sans-serif"],
           },
           colors: {
             brand: {
@@ -37,6 +40,7 @@
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="./src/styles.css" />
   <style>
     /* Lottie sidebar icon sizing */
@@ -64,16 +68,24 @@
   </style>
 </head>
 
-<body class="font-prompt">
+<body class="font-kanit font-sans">
   <!-- Nav Component (loaded from components/nav.html) -->
   <div data-component="./components/nav.html"></div>
 
-  <div class="parent">
-    <!-- Sidebar Component (loaded from components/sidebar.html) -->
-    <div data-component="./components/sidebar.html"></div>
+  <!-- Sidebar Component (Topmost Layer - loaded from components/sidebar.html) -->
+  <div data-component="./components/sidebar.html"></div>
 
+  <div class="parent">
     <main class="content">
-      <h1 class="content-title">หน้าแรก</h1>
+      <!-- Page Header Banner (Proportional Typographic Hierarchy) -->
+      <div id="page-header-banner" class="bg-[#E9ECEF] border border-gray-300/60 rounded-xl px-5 py-3.5 md:px-7 md:py-4.5 mb-3 shadow-2xs">
+        <h1 class="content-title text-lg sm:text-xl md:text-2xl font-bold text-[#1F1F1F] leading-snug m-0">หน้าแรก</h1>
+        <div id="content-breadcrumb" class="text-xs sm:text-sm text-gray-500 font-normal mt-1 flex items-center gap-1.5 flex-wrap">
+          <a href="#home" onclick="navigateToPublicBreadcrumb(-1)" class="hover:underline text-gray-600 font-medium">หน้าหลัก</a>
+          <span class="text-gray-400 font-light">/</span>
+          <span id="breadcrumb-current" class="text-gray-600 font-normal">หน้าแรก</span>
+        </div>
+      </div>
 
       <!-- ตัวโหลด Lottie Animation -->
       <div id="page-loader" style="display: flex; justify-content: center; align-items: center; min-height: 400px;">
@@ -199,300 +211,7 @@
     </main>
   </div>
 
-  <!-- Animated BTS Train Section (Soft Pastels, Dynamic Speed, Fluffy Cloud Trees) -->
-  <div class="spu-train-container ">
-    <!-- Station Sign Board (Muted Slate Blue Box + Dual Posts + Circle Badge) -->
-    <div class="spu-station-sign">
-      <div class="spu-sign-board">
-        <div class="spu-sign-text">
-          <div class="spu-sign-th">เทศบาลนครเจ้าพระยาสุรศักดิ์</div>
-          <div class="spu-sign-en">Chaophraya Surasak</div>
-        </div>
-        <div class="spu-sign-badge">N1</div>
-      </div>
-      <div class="spu-sign-poles">
-        <div class="spu-pole"></div>
-        <div class="spu-pole"></div>
-      </div>
-    </div>
-
-    <!-- Image 2.png after Station Sign Board (Shifted Higher Up) -->
-    <div class="flex justify-center items-center -mt-10 sm:-mt-24 md:-mt-30 z-10 relative pointer-events-none">
-      <img src="./assets/2.png" alt="เทศบาลนครเจ้าพระยาสุรศักดิ์"
-        class="max-w-xs sm:max-w-sm md:max-w-md h-auto object-contain drop-shadow-lg transition-transform pointer-events-auto mt-15">
-    </div>
-
-    <!-- Animated BTS Train (Vector SVG with Soft Pastel Tones) -->
-    <div class="spu-train-track-area">
-      <!-- Concrete Beam Track (Softer Muted Tones) -->
-      <div class="spu-track-beam-top"></div>
-      <div class="spu-track-beam-main"></div>
-      <div class="spu-track-beam-shadow"></div>
-
-      <!-- Moving Train Wrapper (Dynamic Speed Animation) -->
-      <div class="spu-train-wrapper relative">
-        
-        <!-- Animated Lottie Monkey sitting on train roof -->
-        <div class="absolute -top-9 left-[75px] z-30 pointer-events-none drop-shadow-md">
-          <dotlottie-wc src="https://lottie.host/6c20eade-75f1-455c-934f-fcf9df865fe7/zlzAfw5TEo.json" autoplay loop style="width: 80px; height: 80px; margin-bottom: 100px;"></dotlottie-wc>
-        </div>
-
-        <svg class="spu-bts-svg" viewBox="0 0 520 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- CAR 1 (HEAD CAR) -->
-          <g id="head-car">
-            <!-- Main Body (Soft Creamy White) -->
-            <path d="M45 4 H130 V42 H15 C15 42 5 35 5 22 C5 10 25 4 45 4 Z" fill="#F8FAFC" stroke="#CBD5E1"
-              stroke-width="1.5" />
-            <!-- Front Windshield (Soft Blue-Grey Tint) -->
-            <path d="M14 10 C22 7 38 6 42 6 L44 20 H18 C14 18 12 14 14 10 Z" fill="#334155" stroke="#1E293B"
-              stroke-width="1" />
-            <path d="M16 11 C23 8 36 7 40 7 L42 16 H20 Z" fill="#475569" />
-            <path d="M22 8 L32 7 L28 14 Z" fill="white" opacity="0.35" />
-            <!-- Soft Salmon/Pastel Red Stripe Nose -->
-            <path
-              d="M42 6 C35 6 18 8 13 11 C9 14 6 20 6 24 C6 26 12 28 20 28 L130 28 V31 L18 31 C8 31 4 25 4 22 C4 8 26 4 45 4 Z"
-              fill="#EF4444" opacity="0.85" />
-            <!-- Soft Sky Blue Side Window Stripe -->
-            <rect x="44" y="16" width="86" height="10" fill="#3B82F6" opacity="0.8" />
-            <!-- Windows Head Car -->
-            <rect x="48" y="14" width="18" height="11" rx="2" fill="#1E293B" stroke="#475569" />
-            <rect x="49" y="15" width="16" height="9" rx="1" fill="#334155" />
-            <rect x="72" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
-            <rect x="73" y="15" width="20" height="9" rx="1" fill="#334155" />
-            <rect x="100" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
-            <rect x="101" y="15" width="20" height="9" rx="1" fill="#334155" />
-            <!-- Door -->
-            <rect x="63" y="14" width="7" height="26" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8" />
-            <line x1="66.5" y1="14" x2="66.5" y2="40" stroke="#CBD5E1" stroke-width="0.8" />
-            <!-- Bottom Red Stripe -->
-            <rect x="15" y="38" width="115" height="3" fill="#EF4444" opacity="0.85" />
-            <!-- Wheels Bogies -->
-            <circle cx="35" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="35" cy="45" r="2" fill="#94A3B8" />
-            <circle cx="50" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="50" cy="45" r="2" fill="#94A3B8" />
-            <circle cx="105" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="105" cy="45" r="2" fill="#94A3B8" />
-            <circle cx="120" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="120" cy="45" r="2" fill="#94A3B8" />
-          </g>
-
-          <!-- Connector 1-2 -->
-          <rect x="130" y="10" width="4" height="30" fill="#475569" />
-
-          <!-- CAR 2 (MIDDLE CAR) -->
-          <g id="car-2">
-            <rect x="134" y="4" width="120" height="38" rx="2" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" />
-            <rect x="134" y="27" width="120" height="4" fill="#EF4444" opacity="0.85" />
-            <rect x="134" y="16" width="120" height="10" fill="#3B82F6" opacity="0.8" />
-            <!-- Windows -->
-            <rect x="140" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
-            <rect x="141" y="15" width="20" height="9" rx="1" fill="#334155" />
-            <rect x="180" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
-            <rect x="181" y="15" width="20" height="9" rx="1" fill="#334155" />
-            <rect x="220" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
-            <rect x="221" y="15" width="20" height="9" rx="1" fill="#334155" />
-            <!-- Doors -->
-            <rect x="166" y="14" width="10" height="26" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8" />
-            <line x1="171" y1="14" x2="171" y2="40" stroke="#CBD5E1" />
-            <rect x="206" y="14" width="10" height="26" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8" />
-            <line x1="211" y1="14" x2="211" y2="40" stroke="#CBD5E1" />
-            <!-- Bottom Red Accent Stripe -->
-            <rect x="134" y="38" width="120" height="3" fill="#EF4444" opacity="0.85" />
-            <!-- Wheels -->
-            <circle cx="150" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="150" cy="45" r="2" fill="#94A3B8" />
-            <circle cx="165" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="165" cy="45" r="2" fill="#94A3B8" />
-            <circle cx="225" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="225" cy="45" r="2" fill="#94A3B8" />
-            <circle cx="240" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="240" cy="45" r="2" fill="#94A3B8" />
-          </g>
-
-          <!-- Connector 2-3 -->
-          <rect x="254" y="10" width="4" height="30" fill="#475569" />
-
-          <!-- CAR 3 (MIDDLE CAR) -->
-          <g id="car-3">
-            <rect x="258" y="4" width="120" height="38" rx="2" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" />
-            <rect x="258" y="27" width="120" height="4" fill="#EF4444" opacity="0.85" />
-            <rect x="258" y="16" width="120" height="10" fill="#3B82F6" opacity="0.8" />
-            <!-- Windows -->
-            <rect x="264" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
-            <rect x="265" y="15" width="20" height="9" rx="1" fill="#334155" />
-            <rect x="304" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
-            <rect x="305" y="15" width="20" height="9" rx="1" fill="#334155" />
-            <rect x="344" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
-            <rect x="345" y="15" width="20" height="9" rx="1" fill="#334155" />
-            <!-- Doors -->
-            <rect x="290" y="14" width="10" height="26" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8" />
-            <line x1="295" y1="14" x2="295" y2="40" stroke="#CBD5E1" />
-            <rect x="330" y="14" width="10" height="26" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8" />
-            <line x1="335" y1="14" x2="335" y2="40" stroke="#CBD5E1" />
-            <!-- Bottom Red Accent Stripe -->
-            <rect x="258" y="38" width="120" height="3" fill="#EF4444" opacity="0.85" />
-            <!-- Wheels -->
-            <circle cx="274" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="274" cy="45" r="2" fill="#94A3B8" />
-            <circle cx="289" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="289" cy="45" r="2" fill="#94A3B8" />
-            <circle cx="349" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="349" cy="45" r="2" fill="#94A3B8" />
-            <circle cx="364" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="364" cy="45" r="2" fill="#94A3B8" />
-          </g>
-
-          <!-- Connector 3-4 -->
-          <rect x="378" y="10" width="4" height="30" fill="#475569" />
-
-          <!-- CAR 4 (TAIL CAR) -->
-          <g id="tail-car">
-            <rect x="382" y="4" width="125" height="38" rx="2" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5" />
-            <rect x="382" y="27" width="125" height="4" fill="#EF4444" opacity="0.85" />
-            <rect x="382" y="16" width="125" height="10" fill="#3B82F6" opacity="0.8" />
-            <!-- Windows -->
-            <rect x="388" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
-            <rect x="389" y="15" width="20" height="9" rx="1" fill="#334155" />
-            <rect x="428" y="14" width="22" height="11" rx="2" fill="#1E293B" stroke="#475569" />
-            <rect x="429" y="15" width="20" height="9" rx="1" fill="#334155" />
-            <rect x="468" y="14" width="20" height="11" rx="2" fill="#1E293B" stroke="#475569" />
-            <rect x="469" y="15" width="18" height="9" rx="1" fill="#334155" />
-            <!-- Door -->
-            <rect x="414" y="14" width="10" height="26" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8" />
-            <line x1="419" y1="14" x2="419" y2="40" stroke="#CBD5E1" />
-            <!-- Bottom Red Accent Stripe -->
-            <rect x="382" y="38" width="125" height="3" fill="#EF4444" opacity="0.85" />
-            <!-- Wheels -->
-            <circle cx="398" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="398" cy="45" r="2" fill="#94A3B8" />
-            <circle cx="413" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="413" cy="45" r="2" fill="#94A3B8" />
-            <circle cx="473" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="473" cy="45" r="2" fill="#94A3B8" />
-            <circle cx="488" cy="45" r="5" fill="#475569" stroke="#1E293B" stroke-width="1.5" />
-            <circle cx="488" cy="45" r="2" fill="#94A3B8" />
-          </g>
-        </svg>
-      </div>
-    </div>
-
-    <!-- T-shaped Concrete Pillars Structure (Muted Soft Slate Colors) -->
-    <div class="spu-pillars-container">
-      <div class="spu-t-pillar" style="left: 4%;">
-        <div class="spu-pillar-cap"></div>
-        <div class="spu-pillar-stem"></div>
-      </div>
-      <div class="spu-t-pillar" style="left: 18%;">
-        <div class="spu-pillar-cap"></div>
-        <div class="spu-pillar-stem"></div>
-      </div>
-      <div class="spu-t-pillar" style="left: 32%;">
-        <div class="spu-pillar-cap"></div>
-        <div class="spu-pillar-stem"></div>
-      </div>
-      <div class="spu-t-pillar" style="left: 46%;">
-        <div class="spu-pillar-cap"></div>
-        <div class="spu-pillar-stem"></div>
-      </div>
-      <div class="spu-t-pillar" style="left: 60%;">
-        <div class="spu-pillar-cap"></div>
-        <div class="spu-pillar-stem"></div>
-      </div>
-      <div class="spu-t-pillar" style="left: 74%;">
-        <div class="spu-pillar-cap"></div>
-        <div class="spu-pillar-stem"></div>
-      </div>
-      <div class="spu-t-pillar" style="left: 88%;">
-        <div class="spu-pillar-cap"></div>
-        <div class="spu-pillar-stem"></div>
-      </div>
-    </div>
-
-    <!-- FLUFFY CLOUD-SHAPED TREES & BUSHES (Multi-lobed Pastel Cloud Clusters) -->
-    <div class="spu-bushes-container">
-      <!-- Fluffy Cloud Bush Cluster 1 -->
-      <div class="cloud-bush-group" style="left: 0%; width: 220px; height: 60px;">
-        <svg viewBox="0 0 220 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="cloud-svg">
-          <path
-            d="M 0 60 C 0 45, 10 25, 30 22 C 38 8, 68 4, 85 16 C 98 2, 130 4, 142 18 C 158 8, 188 18, 192 34 C 208 30, 222 44, 215 60 Z"
-            fill="#2d6a4f" />
-          <path
-            d="M 5 60 C 5 48, 15 28, 35 26 C 42 12, 70 8, 86 20 C 98 6, 128 8, 138 22 C 154 12, 182 22, 186 38 C 200 34, 214 46, 208 60 Z"
-            fill="#40916c" />
-          <path d="M 38 28 C 45 16, 70 12, 84 24 C 98 10, 126 12, 134 26 C 148 16, 178 24, 182 40 Z" fill="#74c69d"
-            opacity="0.85" />
-          <circle cx="90" cy="18" r="10" fill="#b7e4c7" opacity="0.4" />
-          <circle cx="140" cy="20" r="8" fill="#b7e4c7" opacity="0.4" />
-        </svg>
-      </div>
-
-      <!-- Fluffy Cloud Tree 1 -->
-      <div class="cloud-tree-unit" style="left: 17%; bottom: 0;">
-        <div class="cloud-tree-head"></div>
-        <div class="tree-trunk"></div>
-      </div>
-
-      <!-- Fluffy Cloud Bush Cluster 2 -->
-      <div class="cloud-bush-group" style="left: 23%; width: 200px; height: 58px;">
-        <svg viewBox="0 0 200 58" fill="none" xmlns="http://www.w3.org/2000/svg" class="cloud-svg">
-          <path
-            d="M 0 58 C 0 42, 12 24, 30 22 C 38 8, 65 4, 80 16 C 94 4, 122 6, 132 18 C 148 10, 175 20, 178 35 C 192 30, 204 44, 196 58 Z"
-            fill="#2d6a4f" />
-          <path
-            d="M 8 58 C 8 46, 18 28, 36 26 C 42 12, 68 8, 82 20 C 94 8, 120 10, 128 22 C 144 14, 168 24, 172 38 C 184 34, 196 46, 190 58 Z"
-            fill="#40916c" />
-          <path d="M 38 28 C 44 16, 68 12, 80 22 C 92 10, 116 12, 124 24 C 138 16, 162 24, 166 38 Z" fill="#52b788"
-            opacity="0.85" />
-          <circle cx="85" cy="18" r="9" fill="#b7e4c7" opacity="0.45" />
-        </svg>
-      </div>
-
-      <!-- Fluffy Cloud Tree 2 -->
-      <div class="cloud-tree-unit" style="left: 42%; bottom: 0;">
-        <div class="cloud-tree-head lg"></div>
-        <div class="tree-trunk"></div>
-      </div>
-
-      <!-- Fluffy Cloud Bush Cluster 3 -->
-      <div class="cloud-bush-group" style="left: 48%; width: 230px; height: 62px;">
-        <svg viewBox="0 0 230 62" fill="none" xmlns="http://www.w3.org/2000/svg" class="cloud-svg">
-          <path
-            d="M 0 62 C 0 45, 12 25, 34 22 C 42 6, 75 2, 92 16 C 108 2, 140 4, 154 18 C 172 8, 202 18, 206 36 C 222 30, 235 46, 226 62 Z"
-            fill="#2d6a4f" />
-          <path
-            d="M 8 62 C 8 48, 18 28, 38 26 C 44 10, 72 6, 88 20 C 102 6, 132 8, 144 22 C 162 12, 192 22, 196 40 C 210 34, 224 48, 218 62 Z"
-            fill="#40916c" />
-          <path d="M 40 28 C 46 14, 72 10, 86 22 C 100 8, 128 10, 138 24 C 156 14, 184 24, 188 42 Z" fill="#74c69d"
-            opacity="0.9" />
-          <circle cx="92" cy="18" r="11" fill="#b7e4c7" opacity="0.4" />
-          <circle cx="145" cy="20" r="9" fill="#b7e4c7" opacity="0.4" />
-        </svg>
-      </div>
-
-      <!-- Fluffy Cloud Tree 3 -->
-      <div class="cloud-tree-unit" style="left: 71%; bottom: 0;">
-        <div class="cloud-tree-head"></div>
-        <div class="tree-trunk"></div>
-      </div>
-
-      <!-- Fluffy Cloud Bush Cluster 4 -->
-      <div class="cloud-bush-group" style="left: 77%; width: 210px; height: 58px;">
-        <svg viewBox="0 0 210 58" fill="none" xmlns="http://www.w3.org/2000/svg" class="cloud-svg">
-          <path
-            d="M 0 58 C 0 42, 10 24, 30 22 C 38 8, 65 4, 80 16 C 94 4, 122 6, 132 18 C 148 10, 175 20, 178 35 C 192 30, 204 44, 196 58 Z"
-            fill="#2d6a4f" />
-          <path
-            d="M 8 58 C 8 46, 18 28, 36 26 C 42 12, 68 8, 82 20 C 94 8, 120 10, 128 22 C 144 14, 168 24, 172 38 C 184 34, 196 46, 190 58 Z"
-            fill="#40916c" />
-          <path d="M 38 28 C 44 16, 68 12, 80 22 C 92 10, 116 12, 124 24 C 138 16, 162 24, 166 38 Z" fill="#52b788"
-            opacity="0.85" />
-          <circle cx="85" cy="18" r="9" fill="#b7e4c7" opacity="0.45" />
-        </svg>
-      </div>
-    </div>
-  </div>
-
+  
   <style>
     /* ===== SPU TRAIN SECTION - PASTEL SOFT COLORED, DYNAMIC SPEED & FLUFFY CLOUD TREES ===== */
     .spu-train-container {
@@ -782,15 +501,28 @@
 
   <!-- Footer Component -->
   <div data-component="./components/footer.html"></div>
+  <!-- Cookie Banner Component -->
+  <div data-component="./components/cookie_banner.html"></div>
 
   <!-- Component Loader -->
   <script src="./components/loader.js"></script>
-  <!-- Supabase config & app code -->
+  <!-- Supabase config & app modular scripts -->
   <script src="./src/config.js"></script>
   <script src="./src/complaints.js"></script>
   <script src="./src/executives.js"></script>
   <script src="./src/index_files.js"></script>
   <script src="./src/contact.js"></script>
+  <script src="./src/privacy.js"></script>
+  <script src="./src/cookie.js"></script>
+  <script src="./src/news_sbr.js"></script>
+  <script src="./src/announcements.js"></script>
+  <script src="./src/about_history.js"></script>
+  <script src="./src/officers.js"></script>
+  <script src="./src/oic_sections.js"></script>
+  <script src="./src/eval_form.js"></script>
+  <script src="./src/eval_summary.js"></script>
+  <script src="./src/eval_stats.js"></script>
+  <script src="./src/eval_faq.js"></script>
   <script src="./src/app.js"></script>
   <!-- Lottie Sidebar Icons -->
   <script src="./assets/lottie-icons.js"></script>

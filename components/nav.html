@@ -11,7 +11,7 @@
     left: 0;
     right: 0;
     width: 100%;
-    z-index: 9999;
+    z-index: 999999;
     padding: 0 0.5rem;
     pointer-events: none;
   }
@@ -22,22 +22,91 @@
     }
   }
 
-  /* Floating Navbar Card with Rounded Bottom Corners */
+  /* Floating Navbar Card with Liquid Glass & Chromatic Light Refraction Effect */
   .main-nav-card {
     pointer-events: auto;
     max-width: 1440px;
     width: 100%;
     margin: 0 auto;
-    background: #ffffff;
-    border-radius: 0 0 20px 20px;
-    box-shadow: 0 10px 30px rgba(0, 86, 117, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
-    border-left: 1px solid rgba(0, 134, 117, 0.08);
-    border-right: 1px solid rgba(0, 134, 117, 0.08);
-    border-bottom: 1px solid rgba(0, 134, 117, 0.12);
-    transition: all 0.3s ease;
+    position: relative;
+    z-index: 10;
+    overflow: visible;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.22) 0%,
+      rgba(255, 255, 255, 0.08) 45%,
+      rgba(240, 253, 250, 0.15) 75%,
+      rgba(255, 242, 248, 0.10) 100%
+    );
+    backdrop-filter: blur(1px) saturate(180%);
+    -webkit-backdrop-filter: blur(1px) saturate(180%);
+    border-radius: 0 0 28px 28px;
+    border-left: 1px solid rgba(0, 134, 117, 0.18);
+    border-right: 1px solid rgba(0, 134, 117, 0.18);
+    border-bottom: 1.5px solid rgba(0, 134, 117, 0.25);
+    box-shadow: 
+      /* Top Specular Rim Lighting */
+      inset 0 2px 3px 0 rgba(255, 255, 255, 0.4),
+      /* Bottom Inner Reflection */
+      inset 0 -3px 8px 0 rgba(0, 134, 117, 0.08),
+      /* Inner Soft Glass Ambient Illumination */
+      inset 0 0 20px 0 rgba(255, 255, 255, 0.2),
+      /* Depth Drop Shadow */
+      0 20px 45px -12px rgba(0, 70, 95, 0.14),
+      /* Prismatic Chromatic Liquid Glows (Cyan & Pink Spectrum) */
+      0 0 30px 2px rgba(56, 189, 248, 0.25),
+      0 0 50px 6px rgba(236, 72, 153, 0.12);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Inner Glass Clip Layer (Clips shimmer beam strictly inside navbar boundaries) */
+  .nav-glass-shine {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 0 0 28px 28px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Liquid Light Refraction & Prismatic Chromatic Shimmer Beam */
+  .nav-glass-shine::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 220%;
+    height: 200%;
+    background: linear-gradient(
+      115deg,
+      transparent 25%,
+      rgba(255, 255, 255, 0.75) 40%,
+      rgba(56, 189, 248, 0.45) 46%,
+      rgba(236, 72, 153, 0.35) 52%,
+      rgba(250, 204, 21, 0.35) 57%,
+      rgba(255, 255, 255, 0.65) 65%,
+      transparent 78%
+    );
+    transform: rotate(-12deg);
+    filter: blur(3px);
+    pointer-events: none;
+    animation: liquidRefractionSweep 8s ease-in-out infinite;
+  }
+
+  @keyframes liquidRefractionSweep {
+    0%, 100% {
+      transform: translateX(-35%) rotate(-12deg);
+      opacity: 0.4;
+    }
+    50% {
+      transform: translateX(35%) rotate(-12deg);
+      opacity: 0.9;
+    }
   }
 
   .nav-inner-container {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -78,6 +147,7 @@
     width: auto;
     object-fit: contain;
     flex-shrink: 0;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
   }
 
   @media (min-width: 640px) {
@@ -102,20 +172,21 @@
   }
 
   .brand-title {
-    color: #008675;
+    color: #1e293b;
     font-size: 0.75rem;
-    font-weight: 800;
+    font-weight: 700;
     font-family: 'Prompt', 'Kanit', sans-serif;
     letter-spacing: -0.01em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
   }
 
   .brand-subtitle {
     color: #008675;
     font-size: 0.68rem;
-    font-weight: 600;
+    font-weight: 700;
     font-family: 'Prompt', 'Kanit', sans-serif;
     white-space: nowrap;
     overflow: hidden;
@@ -174,130 +245,167 @@
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    height: 100%;
-    color: #334155;
+    gap: 6px;
+    height: auto;
+    color: #1e293b;
     font-size: 0.88rem;
     font-weight: 600;
     text-decoration: none;
-    padding: 0 4px;
-    transition: color 0.2s ease;
+    padding: 7px 15px;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     white-space: nowrap;
   }
 
-  /* Active & Hover Green Underline Indicator (Matching Reference Image) */
-  .nav-link::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2.5px;
-    background-color: #008675;
-    border-radius: 2px 2px 0 0;
-    transform: scaleX(0);
-    transform-origin: center;
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
+  /* Hover & Menu Active State: Soft White-Mint Transparent Liquid Glass Pill Capsule */
   .nav-link:hover,
   .nav-item:hover .nav-link,
-  .nav-link.is-active {
+  .nav-item.menu-active .nav-link {
     color: #008675;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(220, 250, 244, 0.35) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 
+      inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 2px 0 rgba(0, 134, 117, 0.05),
+      0 4px 14px rgba(0, 134, 117, 0.08),
+      0 0 12px rgba(85, 187, 176, 0.15);
+    transform: translateY(-1px);
   }
 
-  .nav-link:hover::after,
-  .nav-item:hover .nav-link::after,
-  .nav-link.is-active::after {
-    transform: scaleX(1);
+  /* Active State: Soft White-Mint Transparent 3D Liquid Glass Pill */
+  .nav-link.is-active {
+    color: #008675 !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(210, 248, 242, 0.42) 100%) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 
+      inset 0 2px 2px 0 rgba(255, 255, 255, 0.98),
+      inset 0 -1.5px 2px 0 rgba(0, 134, 117, 0.08),
+      0 6px 18px rgba(0, 134, 117, 0.12),
+      0 0 18px rgba(85, 187, 176, 0.2) !important;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
   }
 
-  /* Dropdown Submenu Cards */
+  /* Dropdown Submenu Cards (Liquid Glass 3D Capsule with High Opacity for Readability) */
   .nav-dropdown {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 8px);
     left: 50%;
-    transform: translateX(-50%) translateY(8px);
-    z-index: 1000;
+    transform: translateX(-50%);
+    z-index: 999999;
     display: flex;
     flex-direction: column;
-    min-width: 230px;
-    padding: 8px;
-    background: #ffffff;
-    border: 1px solid rgba(0, 134, 117, 0.12);
-    border-radius: 16px;
-    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.09);
+    min-width: 250px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1.5px solid rgba(255, 255, 255, 0.95) !important;
+    border-radius: 24px;
+    box-shadow: 
+      inset 0 2px 2px 0 rgba(255, 255, 255, 1),
+      inset 0 -2px 5px 0 rgba(0, 134, 117, 0.05),
+      0 25px 50px -10px rgba(0, 30, 60, 0.22),
+      0 0 25px 2px rgba(56, 189, 248, 0.15) !important;
     opacity: 0;
     visibility: hidden;
-    pointer-events: none;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: auto;
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: 0.2s;
+  }
+
+  /* Overlapping Hit Area Bridge extending upwards from dropdown to touch navbar */
+  .nav-dropdown::before {
+    content: "";
+    position: absolute;
+    top: -24px;
+    left: -30px;
+    right: -30px;
+    height: 30px;
+    background: transparent;
+    pointer-events: auto;
+    z-index: 1;
   }
 
   .nav-dropdown-wide {
-    min-width: 310px;
+    min-width: 330px;
   }
 
   .nav-dropdown-right {
     left: auto;
     right: 0;
-    transform: translateY(8px);
+    transform: none;
   }
 
-  .nav-item:hover .nav-dropdown {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  .nav-item:hover .nav-dropdown-right {
-    transform: translateY(0);
+  .nav-item:hover .nav-dropdown,
+  .nav-item.menu-active .nav-dropdown,
+  .nav-dropdown.is-active,
+  .nav-dropdown:hover {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: translateX(-50%) translateY(0) !important;
+    transition-delay: 0s !important;
   }
 
   .nav-dropdown a {
+    position: relative;
+    z-index: 10;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 9px 14px;
-    border-radius: 10px;
-    color: #334155;
-    font-size: 0.86rem;
-    font-weight: 500;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    color: #1e293b;
+    font-size: 0.88rem;
+    font-weight: 600;
     text-decoration: none;
-    transition: all 0.15s ease;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
     white-space: nowrap;
+    pointer-events: auto;
   }
 
   .nav-dropdown a:hover {
-    background: #e6f3f1;
+    background: rgba(255, 255, 255, 0.75);
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 4px 12px rgba(0, 134, 117, 0.12);
     color: #008675;
-    transform: translateX(3px);
+    transform: translateX(4px);
   }
 
   .nav-dropdown a .triangle-icon {
     font-size: 0.65rem;
     color: #008675;
-    opacity: 0.7;
+    opacity: 0.85;
   }
 
-  /* Mobile Hamburger Button */
+  /* Mobile Hamburger Button with Liquid Glass */
   .mobile-toggle-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    background: #f1f5f9;
+    width: 42px;
+    height: 42px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     color: #008675;
     cursor: pointer;
-    border: none;
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+    box-shadow: inset 0 1.5px 1.5px rgba(255, 255, 255, 0.95), 0 4px 12px rgba(0, 0, 0, 0.06);
     flex-shrink: 0;
-    transition: background-color 0.2s ease;
+    transition: all 0.25s ease;
   }
 
   .mobile-toggle-btn:hover {
-    background: #e2e8f0;
+    background: rgba(255, 255, 255, 0.75);
+    transform: scale(1.05);
   }
 
   @media (min-width: 1024px) {
@@ -306,19 +414,29 @@
     }
   }
 
-  /* Mobile Drawer Menu */
+  /* Mobile Drawer Menu with Liquid Glass */
   .mobile-drawer-container {
-    background: #ffffff;
-    border-top: 1px solid rgba(0, 134, 117, 0.08);
-    border-radius: 0 0 20px 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1.5px solid rgba(255, 255, 255, 0.9);
+    border-radius: 0 0 28px 28px;
     padding: 1rem 1.25rem 1.5rem;
+    position: relative;
+    z-index: 2;
+    box-shadow: 
+      inset 0 2px 2px rgba(255, 255, 255, 0.95),
+      0 20px 40px rgba(0, 0, 0, 0.15);
   }
 
   .mobile-menu-item {
     margin-bottom: 0.5rem;
-    border: 1px solid #f1f5f9;
-    border-radius: 12px;
-    background: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 4px 10px rgba(0, 0, 0, 0.04);
     overflow: hidden;
   }
 
@@ -343,27 +461,108 @@
     flex-direction: column;
     gap: 0.25rem;
     padding: 0.5rem 0.75rem 0.75rem;
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.5);
   }
 
   .mobile-submenu-list a {
     padding: 0.65rem 0.85rem;
-    border-radius: 8px;
-    color: #475569;
+    border-radius: 10px;
+    color: #334155;
     font-size: 0.88rem;
     font-weight: 500;
     text-decoration: none;
+    transition: all 0.15s ease;
   }
 
   .mobile-submenu-list a:hover {
-    background: #e6f3f1;
+    background: rgba(255, 255, 255, 0.8);
     color: #008675;
+  }
+
+  /* ============================================================
+     OCEAN WAVE ANIMATION (hivsst.ddc.moph.go.th style with 3D Depth)
+     ============================================================ */
+  .ocean {
+    height: 90px;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+    transform: rotateX(180deg);
+  }
+
+  @media (min-width: 768px) {
+    .ocean {
+      height: 120px;
+    }
+  }
+
+  .wave {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,40 C150,90 450,90 600,40 C750,-10 1050,-10 1200,40 L1200,120 L0,120 Z' fill='%23008675' fill-opacity='0.25'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 1200px 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    animation: wave-loop-forward 8s linear infinite;
+    opacity: 0.8;
+    filter: drop-shadow(0 3px 6px rgba(0, 134, 117, 0.15));
+    will-change: background-position;
+  }
+
+  .wave:nth-of-type(2) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,25 C200,85 400,85 600,25 C800,-35 1000,-35 1200,25 L1200,120 L0,120 Z' fill='%2355bbb0' fill-opacity='0.45'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 1200px 100%;
+    top: 6px;
+    animation: wave-loop-reverse 10s linear infinite;
+    opacity: 0.65;
+    filter: drop-shadow(0 4px 8px rgba(85, 187, 176, 0.25));
+    will-change: background-position;
+  }
+
+  .wave:nth-of-type(3) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,50 C180,105 420,105 600,50 C780,-15 1020,-15 1200,50 L1200,120 L0,120 Z' fill='%23008675' fill-opacity='0.65'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 1200px 100%;
+    top: 12px;
+    animation: wave-loop-forward 12s linear infinite;
+    opacity: 0.85;
+    filter: drop-shadow(0 6px 12px rgba(0, 86, 117, 0.3));
+    will-change: background-position;
+  }
+
+  @keyframes wave-loop-forward {
+    0% {
+      background-position-x: 0px;
+    }
+    100% {
+      background-position-x: 1200px;
+    }
+  }
+
+  @keyframes wave-loop-reverse {
+    0% {
+      background-position-x: 0px;
+    }
+    100% {
+      background-position-x: -1200px;
+    }
   }
 </style>
 
 <!-- Floating Header Wrapper with Rounded Bottom Navbar Card -->
 <header class="site-header-wrapper">
   <div class="main-nav-card">
+    <!-- Inner Glass Shine Clip Layer (Strictly clips light refraction inside navbar card) -->
+    <div class="nav-glass-shine"></div>
+
     <!-- Mobile Hamburger Toggle Input (Sibling of nav & mobile-drawer-container for Tailwind peer selector) -->
     <input id="mobile-nav-toggle" type="checkbox" class="peer hidden" />
 
@@ -514,3 +713,63 @@
     </div>
   </div>
 </header>
+
+<!-- Animated Ocean Waves Layer (z-index 0, outside header wrapper) -->
+<div class="ocean">
+  <div class="wave"></div>
+  <div class="wave"></div>
+  <div class="wave"></div>
+</div>
+
+<!-- JS Dropdown Manager (Guarantees submenus stay 100% active with 350ms safety window) -->
+<script>
+  (function () {
+    function setupNavDropdowns() {
+      var items = document.querySelectorAll(".nav-item");
+      items.forEach(function (item) {
+        var timer = null;
+        var dropdown = item.querySelector(".nav-dropdown");
+        if (!dropdown) return;
+
+        function openMenu() {
+          if (timer) {
+            clearTimeout(timer);
+            timer = null;
+          }
+          item.classList.add("menu-active");
+          dropdown.classList.add("is-active");
+        }
+
+        function closeMenu() {
+          if (timer) clearTimeout(timer);
+          timer = setTimeout(function () {
+            item.classList.remove("menu-active");
+            dropdown.classList.remove("is-active");
+          }, 350); // 350ms bulletproof safety window
+        }
+
+        item.addEventListener("mouseenter", openMenu);
+        item.addEventListener("mouseleave", closeMenu);
+        dropdown.addEventListener("mouseenter", openMenu);
+        dropdown.addEventListener("mouseleave", closeMenu);
+
+        var links = dropdown.querySelectorAll("a");
+        links.forEach(function (link) {
+          link.addEventListener("click", function () {
+            if (timer) clearTimeout(timer);
+            item.classList.remove("menu-active");
+            dropdown.classList.remove("is-active");
+          });
+        });
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", setupNavDropdowns);
+    } else {
+      setupNavDropdowns();
+    }
+    document.addEventListener("componentsLoaded", setupNavDropdowns);
+    setTimeout(setupNavDropdowns, 400);
+  })();
+</script>

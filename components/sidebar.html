@@ -7,7 +7,7 @@
     position: fixed;
     top: 95px;
     left: 0;
-    z-index: 9990;
+    z-index: 2147483647 !important;
     width: 320px;
     max-height: calc(100vh - 115px);
     display: flex;
@@ -90,15 +90,17 @@
 
 <!-- User Original Sidebar Markup with Left Slide-out Floating Feature -->
 <aside id="sidebar-dock" class="sidebar">
-  
+
   <!-- Right Edge Handle Tab with Lottie Animation -->
   <div class="sidebar-edge-handle" onclick="toggleSidebarPin()" title="คลิกเพื่อเปิด/ปิดค้างไว้">
-    <dotlottie-wc src="https://lottie.host/49af6f59-a219-4a98-bee7-9b7fa300be95/LP3icBUQET.json" autoplay loop mode="bounce" style="width: 150px; height: 150px; transform: rotate(90deg);"></dotlottie-wc>
+    <dotlottie-wc src="https://lottie.host/49af6f59-a219-4a98-bee7-9b7fa300be95/LP3icBUQET.json" autoplay loop
+      mode="bounce" style="width: 150px; height: 150px; transform: rotate(90deg);"></dotlottie-wc>
   </div>
 
   <div class="sidebar-header flex items-center justify-between">
     <span>รายการข้อมูล</span>
-    <button onclick="toggleSidebarPin()" class="text-xs text-gray-600 hover:text-teal-700 p-1" title="ปักหมุดเปิดค้างไว้">
+    <button onclick="toggleSidebarPin()" class="text-xs text-gray-600 hover:text-teal-700 p-1"
+      title="ปักหมุดเปิดค้างไว้">
     </button>
   </div>
 
