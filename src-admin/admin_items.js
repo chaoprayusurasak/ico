@@ -729,23 +729,76 @@ window.setupFormListeners = function () {
         let fileUrl = document.getElementById("item-file-url").value;
         let fileSize = null;
 
+// Helper: Convert File to compressed Data URL (fallback if Storage RLS blocks upload)
+function fileToDataUrl(file, maxWidth = 800, quality = 0.85) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        } catch (canvasErr) {
+          resolve(e.target.result);
+        }
+      };
+      img.onerror = () => resolve(e.target.result);
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
         if (!isFolder) {
           const imageFile = document.getElementById("item-image-file").files[0];
           if (imageFile) {
             document.getElementById("image-upload-status").classList.remove("hidden");
             const fileExt = imageFile.name.split('.').pop();
             const fileName = `${Date.now()}_img.${fileExt}`;
-            const { data, error } = await supabase.storage
-              .from("ico-bucket")
-              .upload(fileName, imageFile);
+            
+            let uploadedToStorage = false;
+            try {
+              const { data, error } = await supabase.storage
+                .from("ico-bucket")
+                .upload(fileName, imageFile, { upsert: true });
 
-            if (error) throw error;
+              if (!error && data) {
+                const { data: { publicUrl } } = supabase.storage
+                  .from("ico-bucket")
+                  .getPublicUrl(fileName);
 
-            const { data: { publicUrl } } = supabase.storage
-              .from("ico-bucket")
-              .getPublicUrl(fileName);
+                imageUrl = publicUrl;
+                uploadedToStorage = true;
+              } else if (error) {
+                console.warn("Storage upload failed (RLS policy or bucket restriction). Switching to Data URL fallback:", error);
+              }
+            } catch (storageErr) {
+              console.warn("Storage upload exception, switching to Data URL fallback:", storageErr);
+            }
 
-            imageUrl = publicUrl;
+            // Fallback: If Supabase Storage upload was blocked by RLS or bucket settings, convert to high quality compressed Data URL
+            if (!uploadedToStorage) {
+              try {
+                imageUrl = await fileToDataUrl(imageFile);
+                console.log("Photo converted to Data URL successfully as fallback.");
+              } catch (convErr) {
+                console.error("Failed to convert image to Data URL:", convErr);
+                throw new Error("ไม่สามารถประมวลผลไฟล์ภาพได้: " + (convErr.message || convErr));
+              }
+            }
+
             document.getElementById("image-upload-status").classList.add("hidden");
           }
 
@@ -807,7 +860,11 @@ window.setupFormListeners = function () {
         loadItems();
       } catch (err) {
         console.error("Error saving item:", err);
-        alert("ไม่สามารถบันทึกข้อมูลได้: " + err.message);
+        let errorMsg = err.message || err;
+        if (typeof errorMsg === "string" && errorMsg.includes("row-level security policy")) {
+          errorMsg = `ติดสิทธิ์ความปลอดภัย Supabase RLS (Row-Level Security Policy)\nกรุณาไปที่ Supabase Console -> SQL Editor และรันคำสั่ง SQL เพื่อเปิดสิทธิ์ตาราง ${targetTable} และ Storage ico-bucket\n\n(รายละเอียด: ${errorMsg})`;
+        }
+        alert("ไม่สามารถบันทึกข้อมูลได้: " + errorMsg);
       } finally {
         btnSave.disabled = false;
         btnSave.textContent = "บันทึกข้อมูล";

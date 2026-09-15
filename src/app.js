@@ -214,24 +214,20 @@ async function handleRouting() {
   if (pageLoader) pageLoader.style.display = "none";
   boxEl.style.display = "";
 
-  // Manage top header banner display (Hide on home page and evaluation group pages)
+  // Manage top header banner display (Hide on home, news_sbr, public_complaint, and evaluation group pages)
   const headerBanner = document.getElementById("page-header-banner");
   if (headerBanner) {
-    if (hash === "home" || hash === "" || hash.startsWith("eval_")) {
+    if (hash === "home" || hash === "" || hash === "news_sbr" || hash === "public_complaint" || hash.startsWith("eval_")) {
       headerBanner.style.display = "none";
     } else {
       headerBanner.style.display = "";
     }
   }
 
-  // Manage breadcrumb text line visibility (Hide specifically on news_sbr page, show on all other pages)
+  // Manage breadcrumb text line visibility
   const breadcrumbEl = document.getElementById("content-breadcrumb");
   if (breadcrumbEl) {
-    if (hash === "news_sbr") {
-      breadcrumbEl.style.display = "none";
-    } else {
-      breadcrumbEl.style.display = "";
-    }
+    breadcrumbEl.style.display = "";
   }
 
   // Set page header banner title & breadcrumbs matching reference image
@@ -673,69 +669,5 @@ async function initVisitorCounter() {
 window.initVisitorCounter = initVisitorCounter;
 window.addEventListener("load", () => {
   setTimeout(initVisitorCounter, 500);
-  setTimeout(initCookieConsent, 600);
 });
 
-// Cookie Consent Banner Implementation
-function initCookieConsent() {
-  const consent = localStorage.getItem("ico_cookie_consent");
-  if (consent === "accepted" || consent === "declined") return;
-
-  if (!document.getElementById("cookie-consent-banner")) {
-    const bannerHTML = `
-      <div id="cookie-consent-banner" class="fixed bottom-5 left-5 right-5 sm:left-6 sm:right-auto sm:max-w-md z-[99999] transition-all duration-500 transform translate-y-24 opacity-0 pointer-events-none">
-        <div class="bg-white/95 backdrop-blur-xl border border-[rgba(0,134,117,0.2)] rounded-3xl p-5 shadow-[0_20px_50px_rgba(0,86,117,0.2)] flex flex-col gap-4 text-gray-800">
-          <div class="flex items-start gap-3.5">
-            <div class="w-10 h-10 rounded-2xl bg-teal-50 text-[#008675] flex items-center justify-center text-xl shrink-0 shadow-sm border border-teal-100">
-              🍪
-            </div>
-            <div class="flex-1">
-              <h4 class="text-sm font-bold text-gray-900 mb-1 flex items-center gap-1.5 font-prompt">
-                การใช้งานคุกกี้ (Cookie Policy)
-              </h4>
-              <p class="text-xs text-gray-600 leading-relaxed font-normal font-prompt">
-                เว็บไซต์นี้ใช้คุกกี้เพื่อปรับปรุงประสบการณ์ในการเข้าใช้งานเว็บไซต์ของเราให้ดียิ่งขึ้น 
-                ท่านสามารถศึกษารายละเอียดเพิ่มเติมได้ที่ 
-                <a href="#privacy" class="text-[#008675] font-semibold underline hover:text-teal-700 transition-colors">นโยบายการคุ้มครองข้อมูลส่วนบุคคล</a>
-              </p>
-            </div>
-          </div>
-          <div class="flex items-center justify-end gap-2.5 pt-1">
-            <button onclick="declineCookieConsent()" class="px-4 py-2 text-xs font-semibold text-gray-500 hover:text-gray-800 rounded-xl hover:bg-gray-100 transition-all font-prompt cursor-pointer">
-              ปฏิเสธ
-            </button>
-            <button onclick="acceptCookieConsent()" class="px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-[#008675] to-teal-700 hover:from-teal-700 hover:to-teal-800 rounded-xl  transition-all font-prompt cursor-pointer">
-              ยอมรับทั้งหมด
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-    document.body.insertAdjacentHTML("beforeend", bannerHTML);
-  }
-
-  setTimeout(() => {
-    const banner = document.getElementById("cookie-consent-banner");
-    if (banner) {
-      banner.classList.remove("translate-y-24", "opacity-0", "pointer-events-none");
-    }
-  }, 300);
-}
-
-window.acceptCookieConsent = function () {
-  localStorage.setItem("ico_cookie_consent", "accepted");
-  const banner = document.getElementById("cookie-consent-banner");
-  if (banner) {
-    banner.classList.add("translate-y-24", "opacity-0", "pointer-events-none");
-    setTimeout(() => banner.remove(), 600);
-  }
-};
-
-window.declineCookieConsent = function () {
-  localStorage.setItem("ico_cookie_consent", "declined");
-  const banner = document.getElementById("cookie-consent-banner");
-  if (banner) {
-    banner.classList.add("translate-y-24", "opacity-0", "pointer-events-none");
-    setTimeout(() => banner.remove(), 600);
-  }
-};

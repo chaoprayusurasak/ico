@@ -6,27 +6,30 @@
 window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPerPage = 6, breadcrumbStack = []) {
   let html = ``;
 
-  // Hide breadcrumbs line specifically on news_sbr page
-  const breadcrumbEl = document.getElementById("content-breadcrumb");
-  if (breadcrumbEl) {
-    breadcrumbEl.style.display = "none";
+  // Hide top page header banner on #news_sbr page
+  const headerBanner = document.getElementById("page-header-banner");
+  if (headerBanner) {
+    headerBanner.style.display = "none";
   }
-    let bHTML = `
-      <a href="#home" onclick="navigateToPublicBreadcrumb(-1)" class="hover:underline text-gray-600">หน้าหลัก</a>
-      <span class="text-gray-400">/</span>
-      <a href="#news_sbr" onclick="navigateToPublicBreadcrumb(-1)" class="hover:underline text-gray-600">ข่าวสารจาก สขร.</a>
+
+  // Render Subfolder inline breadcrumbs when inside a subfolder
+  if (breadcrumbStack && breadcrumbStack.length > 0) {
+    let bNav = `
+      <div class="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-800 mb-4 bg-slate-50/80 p-3 rounded-xl border border-slate-200">
+        <a href="#home" onclick="navigateToPublicBreadcrumb(-1)" class="hover:underline hover:text-[#065757] text-slate-900 font-bold">หน้าหลัก</a>
+        <span class="text-slate-400">/</span>
+        <a href="#news_sbr" onclick="navigateToPublicBreadcrumb(-1)" class="hover:underline hover:text-[#065757] text-slate-800">ข่าวสารจาก สขร.</a>
     `;
-    if (breadcrumbStack && breadcrumbStack.length > 0) {
-      breadcrumbStack.forEach((folder, idx) => {
-        bHTML += `
-          <span class="text-gray-400">/</span>
-          <button onclick="navigateToPublicBreadcrumb(${idx})" class="hover:underline ${idx === breadcrumbStack.length - 1 ? 'text-amber-600 font-semibold' : 'text-gray-600'}">
-            ${folder.title}
-          </button>
-        `;
-      });
-    }
-    breadcrumbEl.innerHTML = bHTML;
+    breadcrumbStack.forEach((folder, idx) => {
+      bNav += `
+        <span class="text-slate-400">/</span>
+        <button onclick="navigateToPublicBreadcrumb(${idx})" class="hover:underline hover:text-[#065757] ${idx === breadcrumbStack.length - 1 ? 'text-[#065757] font-bold' : 'text-slate-700 font-medium'}">
+          ${folder.title}
+        </button>
+      `;
+    });
+    bNav += `</div>`;
+    html += bNav;
   }
 
   if (!items || items.length === 0) {
@@ -48,8 +51,47 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
   // เพิ่มแบนเนอร์ด้านบนสุดสำหรับหน้า ข่าวสาร สขร. (เฉพาะหน้า 1 และไม่ได้อยู่ในโฟลเดอร์ย่อย)
   if (currentPage === 1 && (!breadcrumbStack || breadcrumbStack.length === 0)) {
     html += `
-      <div class="w-100 h-80 md:h-85 rounded-2xl overflow-hidden shadow-sm relative bg-gray-100 mb-4">
-        <video src="./assets/Man_in_uniform_and_statue_202607091447.mp4" class="w-full h-80 object-cover object-top" autoplay loop muted playsinline></video>
+      <div class="relative w-full pt-10 sm:pt-14 md:pt-16 pb-2 mb-4 sm:mb-6 overflow-visible">
+        <div class="group relative w-full h-36 sm:h-44 md:h-52 rounded-2xl md:rounded-3xl bg-gradient-to-r from-[#eef4f3] via-slate-50 to-[#f3f8f7] border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_45px_rgba(6,87,87,0.18)] hover:border-[#065757]/30 transition-all duration-500 flex items-center justify-between cursor-pointer select-none overflow-visible">
+          
+          <!-- Left Unified Green Backdrop Behind Portrait (Continuous angled polygon, no white gaps) -->
+          <div class="absolute inset-y-0 left-0 w-48 sm:w-64 md:w-80 bg-[#065757] rounded-l-2xl md:rounded-l-3xl overflow-hidden pointer-events-none"
+               style="clip-path: polygon(0 0, 100% 0, calc(100% - 40px) 100%, 0 100%); -webkit-clip-path: polygon(0 0, 100% 0, calc(100% - 40px) 100%, 0 100%);">
+            <div class="absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-transparent"></div>
+          </div>
+
+          <!-- Popping Out Person Image (Upper head pops out top, body neatly clipped to card frame at bottom/left) -->
+          <div class="absolute inset-y-0 left-0 w-44 sm:w-64 md:w-80 pointer-events-none z-20 overflow-visible"
+               style="clip-path: inset(-160px 0px 0px 0px round 24px 0 0 24px); -webkit-clip-path: inset(-160px 0px 0px 0px round 24px 0 0 24px);">
+            <img src="./assets/นายก.png" alt="นายกเทศมนตรี" 
+                 class="absolute bottom-0 left-2 sm:left-6 md:left-8 h-[125%] sm:h-[135%] md:h-[142%] max-w-none object-contain object-bottom filter drop-shadow-[0_10px_16px_rgba(0,0,0,0.25)] group-hover:scale-105 group-hover:-translate-y-1.5 transition-transform duration-500 ease-out origin-bottom">
+          </div>
+
+          <!-- Spacer so right content doesn't collide with person portrait -->
+          <div class="w-32 sm:w-52 md:w-64 flex-shrink-0 pointer-events-none"></div>
+
+          <!-- Title Content on Right -->
+          <div class="relative z-10 flex-1 flex flex-col justify-center items-center px-4 sm:px-8 text-center">
+            <span class="text-[10px] sm:text-xs md:text-sm font-extrabold tracking-widest text-[#05afae] uppercase mb-1 drop-shadow-xs">
+              OIC NEWS & ANNOUNCEMENTS
+            </span>
+            <h2 class="text-xl sm:text-3xl md:text-4xl lg:text-[44px] font-black text-[#065757] tracking-tight leading-none uppercase group-hover:text-[#05afae] transition-colors duration-300">
+              ข่าวสารจาก สขร
+            </h2>
+            <p class="text-[11px] sm:text-xs md:text-sm font-semibold text-slate-500 mt-1 sm:mt-2 hidden sm:block">
+              ศูนย์ข้อมูลข่าวสารเทศบาลนครเจ้าพระยาสุรศักดิ์
+            </p>
+          </div>
+
+          <!-- Decorative Right Colored Border Accent -->
+          <div class="absolute right-0 top-0 bottom-0 w-2.5 sm:w-3.5 bg-gradient-to-b from-[#05afae] to-[#065757] rounded-r-2xl md:rounded-r-3xl"></div>
+
+          <!-- Pin Overlay on the Right Corner/Edge (assets/ปัก.png) -->
+          <div class="absolute -top-8 sm:-top-11 md:-top-13 -right-2 sm:-right-4 md:-right-5 z-30 pointer-events-none select-none">
+            <img src="./assets/ปัก.png" alt="หมุดปัก" 
+                 class="w-16 sm:w-24 md:w-28 h-auto object-contain -scale-x-100 filter drop-shadow-[0_12px_20px_rgba(0,0,0,0.32)] group-hover:-rotate-12 group-hover:-scale-x-110 group-hover:scale-y-110 transition-transform duration-500 ease-out origin-center">
+          </div>
+        </div>
       </div>
     `;
   }

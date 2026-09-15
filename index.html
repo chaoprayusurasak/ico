@@ -77,13 +77,15 @@
 
   <div class="parent">
     <main class="content">
-      <!-- Page Header Banner (Proportional Typographic Hierarchy) -->
-      <div id="page-header-banner" class="bg-[#E9ECEF] border border-gray-300/60 rounded-xl px-5 py-3.5 md:px-7 md:py-4.5 mb-3 shadow-2xs">
-        <h1 class="content-title text-lg sm:text-xl md:text-2xl font-bold text-[#1F1F1F] leading-snug m-0">หน้าแรก</h1>
-        <div id="content-breadcrumb" class="text-xs sm:text-sm text-gray-500 font-normal mt-1 flex items-center gap-1.5 flex-wrap">
-          <a href="#home" onclick="navigateToPublicBreadcrumb(-1)" class="hover:underline text-gray-600 font-medium">หน้าหลัก</a>
-          <span class="text-gray-400 font-light">/</span>
-          <span id="breadcrumb-current" class="text-gray-600 font-normal">หน้าแรก</span>
+      <!-- Page Header Banner (Frameless Typography, Left-Aligned, Green Title + Black Breadcrumb) -->
+      <div id="page-header-banner" class="w-full bg-transparent border-0 shadow-none px-2 sm:px-4 py-3 sm:py-5 mb-2 text-left flex flex-col items-start justify-start font-prompt">
+        <h1 class="content-title text-2xl sm:text-3xl md:text-4xl lg:text-[38px] font-black text-[#008675] tracking-tight leading-tight m-0 text-left">
+          หน้าแรก
+        </h1>
+        <div id="content-breadcrumb" class="text-xs sm:text-sm text-slate-900 font-semibold mt-1.5 flex items-center justify-start gap-1.5 flex-wrap">
+          <a href="#home" onclick="navigateToPublicBreadcrumb(-1)" class="hover:underline hover:text-[#008675] text-slate-900 font-bold">หน้าหลัก</a>
+          <span class="text-slate-600 font-normal">/</span>
+          <span id="breadcrumb-current" class="text-slate-900 font-bold">หน้าแรก</span>
         </div>
       </div>
 
@@ -94,7 +96,7 @@
       </div>
 
       <!-- ข้อมูลที่จะแสดงหลังโหลดเสร็จ (ซ่อนไว้ก่อนด้วย display: none) -->
-      <div class="content-box p-0 overflow-hidden rounded-3xl" id="page-content" style="display: none;">
+      <div class="content-box p-0 overflow-visible rounded-3xl" id="page-content" style="display: none;">
         <div class="relative w-full bg-gradient-to-b overflow-hidden py-8 px-4 sm:px-6 select-none">
           <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
 
@@ -115,11 +117,11 @@
               </div>
             </div>
 
-            <!-- Right Column: Floating Island Map (land.png) -->
+            <!-- Right Column: Floating Island Map (1.svg) -->
             <div class="lg:col-span-8 relative w-full flex justify-center items-center">
               <div class="relative w-full max-w-5xl animate-float-island">
                 <!-- Base Map Image -->
-                <img src="./assets/land.png" alt="เทศบาลนครเจ้าพระยาสุรศักดิ์ Landmark Map"
+                <img src="./assets/1.svg" alt="เทศบาลนครเจ้าพระยาสุรศักดิ์ Landmark Map"
                   class="w-full h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,40,80,0.35)] rounded-2xl">
 
                 <!-- INTERACTIVE LANDMARK PINS -->

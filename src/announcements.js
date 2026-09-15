@@ -10,15 +10,15 @@ window.renderAnnouncementsView = function (container, items, currentPage = 1, it
   const breadcrumbEl = document.getElementById("content-breadcrumb");
   if (breadcrumbEl) {
     let bHTML = `
-      <a href="#home" onclick="navigateToPublicBreadcrumb(-1)" class="hover:underline text-gray-600">หน้าหลัก</a>
-      <span class="text-gray-400">/</span>
-      <a href="#announcements" onclick="navigateToPublicBreadcrumb(-1)" class="hover:underline text-gray-600">ประกาศล่าสุด</a>
+      <a href="#home" onclick="navigateToPublicBreadcrumb(-1)" class="hover:underline hover:text-[#008675] text-slate-900 font-bold">หน้าหลัก</a>
+      <span class="text-slate-600 font-normal">/</span>
+      <a href="#announcements" onclick="navigateToPublicBreadcrumb(-1)" class="hover:underline hover:text-[#008675] ${breadcrumbStack && breadcrumbStack.length > 0 ? 'text-slate-800 font-medium' : 'text-slate-900 font-bold'}">ประกาศล่าสุด</a>
     `;
     if (breadcrumbStack && breadcrumbStack.length > 0) {
       breadcrumbStack.forEach((folder, idx) => {
         bHTML += `
-          <span class="text-gray-400">/</span>
-          <button onclick="navigateToPublicBreadcrumb(${idx})" class="hover:underline ${idx === breadcrumbStack.length - 1 ? 'text-amber-600 font-semibold' : 'text-gray-600'}">
+          <span class="text-slate-600 font-normal">/</span>
+          <button onclick="navigateToPublicBreadcrumb(${idx})" class="hover:underline hover:text-[#008675] ${idx === breadcrumbStack.length - 1 ? 'text-[#008675] font-bold' : 'text-slate-800 font-medium'}">
             ${folder.title}
           </button>
         `;
