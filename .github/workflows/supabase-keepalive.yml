@@ -19,6 +19,8 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
+          # Accept a Project URL with or without a trailing slash.
+          SUPABASE_URL="${SUPABASE_URL%/}"
           # Keep the Supabase response body in the Actions log when a request fails.
           curl --fail-with-body --silent --show-error \
             "${SUPABASE_URL}/rest/v1/items?select=id&limit=1" \
