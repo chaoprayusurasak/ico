@@ -19,7 +19,8 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          curl --fail --silent --show-error \
+          # Keep the Supabase response body in the Actions log when a request fails.
+          curl --fail-with-body --silent --show-error \
             "${SUPABASE_URL}/rest/v1/items?select=id&limit=1" \
             -H "apikey: ${SUPABASE_ANON_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_ANON_KEY}"
