@@ -43,9 +43,20 @@
   <script src="./src/config.js"></script>
 
   <style>
+    :root {
+      --admin-sidebar-width: 17rem;
+      --admin-ink: #17211f;
+      --admin-muted: #64716e;
+      --admin-border: #e5ebe9;
+      --admin-surface: #ffffff;
+      --admin-sidebar-bg: #f7faf9;
+      --admin-accent: #008675;
+      --admin-accent-soft: #e7f5f1;
+    }
+
     body {
       font-family: 'Kanit', sans-serif !important;
-      background: #F8FAFC;
+      background: #f4f7f6;
     }
 
     /* Custom Scrollbars */
@@ -65,6 +76,233 @@
 
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(0, 134, 117, 0.4);
+    }
+
+    #admin-dashboard {
+      background: #f4f7f6;
+      color: var(--admin-ink);
+    }
+
+    #admin-dashboard > header {
+      height: 4.25rem;
+      background: rgba(255, 255, 255, 0.94);
+      border-color: var(--admin-border);
+      box-shadow: 0 1px 2px rgba(23, 33, 31, 0.04);
+      backdrop-filter: blur(14px);
+    }
+
+    #admin-dashboard > header input {
+      background: #f5f8f7;
+      border-color: var(--admin-border);
+      border-radius: 0.55rem;
+    }
+
+    #admin-dashboard > header a[href="./admin.html"] > div {
+      border-radius: 0.6rem;
+      background: var(--admin-accent-soft);
+      border-color: #c8e7df;
+    }
+
+    #admin-dashboard > header a[href="./admin.html"] > div + div > div:first-child {
+      color: var(--admin-ink);
+      letter-spacing: 0.04em;
+    }
+
+    #admin-sidebar {
+      width: var(--admin-sidebar-width);
+      background: var(--admin-sidebar-bg);
+      color: var(--admin-ink);
+      border-right: 1px solid var(--admin-border);
+      padding: 0.85rem;
+      box-shadow: none;
+    }
+
+    #admin-sidebar > div:first-child {
+      border-color: var(--admin-border);
+    }
+
+    #admin-sidebar > div:first-child > div:first-child {
+      color: var(--admin-ink);
+      letter-spacing: 0.04em;
+    }
+
+    #admin-sidebar > div:first-child span {
+      background: var(--admin-accent-soft);
+      color: var(--admin-accent);
+      border-color: #c8e7df;
+    }
+
+    #admin-sidebar input {
+      background: #fff;
+      color: var(--admin-ink);
+      border-color: var(--admin-border);
+      border-radius: 0.55rem;
+    }
+
+    #admin-sidebar input::placeholder {
+      color: #9aa8a4;
+    }
+
+    #admin-sidebar #admin-categories {
+      gap: 0.15rem;
+      padding-right: 0.15rem;
+    }
+
+    #admin-sidebar #admin-categories > div {
+      background: transparent;
+      border-left: 2px solid #a9d9ce;
+      color: var(--admin-muted);
+      border-radius: 0;
+    }
+
+    #admin-sidebar #admin-categories details summary,
+    #admin-sidebar #admin-categories button[data-cat] {
+      color: #52615d;
+      border-radius: 0.5rem;
+      min-height: 2.15rem;
+    }
+
+    #admin-sidebar #admin-categories details summary:hover,
+    #admin-sidebar #admin-categories button[data-cat]:hover {
+      background: #edf5f2;
+      color: var(--admin-accent);
+    }
+
+    #admin-sidebar #admin-categories button[data-cat].bg-\[\#007062\],
+    #admin-sidebar #admin-categories button[data-cat].bg-\[\#007062\]:hover {
+      background: var(--admin-accent-soft) !important;
+      color: var(--admin-accent) !important;
+      font-weight: 600;
+      box-shadow: inset 2px 0 0 var(--admin-accent);
+    }
+
+    #admin-sidebar #admin-categories button[data-cat] i,
+    #admin-sidebar #admin-categories details summary i {
+      color: var(--admin-accent);
+    }
+
+    #admin-sidebar #admin-categories > details > div {
+      border-color: #d7e7e2;
+    }
+
+    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar {
+      width: 4.25rem;
+      padding-left: 0.65rem;
+      padding-right: 0.65rem;
+    }
+
+    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar > div:first-child,
+    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar > div:nth-child(2),
+    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar #admin-categories > div {
+      display: none;
+    }
+
+    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar details > div {
+      display: flex;
+      gap: 0.15rem;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar #admin-categories {
+      overflow-x: hidden;
+    }
+
+    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar details summary,
+    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar button[data-cat] {
+      justify-content: center;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+      font-size: 0;
+    }
+
+    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar details summary i,
+    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar button[data-cat] i {
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar details summary {
+      cursor: default;
+    }
+
+    #admin-dashboard.admin-sidebar-collapsed #btn-admin-sidebar-toggle i {
+      transform: rotate(180deg);
+    }
+
+    #btn-admin-sidebar-toggle i {
+      transition: transform 180ms ease;
+    }
+
+    #admin-dashboard > div > main {
+      background: #f4f7f6;
+      padding: 1.35rem clamp(1rem, 3vw, 2.25rem);
+    }
+
+    #active-category-title {
+      color: var(--admin-ink);
+      font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+      letter-spacing: -0.01em;
+    }
+
+    #items-list-container {
+      background: var(--admin-surface);
+      border: 1px solid var(--admin-border);
+      border-radius: 0.75rem;
+      padding: clamp(0.85rem, 2vw, 1.35rem);
+      box-shadow: 0 1px 2px rgba(23, 33, 31, 0.03);
+    }
+
+    #admin-breadcrumb {
+      background: #fff;
+      border-color: var(--admin-border);
+      border-radius: 0.55rem;
+      box-shadow: none;
+    }
+
+    #admin-dashboard button[id^="btn-"]:not(#btn-logout):not(#btn-mobile-sidebar-toggle):not(#btn-admin-sidebar-toggle) {
+      border-radius: 0.55rem;
+      box-shadow: none;
+    }
+
+    .admin-skeleton {
+      position: relative;
+      overflow: hidden;
+      background: #edf1f0;
+    }
+
+    .admin-skeleton::after {
+      position: absolute;
+      inset: 0;
+      content: "";
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72), transparent);
+      transform: translateX(-100%);
+      animation: admin-skeleton-shimmer 1.35s ease-in-out infinite;
+    }
+
+    @keyframes admin-skeleton-shimmer {
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      #admin-sidebar {
+        top: 4.25rem;
+        height: calc(100vh - 4.25rem);
+      }
+
+      #admin-dashboard > div {
+        min-height: calc(100vh - 4.25rem);
+      }
+    }
+
+    @media (max-width: 1023px) {
+      #admin-sidebar {
+        top: 4rem;
+        height: calc(100vh - 4rem);
+      }
     }
   </style>
 </head>
@@ -141,8 +379,14 @@
           <i class="fi fi-rr-menu-burger text-lg"></i>
         </button>
 
+        <button id="btn-admin-sidebar-toggle" onclick="toggleAdminSidebar()" title="ย่อหรือขยายเมนูด้านข้าง"
+          class="hidden lg:inline-flex p-2 rounded-lg text-gray-500 hover:bg-teal-50 hover:text-brand-teal transition-all cursor-pointer">
+          <i class="fi fi-rr-angle-left text-sm"></i>
+          <span class="sr-only">ย่อหรือขยายเมนูด้านข้าง</span>
+        </button>
+
         <a href="./admin.html" class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center p-1.5 shadow-2xs">
+          <div class="w-10 h-10 ">
             <img src="./assets/logo.png" alt="Logo" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/80x80?text=ICO'" />
           </div>
           <div class="hidden sm:block text-left">
@@ -152,15 +396,6 @@
         </a>
       </div>
 
-      <!-- Center: Search Input & View Live Site -->
-      <div class="flex items-center gap-3 flex-1 max-w-lg mx-2">
-        <div class="relative w-full">
-          <input type="text" id="admin-search-input" oninput="onAdminSearchInput(this.value)"
-            placeholder="ค้นหาข้อมูลหรือชื่อแฟ้มในระบบ..."
-            class="w-full pl-9 pr-4 py-2 bg-slate-100/80 border border-gray-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:border-brand-teal focus:bg-white focus:ring-2 focus:ring-brand-teal/10 transition-all">
-          <i class="fi fi-rr-search absolute left-3 top-2.5 text-gray-400 text-xs pointer-events-none"></i>
-        </div>
-      </div>
 
       <!-- Right Header Actions -->
       <div class="flex items-center gap-2.5 shrink-0">
@@ -172,22 +407,7 @@
           <i class="fi fi-rr-arrow-up-right text-[10px] opacity-70"></i>
         </a>
 
-        <!-- Today Date Pill Badge -->
-        <div class="hidden md:flex items-center gap-1.5 px-3 py-2 bg-slate-100/80 border border-gray-200 rounded-xl text-xs font-medium text-gray-600">
-          <i class="fi fi-rr-calendar text-brand-teal text-xs"></i>
-          <span id="admin-current-date">05 ส.ค. 2026</span>
-        </div>
 
-        <!-- Admin Profile Badge -->
-        <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-gray-200 rounded-xl">
-          <div class="w-7 h-7 rounded-lg bg-brand-teal text-white flex items-center justify-center font-bold text-xs shadow-2xs">
-            <i class="fi fi-rr-user"></i>
-          </div>
-          <div class="text-left hidden xl:block">
-            <div class="text-xs font-bold text-gray-800 leading-none">ผู้ดูแลระบบ</div>
-            <div id="admin-user-email" class="text-[10px] text-gray-500 font-medium leading-tight">admin@domain.com</div>
-          </div>
-        </div>
 
         <!-- Logout Button -->
         <button id="btn-logout" title="ออกจากระบบ"
@@ -208,11 +428,6 @@
       <aside id="admin-sidebar"
         class="fixed lg:sticky top-16 left-0 z-40 w-72 lg:w-80 xl:w-84 h-[calc(100vh-64px)] bg-[#1E293B] text-slate-100 border-r border-slate-700/80 p-4 flex flex-col gap-3 shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 shadow-2xl lg:shadow-none rounded-none overflow-hidden">
         
-        <!-- Sidebar Header Title & Filter Input -->
-        <div class="flex items-center justify-between pb-2 border-b border-slate-700/80 shrink-0">
-          <div class="text-xs font-bold text-teal-300 uppercase tracking-wider">หมวดหมู่ระบบ</div>
-          <span class="text-[10px] bg-slate-800 text-teal-200 px-2 py-0.5 rounded-full font-mono border border-slate-700">25+ หมวด</span>
-        </div>
 
         <div class="relative w-full shrink-0">
           <input type="text" id="sidebar-cat-search" oninput="filterSidebarNav(this.value)"
@@ -240,19 +455,10 @@
                 <span class="w-2.5 h-2.5 rounded-full bg-brand-teal shadow-2xs inline-block shrink-0"></span>
                 <h2 id="active-category-title" class="text-base sm:text-lg font-bold text-gray-900 leading-snug">กรุณาเลือกหัวข้อ...</h2>
               </div>
-              <p class="text-xs text-gray-500 mt-0.5 pl-4.5 font-normal">จัดการข้อมูล ข่าวสาร ประกาศ และไฟล์แนบประจำหมวดหมู่</p>
             </div>
 
             <!-- Action Toolbar Buttons (Uniform height h-10 & Distinct functional colors) -->
             <div class="flex items-center gap-2 flex-wrap">
-              <button id="btn-seed-executives"
-                class="hidden px-4 py-2.5 h-10 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer shrink-0">
-                <i class="fi fi-rr-cloud-download"></i> ดึงชุดข้อมูลผู้บริหารเริ่มต้น (10 รายชื่อ)
-              </button>
-              <button id="btn-seed-officers"
-                class="hidden px-4 py-2.5 h-10 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer shrink-0">
-                <i class="fi fi-rr-cloud-download"></i> ดึงชุดข้อมูลเจ้าหน้าที่เริ่มต้น (9 รายชื่อ 3 แถว)
-              </button>
               <button id="btn-seed-m91"
                 class="hidden px-4 py-2.5 h-10 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer shrink-0">
                 <i class="fi fi-rr-folder-add"></i> ดึงชุดข้อมูลเริ่มต้น ม.9(1) (26 รายการ)

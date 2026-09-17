@@ -54,7 +54,6 @@ window.renderEvalSummaryView = async function (container) {
               <span class="w-2.5 h-5 bg-[#008675] rounded-full inline-block"></span>
               <h3 class="font-medium text-sm sm:text-base text-gray-800">สัดส่วนระดับความพึงพอใจรวม</h3>
             </div>
-            <span class="text-xs text-gray-400 font-normal">Doughnut Chart</span>
           </div>
 
           <div class="relative w-full aspect-square max-h-72 mx-auto flex items-center justify-center py-2">
@@ -71,9 +70,8 @@ window.renderEvalSummaryView = async function (container) {
           <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
             <div class="flex items-center gap-2">
               <span class="w-2.5 h-5 bg-sky-600 rounded-full inline-block"></span>
-              <h3 class="font-medium text-sm sm:text-base text-gray-800">จำนวนผู้ประเมินแยกตามระดับ</h3>
+              <h3 class="font-medium text-sm sm:text-base text-gray-800">จำนวนผู้ประเมิน</h3>
             </div>
-            <span class="text-xs text-gray-400 font-normal">Bar Chart</span>
           </div>
 
           <div class="relative w-full h-64 sm:h-72 mx-auto flex items-center justify-center">
@@ -81,7 +79,7 @@ window.renderEvalSummaryView = async function (container) {
           </div>
 
           <div class="pt-4 border-t border-gray-100 text-xs text-gray-500 font-normal text-center">
-            สถิติอัปเดตแบบ Real-time จากผู้ใช้บริการทั้งหมด
+            สถิติผู้ใช้บริการทั้งหมด
           </div>
         </div>
 

@@ -56,7 +56,6 @@ window.renderEvalStatsView = async function (container) {
               <span class="w-2.5 h-5 bg-[#008675] rounded-full inline-block"></span>
               <h3 class="font-medium text-sm sm:text-base text-gray-800">ผู้เข้าชมเว็บไซต์</h3>
             </div>
-            <span class="text-xs text-gray-400 font-normal">Line Chart (7 วันล่าสุด)</span>
           </div>
 
           <div class="relative w-full h-64 sm:h-72 mx-auto">
@@ -71,7 +70,6 @@ window.renderEvalStatsView = async function (container) {
               <span class="w-2.5 h-5 bg-sky-600 rounded-full inline-block"></span>
               <h3 class="font-medium text-sm sm:text-base text-gray-800">สัดส่วนอุปกรณ์ผู้ใช้บริการจริง</h3>
             </div>
-            <span class="text-xs text-gray-400 font-normal">Device Distribution</span>
           </div>
 
           <div class="relative w-full aspect-square max-h-60 mx-auto flex items-center justify-center">
@@ -92,7 +90,6 @@ window.renderEvalStatsView = async function (container) {
             <i class="fi fi-rr-stats text-brand-teal text-lg"></i>
             <h3 class="font-medium text-sm sm:text-base text-gray-800">สถิติผู้เข้าชมเว็บไซต์ย้อนหลังรายเดือน (ปี 2569)</h3>
           </div>
-          <span class="text-xs text-gray-400 font-normal">Bar Chart</span>
         </div>
 
         <div class="relative w-full h-64 sm:h-72">
@@ -108,6 +105,10 @@ window.renderEvalStatsView = async function (container) {
 };
 
 async function recordAndLoadRealVisitorStats() {
+  if (window.visitorCounterPromise) {
+    await window.visitorCounterPromise;
+  }
+
   const sb = (typeof window !== "undefined" && window.supabase && typeof window.supabase.from === "function") ? window.supabase : (typeof supabase !== "undefined" ? supabase : null);
   
   const todayKey = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
@@ -142,11 +143,20 @@ async function recordAndLoadRealVisitorStats() {
 
   // Fetch ALL real visitor log records from Supabase
   let logs = [];
+  let totalVisitorCount = null;
   try {
     if (sb) {
-      const res = await sb.from("evaluations").select("*").eq("category", "visitor_log").order("created_at", { ascending: false });
-      if (!res.error && res.data) {
-        logs = res.data;
+      const [logsRes, totalRes] = await Promise.all([
+        sb.from("evaluations").select("*").eq("category", "visitor_log").order("created_at", { ascending: false }),
+        sb.from("items").select("description").eq("category", "site_stats").eq("title", "visitor_count").maybeSingle()
+      ]);
+
+      if (!logsRes.error && logsRes.data) logs = logsRes.data;
+      if (!totalRes.error && totalRes.data) {
+        const parsedTotal = parseInt(totalRes.data.description, 10);
+        if (Number.isFinite(parsedTotal) && parsedTotal > 0) {
+          totalVisitorCount = parsedTotal;
+        }
       }
     }
   } catch (err) {
@@ -154,7 +164,8 @@ async function recordAndLoadRealVisitorStats() {
   }
 
   // Calculate Real Statistics from Database
-  const totalCount = logs.length;
+  // The footer and this KPI must use the same site-wide counter.
+  const totalCount = totalVisitorCount || logs.length;
   let todayCount = 0;
   let monthCount = 0;
 
@@ -252,7 +263,7 @@ async function recordAndLoadRealVisitorStats() {
 
   // Update Footer Count with Real Count
   const footerTotal = document.getElementById("visitor-total");
-  if (footerTotal && totalCount > 0) {
+  if (footerTotal) {
     footerTotal.textContent = totalCount.toLocaleString("th-TH");
   }
 

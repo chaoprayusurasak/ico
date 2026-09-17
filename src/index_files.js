@@ -12,10 +12,10 @@ function renderIndexFilesView(container, items = []) {
   // 1. FIRST: Render uploaded items list for index_files if available
   if (items && items.length > 0) {
     html += `
-      <div class="bg-white border border-teal-900/10 rounded-3xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_15px_40px_rgba(0,134,117,0.08)] transition-all">
-        <div class="flex items-center justify-between gap-3 border-b border-gray-100 pb-4 mb-5">
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+        <div class="flex items-center justify-between gap-3 border-b border-slate-100 pb-4 mb-5">
           <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-2xl bg-teal-50 text-brand-teal flex items-center justify-center border border-teal-100 shadow-sm shrink-0">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center border border-slate-200 shrink-0">
               <dotlottie-wc src="./assets/icons/document.json" autoplay loop class="w-8 h-8"></dotlottie-wc>
             </div>
             <div>
@@ -24,7 +24,7 @@ function renderIndexFilesView(container, items = []) {
               </h3>
             </div>
           </div>
-          <span class="px-3 py-1 bg-teal-500/10 text-brand-teal font-bold text-xs rounded-full border border-teal-500/20 shrink-0">
+          <span class="px-2.5 py-1 bg-slate-100 text-slate-600 font-semibold text-xs rounded-md border border-slate-200 shrink-0">
             ${items.length} รายการ
           </span>
         </div>
@@ -35,26 +35,26 @@ function renderIndexFilesView(container, items = []) {
     items.forEach(item => {
       const formattedDate = item.created_at ? new Date(item.created_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
       html += `
-        <div class="group p-5 bg-gradient-to-b from-slate-50/80 to-white border border-gray-200/80 hover:border-brand-teal/40 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between gap-4">
+        <div class="group p-4 bg-white border border-slate-200 hover:border-slate-400 rounded-xl shadow-none hover:shadow-sm transition-all duration-200 flex flex-col justify-between gap-4">
           <div>
             <div class="flex items-center justify-between gap-2 mb-2">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-teal-50 text-brand-teal text-[11px] font-bold border border-teal-100">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-semibold border border-slate-200">
                 <i class="fi fi-rr-file-pdf text-xs"></i> แฟ้มดัชนีข่าวสาร
               </span>
               ${formattedDate ? `<span class="text-[11px] text-gray-400 font-medium flex items-center gap-1"><i class="fi fi-rr-calendar"></i> ${formattedDate}</span>` : ''}
             </div>
-            <h4 class="font-bold text-sm text-gray-800 group-hover:text-brand-teal leading-snug transition-colors">${item.title}</h4>
+            <h4 class="font-semibold text-sm text-slate-800 group-hover:text-slate-950 leading-snug transition-colors">${item.title}</h4>
             ${item.description ? `<p class="text-xs text-gray-500 mt-1.5 leading-relaxed line-clamp-2">${item.description}</p>` : ''}
           </div>
 
-          <div class="flex items-center gap-2 pt-3 border-t border-gray-100">
+          <div class="flex items-center gap-2 pt-3 border-t border-slate-100">
             ${item.file_url ? `
-              <button onclick="downloadFile(event, '${(item.file_url || '').replace(/'/g, "\\'")}', '${(item.title || '').replace(/'/g, "\\'")}', '${item.id || ''}')" class="px-4 py-2 bg-gradient-to-r from-brand-teal to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-bold text-xs rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer">
+              <button onclick="downloadFile(event, '${(item.file_url || '').replace(/'/g, "\\'")}', '${(item.title || '').replace(/'/g, "\\'")}', '${item.id || ''}')" class="px-3.5 py-2 bg-slate-900 hover:bg-slate-700 text-white font-semibold text-xs rounded-lg transition-colors flex items-center gap-2 cursor-pointer">
                 <i class="fi fi-rr-download text-xs"></i> ดาวน์โหลดเอกสาร
               </button>
             ` : ''}
             ${item.link ? `
-              <a href="${item.link}" target="_blank" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition-all flex items-center gap-2 cursor-pointer">
+              <a href="${item.link}" target="_blank" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition-colors flex items-center gap-2 cursor-pointer">
                 <i class="fi fi-rr-link text-xs"></i> เปิดลิงก์เอกสาร
               </a>
             ` : ''}
@@ -72,19 +72,19 @@ function renderIndexFilesView(container, items = []) {
   // 2. SECOND: Section 7 Category Cards (ม.7) & Section 9 Category Cards (ม.9)
   html += `
       <!-- Section 7 Category Cards -->
-      <div class="bg-white border border-teal-900/10 rounded-3xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.03)] space-y-4">
-        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <h3 class="font-bold text-gray-900 text-base flex items-center gap-2.5">
-            <span class="w-3.5 h-3.5 rounded-full bg-teal-600 shadow-sm inline-block"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-slate-900 inline-block"></span>
             ดัชนีข่าวสารตามมาตรา 7
           </h3>
           <span class="text-xs text-gray-400 font-normal">4 หมวดหมู่ย่อย</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <a href="#m7_1" class="p-4 bg-slate-50/70 border border-gray-200/70 hover:border-brand-teal hover:bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-between group">
+          <a href="#m7_1" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex items-center justify-between group">
             <div class="flex items-center gap-3.5">
-              <div class="w-11 h-11 rounded-2xl bg-brand-teal/10 text-brand-teal flex items-center justify-center font-extrabold text-sm shrink-0 group-hover:bg-brand-teal group-hover:text-white transition-colors shadow-sm">
+              <div class="w-10 h-10 rounded-xl bg-white text-slate-700 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-200 group-hover:bg-slate-900 group-hover:text-white transition-colors">
                 7(1)
               </div>
               <div>
@@ -95,9 +95,9 @@ function renderIndexFilesView(container, items = []) {
             <i class="fi fi-rr-arrow-right text-gray-300 group-hover:text-brand-teal group-hover:translate-x-1 transition-all text-sm"></i>
           </a>
 
-          <a href="#m7_2" class="p-4 bg-slate-50/70 border border-gray-200/70 hover:border-brand-teal hover:bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-between group">
+          <a href="#m7_2" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex items-center justify-between group">
             <div class="flex items-center gap-3.5">
-              <div class="w-11 h-11 rounded-2xl bg-brand-teal/10 text-brand-teal flex items-center justify-center font-extrabold text-sm shrink-0 group-hover:bg-brand-teal group-hover:text-white transition-colors shadow-sm">
+              <div class="w-10 h-10 rounded-xl bg-white text-slate-700 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-200 group-hover:bg-slate-900 group-hover:text-white transition-colors">
                 7(2)
               </div>
               <div>
@@ -108,9 +108,9 @@ function renderIndexFilesView(container, items = []) {
             <i class="fi fi-rr-arrow-right text-gray-300 group-hover:text-brand-teal group-hover:translate-x-1 transition-all text-sm"></i>
           </a>
 
-          <a href="#m7_3" class="p-4 bg-slate-50/70 border border-gray-200/70 hover:border-brand-teal hover:bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-between group">
+          <a href="#m7_3" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex items-center justify-between group">
             <div class="flex items-center gap-3.5">
-              <div class="w-11 h-11 rounded-2xl bg-brand-teal/10 text-brand-teal flex items-center justify-center font-extrabold text-sm shrink-0 group-hover:bg-brand-teal group-hover:text-white transition-colors shadow-sm">
+              <div class="w-10 h-10 rounded-xl bg-white text-slate-700 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-200 group-hover:bg-slate-900 group-hover:text-white transition-colors">
                 7(3)
               </div>
               <div>
@@ -121,9 +121,9 @@ function renderIndexFilesView(container, items = []) {
             <i class="fi fi-rr-arrow-right text-gray-300 group-hover:text-brand-teal group-hover:translate-x-1 transition-all text-sm"></i>
           </a>
 
-          <a href="#m7_4" class="p-4 bg-slate-50/70 border border-gray-200/70 hover:border-brand-teal hover:bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-between group">
+          <a href="#m7_4" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex items-center justify-between group">
             <div class="flex items-center gap-3.5">
-              <div class="w-11 h-11 rounded-2xl bg-brand-teal/10 text-brand-teal flex items-center justify-center font-extrabold text-sm shrink-0 group-hover:bg-brand-teal group-hover:text-white transition-colors shadow-sm">
+              <div class="w-10 h-10 rounded-xl bg-white text-slate-700 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-200 group-hover:bg-slate-900 group-hover:text-white transition-colors">
                 7(4)
               </div>
               <div>
@@ -137,46 +137,46 @@ function renderIndexFilesView(container, items = []) {
       </div>
 
       <!-- Section 9 Category Cards -->
-      <div class="bg-white border border-teal-900/10 rounded-3xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.03)] space-y-4">
-        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <h3 class="font-bold text-gray-900 text-base flex items-center gap-2.5">
-            <span class="w-3.5 h-3.5 rounded-full bg-teal-600 shadow-sm inline-block"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-slate-900 inline-block"></span>
             ดัชนีข่าวสารตามมาตรา 9
           </h3>
           <span class="text-xs text-gray-400 font-normal">8 หมวดหมู่ย่อย</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-          <a href="#m9_1" class="p-4 bg-slate-50/70 border border-gray-200/70 hover:border-brand-teal hover:bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-2 group">
-            <span class="text-xs font-bold text-brand-teal bg-teal-50 px-2 py-0.5 rounded-md w-max border border-teal-100">ม.9 (1)</span>
+          <a href="#m9_1" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
+            <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (1)</span>
             <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">ผลการพิจารณาอนุมัติ</span>
           </a>
-          <a href="#m9_2" class="p-4 bg-slate-50/70 border border-gray-200/70 hover:border-brand-teal hover:bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-2 group">
-            <span class="text-xs font-bold text-brand-teal bg-teal-50 px-2 py-0.5 rounded-md w-max border border-teal-100">ม.9 (2)</span>
+          <a href="#m9_2" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
+            <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (2)</span>
             <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">นโยบายและการตีความ</span>
           </a>
-          <a href="#m9_3" class="p-4 bg-slate-50/70 border border-gray-200/70 hover:border-brand-teal hover:bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-2 group">
-            <span class="text-xs font-bold text-brand-teal bg-teal-50 px-2 py-0.5 rounded-md w-max border border-teal-100">ม.9 (3)</span>
+          <a href="#m9_3" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
+            <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (3)</span>
             <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">แผนงาน/โครงการงบประมาณ</span>
           </a>
-          <a href="#m9_4" class="p-4 bg-slate-50/70 border border-gray-200/70 hover:border-brand-teal hover:bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-2 group">
-            <span class="text-xs font-bold text-brand-teal bg-teal-50 px-2 py-0.5 rounded-md w-max border border-teal-100">ม.9 (4)</span>
+          <a href="#m9_4" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
+            <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (4)</span>
             <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">คู่มือและคำสั่งการทำงาน</span>
           </a>
-          <a href="#m9_5" class="p-4 bg-slate-50/70 border border-gray-200/70 hover:border-brand-teal hover:bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-2 group">
-            <span class="text-xs font-bold text-brand-teal bg-teal-50 px-2 py-0.5 rounded-md w-max border border-teal-100">ม.9 (5)</span>
+          <a href="#m9_5" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
+            <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (5)</span>
             <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">สิ่งพิมพ์ราชการ</span>
           </a>
-          <a href="#m9_6" class="p-4 bg-slate-50/70 border border-gray-200/70 hover:border-brand-teal hover:bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-2 group">
-            <span class="text-xs font-bold text-brand-teal bg-teal-50 px-2 py-0.5 rounded-md w-max border border-teal-100">ม.9 (6)</span>
+          <a href="#m9_6" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
+            <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (6)</span>
             <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">สัญญาสัมปทาน / ร่วมทุน</span>
           </a>
-          <a href="#m9_7" class="p-4 bg-slate-50/70 border border-gray-200/70 hover:border-brand-teal hover:bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-2 group">
-            <span class="text-xs font-bold text-brand-teal bg-teal-50 px-2 py-0.5 rounded-md w-max border border-teal-100">ม.9 (7)</span>
+          <a href="#m9_7" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
+            <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (7)</span>
             <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">มติคณะรัฐมนตรี / คำสั่ง</span>
           </a>
-          <a href="#m9_8" class="p-4 bg-slate-50/70 border border-gray-200/70 hover:border-brand-teal hover:bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col justify-between gap-2 group">
-            <span class="text-xs font-bold text-brand-teal bg-teal-50 px-2 py-0.5 rounded-md w-max border border-teal-100">ม.9 (8)</span>
+          <a href="#m9_8" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
+            <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (8)</span>
             <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">ข้อมูลข่าวสารอื่นที่กำหนด</span>
           </a>
         </div>
@@ -185,6 +185,8 @@ function renderIndexFilesView(container, items = []) {
   `;
 
   container.innerHTML = html;
+  const headerBanner = document.getElementById("page-header-banner");
+  if (headerBanner) headerBanner.classList.remove("route-loading");
 }
 
 window.renderIndexFilesView = renderIndexFilesView;

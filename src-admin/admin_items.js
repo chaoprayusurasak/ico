@@ -133,18 +133,43 @@ window.seedM92Items = async function () {
   }
 };
 
+function renderAdminItemsSkeleton() {
+  const skeletonRows = Array.from({ length: 6 }, (_, index) => `
+    <div class="flex items-center gap-3 border-b border-gray-100 px-3 py-3 last:border-b-0">
+      <div class="admin-skeleton h-8 w-8 shrink-0 rounded-md"></div>
+      <div class="min-w-0 flex-1 space-y-2">
+        <div class="admin-skeleton h-3.5 w-2/5 rounded"></div>
+        <div class="admin-skeleton h-3 w-3/5 rounded"></div>
+      </div>
+      <div class="admin-skeleton hidden h-6 w-20 rounded-md sm:block"></div>
+      <div class="admin-skeleton h-7 w-16 rounded-md"></div>
+    </div>
+  `).join("");
+
+  return `
+    <div class="w-full overflow-hidden rounded-xl border border-gray-200 bg-white">
+      <div class="flex items-center gap-3 border-b border-gray-200 bg-gray-50 px-3 py-3">
+        <div class="admin-skeleton h-3 w-8 rounded"></div>
+        <div class="admin-skeleton h-3 w-1/3 rounded"></div>
+        <div class="admin-skeleton ml-auto h-3 w-20 rounded"></div>
+        <div class="admin-skeleton h-3 w-16 rounded"></div>
+      </div>
+      ${skeletonRows}
+    </div>
+    <div class="mt-3 flex items-center justify-center gap-2 text-xs text-gray-400" aria-live="polite">
+      <span class="admin-skeleton h-2 w-2 rounded-full"></span>
+      กำลังโหลดข้อมูล...
+    </div>
+  `;
+}
+
 window.loadItems = async function () {
   const container = document.getElementById("items-list-container");
   if (typeof renderAdminBreadcrumb === 'function') renderAdminBreadcrumb();
 
   if (!container) return;
 
-  container.innerHTML = `
-    <div class="flex flex-col items-center justify-center py-16 gap-3 text-gray-500">
-      <div class="w-8 h-8 border-3 border-t-brand-teal rounded-full animate-spin"></div>
-      <p class="text-xs font-semibold">กำลังโหลดข้อมูลรายการ...</p>
-    </div>
-  `;
+  container.innerHTML = renderAdminItemsSkeleton();
 
   // Handle Q&A Forum Category (eval_faq) in Admin
   if (window.activeCategory === "eval_faq") {
@@ -256,15 +281,10 @@ window.renderItemsTable = function (items) {
 
   if (isOfficerMode) {
     html += `
-      <div class="mb-4 p-3.5 bg-teal-50/70 border border-teal-200/80 rounded-2xl flex flex-col gap-3 text-xs text-brand-teal shadow-2xs w-full min-w-0">
-        <div class="flex items-center gap-2">
-          <i class="fi fi-rr-apps-sort text-sm text-brand-teal"></i>
-          <span class="font-bold text-gray-800 text-xs sm:text-sm">ตั้งค่าจำนวนการ์ดแสดงผลในแต่ละแถว (หน้าเจ้าหน้าที่ผู้รับผิดชอบ)</span>
-        </div>
-        <div class="flex flex-wrap items-center gap-2.5 pt-2.5 border-t border-teal-200/60 w-full">
-          <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-teal-200 shadow-2xs">
-            <span class="font-bold text-teal-800 text-xs">แถวที่ 1:</span>
-            <select id="officer-row1-count" onchange="saveOfficerRowConfig()" class="bg-teal-50 text-teal-900 font-bold text-xs py-1 px-2 rounded-lg border border-teal-300 focus:outline-none cursor-pointer">
+        <div class="flex flex-wrap items-center gap-2.5 w-full mt-0 mb-2.5">
+          <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200">
+            <span class="font-semibold text-gray-700 text-xs">แถวที่ 1:</span>
+            <select id="officer-row1-count" onchange="saveOfficerRowConfig()" class="bg-gray-50 text-gray-800 font-semibold text-xs py-1 px-2 rounded-md border border-gray-200 focus:outline-none focus:border-gray-400 cursor-pointer">
               <option value="1" ${rowConfig.row1 === 1 ? 'selected' : ''}>1 คน (ประธาน/หัวหน้าใหญ่)</option>
               <option value="2" ${rowConfig.row1 === 2 ? 'selected' : ''}>2 คน</option>
               <option value="3" ${rowConfig.row1 === 3 ? 'selected' : ''}>3 คน</option>
@@ -273,9 +293,9 @@ window.renderItemsTable = function (items) {
             </select>
           </div>
 
-          <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-emerald-200 shadow-2xs">
-            <span class="font-bold text-emerald-800 text-xs">แถวที่ 2:</span>
-            <select id="officer-row2-count" onchange="saveOfficerRowConfig()" class="bg-emerald-50 text-emerald-900 font-bold text-xs py-1 px-2 rounded-lg border border-emerald-300 focus:outline-none cursor-pointer">
+          <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200">
+            <span class="font-semibold text-gray-700 text-xs">แถวที่ 2:</span>
+            <select id="officer-row2-count" onchange="saveOfficerRowConfig()" class="bg-gray-50 text-gray-800 font-semibold text-xs py-1 px-2 rounded-md border border-gray-200 focus:outline-none focus:border-gray-400 cursor-pointer">
               <option value="1" ${rowConfig.row2 === 1 ? 'selected' : ''}>1 คน</option>
               <option value="2" ${rowConfig.row2 === 2 ? 'selected' : ''}>2 คน</option>
               <option value="3" ${rowConfig.row2 === 3 ? 'selected' : ''}>3 คน</option>
@@ -285,9 +305,9 @@ window.renderItemsTable = function (items) {
             </select>
           </div>
 
-          <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-blue-200 shadow-2xs">
-            <span class="font-bold text-blue-800 text-xs">แถวที่ 3:</span>
-            <select id="officer-row3-count" onchange="saveOfficerRowConfig()" class="bg-blue-50 text-blue-900 font-bold text-xs py-1 px-2 rounded-lg border border-blue-300 focus:outline-none cursor-pointer">
+          <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200">
+            <span class="font-semibold text-gray-700 text-xs">แถวที่ 3:</span>
+            <select id="officer-row3-count" onchange="saveOfficerRowConfig()" class="bg-gray-50 text-gray-800 font-semibold text-xs py-1 px-2 rounded-md border border-gray-200 focus:outline-none focus:border-gray-400 cursor-pointer">
               <option value="1" ${rowConfig.row3 === 1 ? 'selected' : ''}>1 คน</option>
               <option value="2" ${rowConfig.row3 === 2 ? 'selected' : ''}>2 คน</option>
               <option value="3" ${rowConfig.row3 === 3 ? 'selected' : ''}>3 คน</option>
@@ -360,11 +380,11 @@ window.renderItemsTable = function (items) {
     let rowBadgeHtml = "";
     if (isOfficerMode) {
       if (idx < r1End) {
-        rowBadgeHtml = `<span class="px-2 py-0.5 rounded-lg bg-teal-100 text-teal-800 font-bold text-xs border border-teal-200 inline-flex items-center gap-1"><i class="fi fi-rr-crown text-amber-500 text-[10px]"></i> แถว 1 (${idx + 1})</span>`;
+        rowBadgeHtml = `<span class="px-2 py-0.5 rounded-md bg-gray-100 text-gray-700 font-semibold text-xs border border-gray-200 inline-flex items-center gap-1"><i class="fi fi-rr-crown text-gray-500 text-[10px]"></i> แถว 1 (${idx + 1})</span>`;
       } else if (idx < r2End) {
-        rowBadgeHtml = `<span class="px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 font-semibold text-xs border border-emerald-200">แถว 2 (${idx - r1End + 1})</span>`;
+        rowBadgeHtml = `<span class="px-2 py-0.5 rounded-md bg-gray-50 text-gray-600 font-semibold text-xs border border-gray-200">แถว 2 (${idx - r1End + 1})</span>`;
       } else {
-        rowBadgeHtml = `<span class="px-2 py-0.5 rounded-lg bg-blue-50 text-blue-700 font-semibold text-xs border border-blue-200">แถว 3 (${idx - r2End + 1})</span>`;
+        rowBadgeHtml = `<span class="px-2 py-0.5 rounded-md bg-white text-gray-500 font-semibold text-xs border border-gray-200">แถว 3 (${idx - r2End + 1})</span>`;
       }
     }
 
@@ -648,7 +668,7 @@ window.setupFormListeners = function () {
         alert("ไม่สามารถดึงชุดข้อมูลได้: " + e.message);
       } finally {
         btnSeed.disabled = false;
-        btnSeed.innerHTML = `<i class="fi fi-rr-cloud-download"></i> ดึงชุดข้อมูลผู้บริหารเริ่มต้น (10 รายชื่อ)`;
+        btnSeed.innerHTML = `<i class="fi fi-rr-cloud-download"></i> ดึงชุดข้อมูลผู้บริหารเริ่มต้น (10 รายชื่เทอ)`;
       }
     });
   }

@@ -58,7 +58,7 @@ document.addEventListener("componentsLoaded", () => {
   handleRouting();
 
   // Initialize Visitor Counter Statistics
-  initVisitorCounter();
+  window.visitorCounterPromise = initVisitorCounter();
 
   // Initialize Cookie Consent Banner
   initCookieConsent();
@@ -189,6 +189,16 @@ function typewriterEffect(element, text, speed = 55) {
 let currentPublicParentId = null;
 let publicBreadcrumbStack = []; // [{ id, title }]
 
+function revealRoutedContent() {
+  const headerBanner = document.getElementById("page-header-banner");
+  const boxEl = document.querySelector(".content-box");
+  if (headerBanner) headerBanner.classList.remove("route-loading");
+  if (boxEl) {
+    boxEl.classList.remove("opacity-50", "pointer-events-none");
+    boxEl.classList.add("is-ready");
+  }
+}
+
 // Route handler
 async function handleRouting() {
   let hash = window.location.hash.replace("#", "");
@@ -209,10 +219,16 @@ async function handleRouting() {
 
   if (!titleEl || !boxEl) return;
 
-  // Hide page loader if visible and show content box immediately
+  // Fade from the loading placeholder to the routed content in one place.
   const pageLoader = document.getElementById("page-loader");
-  if (pageLoader) pageLoader.style.display = "none";
+  if (pageLoader) {
+    pageLoader.classList.add("is-hidden");
+    window.setTimeout(() => {
+      pageLoader.style.display = "none";
+    }, 180);
+  }
   boxEl.style.display = "";
+  window.setTimeout(() => boxEl.classList.add("is-ready"), 0);
 
   // Manage top header banner display (Hide on home, news_sbr, public_complaint, and evaluation group pages)
   const headerBanner = document.getElementById("page-header-banner");
@@ -222,6 +238,7 @@ async function handleRouting() {
     } else {
       headerBanner.style.display = "";
     }
+    headerBanner.classList.toggle("route-loading", hash !== "home" && hash !== "");
   }
 
   // Manage breadcrumb text line visibility
@@ -244,6 +261,7 @@ async function handleRouting() {
     if (defaultContentBoxHTML) {
       boxEl.innerHTML = defaultContentBoxHTML;
     }
+    revealRoutedContent();
     return;
   }
 
@@ -252,6 +270,7 @@ async function handleRouting() {
     if (typeof renderContactView === "function") {
       renderContactView(boxEl);
     }
+    revealRoutedContent();
     return;
   }
 
@@ -260,6 +279,7 @@ async function handleRouting() {
     if (typeof renderPublicComplaintsView === "function") {
       renderPublicComplaintsView(boxEl);
     }
+    revealRoutedContent();
     return;
   }
 
@@ -268,6 +288,7 @@ async function handleRouting() {
     if (typeof renderExecutivesView === "function") {
       renderExecutivesView(boxEl);
     }
+    revealRoutedContent();
     return;
   }
 
@@ -276,6 +297,7 @@ async function handleRouting() {
     if (typeof renderEvalFormView === "function") {
       renderEvalFormView(boxEl);
     }
+    revealRoutedContent();
     return;
   }
 
@@ -284,6 +306,7 @@ async function handleRouting() {
     if (typeof renderEvalSummaryView === "function") {
       renderEvalSummaryView(boxEl);
     }
+    revealRoutedContent();
     return;
   }
 
@@ -292,6 +315,7 @@ async function handleRouting() {
     if (typeof renderEvalStatsView === "function") {
       renderEvalStatsView(boxEl);
     }
+    revealRoutedContent();
     return;
   }
 
@@ -300,6 +324,7 @@ async function handleRouting() {
     if (typeof renderEvalFaqView === "function") {
       renderEvalFaqView(boxEl);
     }
+    revealRoutedContent();
     return;
   }
 
@@ -322,6 +347,7 @@ async function handleRouting() {
           .catch(() => {});
       }
     }
+    revealRoutedContent();
     return;
   }
 
@@ -343,53 +369,36 @@ async function loadCategoryItems(hash) {
 
     let items = [];
 
-    // 1. Try querying dedicated 'oic_documents' table first
-    let query = sb.from("oic_documents").select("*").eq("category", hash);
-    if (currentPublicParentId) {
-      query = query.eq("parent_id", currentPublicParentId);
-    } else {
-      query = query.is("parent_id", null);
-    }
+    // Query both supported tables in parallel so a slow or unavailable
+    // oic_documents table does not delay the existing items fallback.
+    const parentQuery = currentPublicParentId
+      ? { method: "eq", value: currentPublicParentId }
+      : { method: "is", value: null };
+    const buildCategoryQuery = (table) => {
+      let query = sb.from(table).select("*").eq("category", hash);
+      query = parentQuery.method === "eq"
+        ? query.eq("parent_id", parentQuery.value)
+        : query.is("parent_id", null);
+      return query.order("is_folder", { ascending: false }).order("created_at", { ascending: false });
+    };
 
-    const { data: oicData, error: oicErr } = await query
-      .order("is_folder", { ascending: false })
-      .order("created_at", { ascending: false });
+    const [oicResult, itemsResult] = await Promise.all([
+      buildCategoryQuery("oic_documents"),
+      buildCategoryQuery("items")
+    ]);
 
-    if (!oicErr && oicData && oicData.length > 0) {
-      items = oicData;
-    } else {
-      // Fallback or check 'items' table if 'oic_documents' table has no records for this view
-      if (currentPublicParentId) {
-        const res = await sb
-          .from("items")
-          .select("*")
-          .eq("category", hash)
-          .eq("parent_id", currentPublicParentId)
-          .order("is_folder", { ascending: false })
-          .order("created_at", { ascending: false });
+    const oicData = oicResult.data || [];
+    const itemsData = itemsResult.data || [];
+    items = oicData.length > 0 ? oicData : itemsData;
 
-        items = (res.data && res.data.length > 0) ? res.data : (oicData || []);
-      } else {
-        const res1 = await sb
-          .from("items")
-          .select("*")
-          .eq("category", hash)
-          .is("parent_id", null)
-          .order("is_folder", { ascending: false })
-          .order("created_at", { ascending: false });
-
-        if (!res1.error && res1.data && res1.data.length > 0) {
-          items = res1.data;
-        } else {
-          const res2 = await sb
-            .from("items")
-            .select("*")
-            .eq("category", hash)
-            .order("created_at", { ascending: false });
-
-          items = (res2.data && res2.data.length > 0) ? res2.data : (oicData || []);
-        }
-      }
+    // Keep the legacy broad fallback for records saved without parent_id.
+    if (items.length === 0 && !currentPublicParentId) {
+      const { data: legacyItems } = await sb
+        .from("items")
+        .select("*")
+        .eq("category", hash)
+        .order("created_at", { ascending: false });
+      items = legacyItems || [];
     }
 
     if ((!items || items.length === 0) && hash === "executives" && !currentPublicParentId) {
@@ -420,17 +429,17 @@ async function loadCategoryItems(hash) {
     }
 
     currentPage = 1; // Reset to page 1 on new folder view
-    boxEl.classList.remove("opacity-50", "pointer-events-none");
     renderItems(boxEl);
+    revealRoutedContent();
   } catch (err) {
     console.error("Error fetching items:", err);
-    boxEl.classList.remove("opacity-50", "pointer-events-none");
     if (hash === "executives") {
       currentItems = DEFAULT_EXECUTIVES;
       renderItems(boxEl);
     } else {
       renderError(boxEl, "เกิดข้อผิดพลาดในการโหลดข้อมูล กรุณาลองใหม่อีกครั้ง");
     }
+    revealRoutedContent();
   }
 }
 
@@ -457,16 +466,13 @@ function highlightSidebarLink(hash) {
 
 // Render Loading (Graceful transition without destroying existing DOM nodes)
 function renderLoading(container) {
-  if (container && container.children && container.children.length > 0) {
-    container.classList.add("opacity-50", "pointer-events-none", "transition-opacity", "duration-200");
-  } else if (container) {
-    container.innerHTML = `
-      <div class="flex flex-col items-center justify-center py-16 gap-3 text-gray-400">
-        <div class="w-8 h-8 border-3 border-teal-100 border-t-[#008675] rounded-full animate-spin"></div>
-        <p class="text-xs font-medium text-gray-500">กำลังโหลดข้อมูล...</p>
-      </div>
-    `;
-  }
+  if (!container) return;
+  container.classList.remove("is-ready");
+  container.innerHTML = `
+    <div class="route-content-skeleton" aria-live="polite" aria-label="กำลังโหลดข้อมูล">
+      <div></div><div></div><div></div><div></div>
+    </div>
+  `;
 }
 
 // Render Error
@@ -646,16 +652,14 @@ async function initVisitorCounter() {
 
         if (isNewVisit) {
           cloudCount += 1;
-          sb.from("items")
+          await sb.from("items")
             .update({ description: String(cloudCount) })
-            .eq("id", data.id)
-            .then(() => { });
+            .eq("id", data.id);
         }
         totalCount = Math.max(totalCount, cloudCount);
       } else if (!error && !data) {
-        sb.from("items")
+        await sb.from("items")
           .insert([{ category: "site_stats", title: "visitor_count", description: String(totalCount) }])
-          .then(() => { });
       }
       localStorage.setItem("ico_real_visitor_count", String(totalCount));
       totalEl.textContent = totalCount.toLocaleString("th-TH");
@@ -668,6 +672,10 @@ async function initVisitorCounter() {
 // Expose globally and attach load handlers
 window.initVisitorCounter = initVisitorCounter;
 window.addEventListener("load", () => {
-  setTimeout(initVisitorCounter, 500);
+  setTimeout(() => {
+    if (!window.visitorCounterPromise) {
+      window.visitorCounterPromise = initVisitorCounter();
+    }
+  }, 500);
 });
 

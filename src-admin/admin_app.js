@@ -110,7 +110,6 @@ function setupAuthListener() {
     });
   }
 }
-
 async function checkSession() {
   let session = null;
   try {
@@ -221,6 +220,7 @@ window.initDashboard = function () {
 
         const summary = document.createElement("summary");
         summary.className = "flex items-center gap-2 px-2.5 py-1.5 text-xs sm:text-sm font-semibold text-slate-200 hover:text-white cursor-pointer hover:bg-slate-700/60 select-none rounded-lg transition-all";
+        summary.title = group.title;
         summary.innerHTML = `<i class="fi fi-rr-folder-open text-teal-300 text-xs"></i> <span class="truncate">${group.title}</span>`;
 
         const itemsContainer = document.createElement("div");
@@ -241,6 +241,7 @@ window.initDashboard = function () {
   if (!window.activeCategory) {
     window.activeCategory = "officers";
   }
+  window.syncAdminSidebarState();
   selectCategory(window.activeCategory);
 };
 
@@ -248,6 +249,7 @@ function createCategoryButton(id, title, icon, isNested = false) {
   const btn = document.createElement("button");
   btn.className = `w-full text-left px-2.5 py-1.5 text-xs sm:text-sm font-normal text-slate-300 rounded-lg hover:bg-slate-700/60 hover:text-white transition-all flex items-center gap-2 ${isNested ? 'text-xs py-1.5 text-slate-400' : ''}`;
   btn.setAttribute("data-cat", id);
+  btn.title = title || id;
   btn.innerHTML = `<i class="fi ${icon} text-xs shrink-0 text-teal-300"></i> <span class="leading-normal text-left truncate">${title || id}</span>`;
 
   btn.addEventListener("click", () => {
@@ -269,6 +271,32 @@ window.toggleMobileSidebar = function (show) {
   } else {
     sidebar.classList.add("-translate-x-full");
     if (backdrop) backdrop.classList.add("hidden");
+  }
+};
+
+window.syncAdminSidebarState = function () {
+  const dashboard = document.getElementById("admin-dashboard");
+  if (!dashboard) return;
+
+  const isCollapsed = localStorage.getItem("admin_sidebar_collapsed") === "true";
+  dashboard.classList.toggle("admin-sidebar-collapsed", isCollapsed);
+
+  const toggle = document.getElementById("btn-admin-sidebar-toggle");
+  if (toggle) {
+    toggle.setAttribute("aria-expanded", String(!isCollapsed));
+  }
+};
+
+window.toggleAdminSidebar = function () {
+  const dashboard = document.getElementById("admin-dashboard");
+  if (!dashboard) return;
+
+  const isCollapsed = dashboard.classList.toggle("admin-sidebar-collapsed");
+  localStorage.setItem("admin_sidebar_collapsed", String(isCollapsed));
+
+  const toggle = document.getElementById("btn-admin-sidebar-toggle");
+  if (toggle) {
+    toggle.setAttribute("aria-expanded", String(!isCollapsed));
   }
 };
 
@@ -331,17 +359,13 @@ function selectCategory(key) {
 
   const btnAddItem = document.getElementById("btn-add-item");
   const btnAddFolder = document.getElementById("btn-add-folder");
-  const btnSeed = document.getElementById("btn-seed-executives");
-  const btnSeedOfficers = document.getElementById("btn-seed-officers");
   const btnSeedM91 = document.getElementById("btn-seed-m91");
   const btnSeedM92 = document.getElementById("btn-seed-m92");
 
-  if (btnAddItem && btnAddFolder && btnSeed) {
+  if (btnAddItem && btnAddFolder) {
     if (readOnlyCategories.includes(key)) {
       btnAddItem.classList.add("hidden");
       btnAddFolder.classList.add("hidden");
-      btnSeed.classList.add("hidden");
-      if (btnSeedOfficers) btnSeedOfficers.classList.add("hidden");
       if (btnSeedM91) btnSeedM91.classList.add("hidden");
       if (btnSeedM92) btnSeedM92.classList.add("hidden");
     } else {
@@ -355,39 +379,27 @@ function selectCategory(key) {
 
     if (key === "executives") {
       btnAddItem.innerHTML = `<i class="fi fi-rr-user-add"></i> เพิ่มผู้บริหารใหม่`;
-      btnSeed.classList.remove("hidden");
-      if (btnSeedOfficers) btnSeedOfficers.classList.add("hidden");
       if (btnSeedM91) btnSeedM91.classList.add("hidden");
       if (btnSeedM92) btnSeedM92.classList.add("hidden");
     } else if (key === "officers") {
       btnAddItem.innerHTML = `<i class="fi fi-rr-user-add"></i> เพิ่มเจ้าหน้าที่ผู้รับผิดชอบใหม่`;
       btnAddFolder.classList.add("hidden");
-      btnSeed.classList.add("hidden");
-      if (btnSeedOfficers) btnSeedOfficers.classList.remove("hidden");
       if (btnSeedM91) btnSeedM91.classList.add("hidden");
       if (btnSeedM92) btnSeedM92.classList.add("hidden");
     } else if (key === "m9_1") {
       btnAddItem.innerHTML = `<i class="fi fi-rr-document-signed"></i> เพิ่มไฟล์ / ข้อมูลใหม่`;
-      btnSeed.classList.add("hidden");
-      if (btnSeedOfficers) btnSeedOfficers.classList.add("hidden");
       if (btnSeedM91) btnSeedM91.classList.remove("hidden");
       if (btnSeedM92) btnSeedM92.classList.add("hidden");
     } else if (key === "m9_2") {
       btnAddItem.innerHTML = `<i class="fi fi-rr-document-signed"></i> เพิ่มไฟล์ / ข้อมูลใหม่`;
-      btnSeed.classList.add("hidden");
-      if (btnSeedOfficers) btnSeedOfficers.classList.add("hidden");
       if (btnSeedM91) btnSeedM91.classList.add("hidden");
       if (btnSeedM92) btnSeedM92.classList.remove("hidden");
     } else if (key === "about_history") {
       btnAddItem.innerHTML = `<i class="fi fi-rr-document-signed"></i> เพิ่มข้อมูลประวัติความเป็นมา`;
-      btnSeed.classList.add("hidden");
-      if (btnSeedOfficers) btnSeedOfficers.classList.add("hidden");
       if (btnSeedM91) btnSeedM91.classList.add("hidden");
       if (btnSeedM92) btnSeedM92.classList.add("hidden");
     } else {
       btnAddItem.innerHTML = `<i class="fi fi-rr-document-signed"></i> เพิ่มไฟล์ / ข้อมูลใหม่`;
-      btnSeed.classList.add("hidden");
-      if (btnSeedOfficers) btnSeedOfficers.classList.add("hidden");
       if (btnSeedM91) btnSeedM91.classList.add("hidden");
       if (btnSeedM92) btnSeedM92.classList.add("hidden");
     }
@@ -405,51 +417,3 @@ function selectCategory(key) {
   }
 }
 
-// Setup Auto-Seed Officers Button Listener
-document.addEventListener("DOMContentLoaded", () => {
-  const btnSeedOfficers = document.getElementById("btn-seed-officers");
-  if (btnSeedOfficers) {
-    btnSeedOfficers.addEventListener("click", async () => {
-      if (!confirm("คุณต้องการดึงข้อมูลเจ้าหน้าที่เริ่มต้น (9 รายชื่อเรียง 3 แถว) ลงสู่ระบบใช่หรือไม่?")) return;
-
-      btnSeedOfficers.disabled = true;
-      btnSeedOfficers.innerHTML = `<i class="fi fi-rr-spinner animate-spin"></i> กำลังสร้างรายการ...`;
-
-      try {
-        const DEFAULT_OFFICERS = [
-          { title: "นางสาวเพ็ญนภา สุวรรณรัตน์", pos: "หัวหน้าศูนย์ข้อมูลข่าวสารของราชการ", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500" },
-          { title: "นายธนวัฒน์ พรหมเสน", pos: "นักจัดการงานทั่วไปปฏิบัติการ", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400" },
-          { title: "นางสาวศิริพร บุญช่วย", pos: "เจ้าพนักงานประชาสัมพันธ์ชำนาญงาน", img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400" },
-          { title: "นายกิตติศักดิ์ รัตนพงษ์", pos: "เจ้าพนักงานธุรการปฏิบัติงาน", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400" },
-          { title: "นางสาวชลธิชา ใจดี", pos: "เจ้าหน้าที่คอมพิวเตอร์ประจำศูนย์", img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400" },
-          { title: "นายวิศรุต สุขเสริฐ", pos: "เจ้าหน้าที่จัดเก็บเอกสารและระบบสารสนเทศ", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400" },
-          { title: "นางสาวณิชากานต์ พรประเสริฐ", pos: "เจ้าหน้าที่ให้บริการข้อมูลและรับเรื่องร้องเรียน", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400" },
-          { title: "นายอนันต์ มั่นคง", pos: "เจ้าพนักงานศูนย์บริการข้อมูลข่าวสาร", img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400" },
-          { title: "นางสาวปรียาภรณ์ วงศ์สว่าง", pos: "เจ้าหน้าที่สนับสนุนงานศูนย์ข้อมูลข่าวสาร", img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400" }
-        ];
-
-        const targetTable = window.ACTIVE_TABLE_NAME || 'oic_documents';
-        const now = Date.now();
-        const itemsToInsert = DEFAULT_OFFICERS.map((item, idx) => ({
-          category: "officers",
-          parent_id: null,
-          is_folder: false,
-          title: item.title,
-          description: JSON.stringify({ position: item.pos, bio: "" }),
-          image_url: item.img,
-          created_at: new Date(now - idx * 1000).toISOString()
-        }));
-
-        await supabase.from(targetTable).insert(itemsToInsert);
-        alert("สร้างชุดข้อมูลเจ้าหน้าที่เริ่มต้น 9 รายชื่อเรียบร้อยแล้ว!");
-        if (typeof window.loadItems === "function") window.loadItems();
-      } catch (e) {
-        console.error("Seed officers error:", e);
-        alert("ไม่สามารถดึงข้อมูลได้: " + e.message);
-      } finally {
-        btnSeedOfficers.disabled = false;
-        btnSeedOfficers.innerHTML = `<i class="fi fi-rr-cloud-download"></i> ดึงชุดข้อมูลเจ้าหน้าที่เริ่มต้น (9 รายชื่อ 3 แถว)`;
-      }
-    });
-  }
-});

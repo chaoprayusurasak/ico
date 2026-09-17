@@ -43,6 +43,114 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="./src/styles.css" />
   <style>
+    .home-loading-skeleton {
+      position: relative;
+      overflow: hidden;
+      min-height: 400px;
+      padding: 2rem 1rem;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 1.5rem;
+      background: rgba(255, 255, 255, 0.72);
+      transition: opacity 180ms ease;
+    }
+
+    .home-loading-skeleton.is-hidden {
+      opacity: 0;
+    }
+
+    .home-loading-skeleton::after {
+      position: absolute;
+      inset: 0;
+      content: "";
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72), transparent);
+      transform: translateX(-100%);
+      animation: home-skeleton-shimmer 1.35s ease-in-out infinite;
+    }
+
+    .home-skeleton-block {
+      position: relative;
+      z-index: 1;
+      background: #e9efee;
+      border-radius: 0.65rem;
+    }
+
+    .home-landmark-art {
+      aspect-ratio: 841.89 / 595.28;
+      border-radius: 1rem;
+    }
+
+    .home-landmark-image {
+      opacity: 0;
+      transition: opacity 220ms ease;
+    }
+
+    .home-landmark-image.is-loaded {
+      opacity: 1;
+    }
+
+    #page-content {
+      opacity: 0;
+      transition: opacity 220ms ease;
+    }
+
+    #page-content.is-ready {
+      opacity: 1;
+    }
+
+    #page-header-banner.route-loading .content-title,
+    #page-header-banner.route-loading #content-breadcrumb {
+      visibility: hidden;
+    }
+
+    #page-header-banner.route-loading .content-title::after {
+      display: block;
+      width: min(18rem, 70vw);
+      height: 2.25rem;
+      content: "";
+      visibility: visible;
+      border-radius: 0.65rem;
+      background: #e9efee;
+      animation: home-skeleton-pulse 1.35s ease-in-out infinite;
+    }
+
+    #page-header-banner.route-loading #content-breadcrumb::after {
+      display: block;
+      width: 12rem;
+      height: 0.9rem;
+      content: "";
+      visibility: visible;
+      border-radius: 0.4rem;
+      background: #edf1f0;
+      animation: home-skeleton-pulse 1.35s ease-in-out infinite;
+    }
+
+    .route-content-skeleton {
+      display: grid;
+      gap: 0.85rem;
+      padding: 1.25rem;
+      border: 1px solid #e5ebe9;
+      border-radius: 1rem;
+      background: #fff;
+    }
+
+    .route-content-skeleton div {
+      height: 3.25rem;
+      border-radius: 0.65rem;
+      background: #edf1f0;
+      animation: home-skeleton-pulse 1.35s ease-in-out infinite;
+    }
+
+    @keyframes home-skeleton-pulse {
+      0%, 100% { opacity: 0.55; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes home-skeleton-shimmer {
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
     /* Lottie sidebar icon sizing */
     .sidebar-icon dotlottie-wc {
       display: inline-flex;
@@ -78,7 +186,7 @@
   <div class="parent">
     <main class="content">
       <!-- Page Header Banner (Frameless Typography, Left-Aligned, Green Title + Black Breadcrumb) -->
-      <div id="page-header-banner" class="w-full bg-transparent border-0 shadow-none px-2 sm:px-4 py-3 sm:py-5 mb-2 text-left flex flex-col items-start justify-start font-prompt">
+      <div id="page-header-banner" style="display: none;" class="w-full bg-transparent border-0 shadow-none px-2 sm:px-4 py-3 sm:py-5 mb-2 text-left flex flex-col items-start justify-start font-prompt">
         <h1 class="content-title text-2xl sm:text-3xl md:text-4xl lg:text-[38px] font-black text-[#008675] tracking-tight leading-tight m-0 text-left">
           หน้าแรก
         </h1>
@@ -89,10 +197,21 @@
         </div>
       </div>
 
-      <!-- ตัวโหลด Lottie Animation -->
-      <div id="page-loader" style="display: flex; justify-content: center; align-items: center; min-height: 400px;">
-        <dotlottie-wc src="./assets/icons/Loading.json" autoplay loop
-          style="width: 200px; height: 200px;"></dotlottie-wc>
+      <!-- Skeleton Screen ระหว่างเตรียมข้อมูลหน้าแรก -->
+      <div id="page-loader" class="home-loading-skeleton" aria-live="polite" aria-label="กำลังโหลดหน้าแรก">
+        <div class="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-8 lg:grid-cols-12">
+          <div class="flex flex-col items-start gap-4 lg:col-span-4">
+            <div class="home-skeleton-block h-12 w-56 sm:h-16 sm:w-72"></div>
+            <div class="home-skeleton-block h-6 w-64 max-w-full sm:h-7 sm:w-80"></div>
+            <div class="grid w-full max-w-sm grid-cols-2 gap-3 pt-3">
+              <div class="home-skeleton-block h-16"></div>
+              <div class="home-skeleton-block h-16"></div>
+            </div>
+          </div>
+          <div class="flex min-h-64 items-center justify-center lg:col-span-8 lg:min-h-80">
+            <div class="home-skeleton-block aspect-[4/3] w-full max-w-2xl rounded-3xl"></div>
+          </div>
+        </div>
       </div>
 
       <!-- ข้อมูลที่จะแสดงหลังโหลดเสร็จ (ซ่อนไว้ก่อนด้วย display: none) -->
@@ -119,10 +238,12 @@
 
             <!-- Right Column: Floating Island Map (1.svg) -->
             <div class="lg:col-span-8 relative w-full flex justify-center items-center">
-              <div class="relative w-full max-w-5xl animate-float-island">
+              <div class="home-landmark-art relative w-full max-w-5xl animate-float-island">
                 <!-- Base Map Image -->
                 <img src="./assets/1.svg" alt="เทศบาลนครเจ้าพระยาสุรศักดิ์ Landmark Map"
-                  class="w-full h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,40,80,0.35)] rounded-2xl">
+                  width="842" height="595" loading="eager" decoding="async" fetchpriority="high"
+                  onload="this.classList.add('is-loaded')"
+                  class="home-landmark-image w-full h-auto object-contain drop-shadow-[0_20px_35px_rgba(0,40,80,0.35)] rounded-2xl">
 
                 <!-- INTERACTIVE LANDMARK PINS -->
 
@@ -529,16 +650,6 @@
   <!-- Lottie Sidebar Icons -->
   <script src="./assets/lottie-icons.js"></script>
 
-  <!-- Script จัดการเวลาโหลด -->
-  <script>
-    window.addEventListener("load", function () {
-      // เมื่อเว็บโหลดเสร็จ ให้รออีก 2 วินาที (2000 ms) ค่อยแสดงข้อมูล
-      setTimeout(function () {
-        document.getElementById("page-loader").style.display = "none";
-        document.getElementById("page-content").style.display = ""; // ลบ display: none ออกเพื่อให้แสดงผลตาม CSS ปกติ
-      }, 1000);
-    });
-  </script>
 </body>
 
 </html>
