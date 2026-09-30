@@ -86,7 +86,13 @@ window.toggleSidebarMenu = function (open) {
 window.toggleSidebarCollapse = function () {
   const isCollapsed = document.body.classList.toggle("sidebar-collapsed");
   const button = document.getElementById("sidebar-collapse-button");
+  const sidebar = document.getElementById("sidebar-dock");
   const icon = button?.querySelector("i");
+  if (!isCollapsed) {
+    sidebar?.querySelectorAll("details.sidebar-group").forEach((group) => {
+      group.open = true;
+    });
+  }
   if (button) {
     button.title = isCollapsed ? "ขยายเมนู" : "ย่อเมนู";
     button.setAttribute("aria-label", button.title);
@@ -102,9 +108,20 @@ window.toggleSidebarCollapse = function () {
 };
 
 function initializePublicSidebar() {
-  if (!document.getElementById("sidebar-dock")) return;
+  const sidebar = document.getElementById("sidebar-dock");
+  if (!sidebar) return;
 
   document.body.classList.add("has-public-sidebar");
+  sidebar.addEventListener("click", (event) => {
+    if (event.target instanceof Element && event.target.closest("#sidebar-collapse-button")) return;
+    if (
+      document.body.classList.contains("sidebar-collapsed") &&
+      window.matchMedia("(min-width: 1025px)").matches
+    ) {
+      window.toggleSidebarCollapse();
+    }
+  });
+
   document.querySelectorAll("#sidebar-dock .sidebar-link").forEach((link) => {
     Array.from(link.childNodes).forEach((node) => {
       if (node.nodeType !== Node.TEXT_NODE || !node.textContent.trim()) return;
