@@ -22,18 +22,22 @@ const CATEGORY_NAMES = {
 
   // Main Section Categories (Sidebar & Index)
   "index_files": "ดัชนีรวม / ดัชนีประจำแฟ้ม",
-  "m7_1": "มาตรา 7 (1) โครงสร้างและการจัดองค์กรในการดำเนินงาน",
-  "m7_2": "มาตรา 7 (2) สรุปอำนาจหน้าที่ที่สำคัญและวิธีการดำเนินงาน",
-  "m7_3": "มาตรา 7 (3) สถานที่ติดต่อเพื่อขอรับข้อมูลข่าวสาร",
-  "m7_4": "มาตรา 7 (4) กฎ มติ ครม. ข้อบังคับ คำสั่ง และระเบียบที่เกี่ยวข้อง",
-  "m9_1": "มาตรา 9 (1) ผลการพิจารณา",
-  "m9_2": "มาตรา 9 (2) นโยบายหรือการตีความที่ไม่เข้าข่ายต้องลงพิมพ์ในราชกิจจานุเบกษา ตามมาตรา 7 (4)",
-  "m9_3": "มาตรา 9 (3) แผนงาน โครงการ งบประมาณรายจ่ายประจำปี",
-  "m9_4": "มาตรา 9 (4) คู่มือหรือคำสั่งเกี่ยวกับวิธีปฏิบัติงานของเจ้าหน้าที่ของรัฐ ซึ่งมีผลกระทบถึงสิทธิหน้าที่ของเอกชน",
-  "m9_5": "มาตรา 9 (5) สิ่งพิมพ์ที่อ้างถึงตาม ม. 7 วรรคสอง",
-  "m9_6": "มาตรา 9 (6) สัญญาสัมปทาน สัญญาผูกขาดตัดตอน / สัญญาร่วมทุนกับเอกชนในการจัดทำบริการสาธารณะ",
-  "m9_7": "มาตรา 9 (7) มติคณะรัฐมนตรี หรือมติคณะกรรมการที่แต่งตั้งโดยกฎหมาย หรือโดยมติคณะรัฐมนตรี",
-  "m9_8": "มาตรา 9 (8) ข้อมูลข่าวสารอื่นที่คณะกรรมการกำหนด",
+  "m7_1": "มาตรา 7 (1) โครงสร้างและการจัดตั้งองค์กรในการดำเนินงาน",
+  "m7_2": "มาตรา 7 (2) สรุปอำนาจ หน้าที่สำคัญและวิธีการดำเนินงาน",
+  "m7_3": "มาตรา 7 (3) สถานที่ติดต่อเพื่อขอรับข้อมูลข่าวสารหรือคำแนะนำ",
+  "m7_4": "มาตรา 7 (4) กฎ มติคณะรัฐมนตรี ข้อบังคับ คำสั่ง หนังสือเวียน ระเบียบ แผน และนโยบาย",
+  "m7_5": "มาตรา 7 (5) ข้อมูลข่าวสารอื่นตามที่คณะกรรมการกำหนด",
+  "m7_6": "มาตรา 7 (6) ผลการดำเนินงานตามโครงการต่าง ๆ",
+  "m7_7": "มาตรา 7 (7) คู่มือการดำเนินงานและการขอใบอนุญาต",
+  "m7_8": "มาตรา 7 (8) ระเบียบที่ควรแจ้งให้ทราบ",
+  "m9_1": "มาตรา 9 (1) รายงานการประชุมสภา",
+  "m9_2": "มาตรา 9 (2) งบประมาณรายจ่ายประจำปี",
+  "m9_3": "มาตรา 9 (3) แผนการดำเนินงานประจำปี",
+  "m9_4": "มาตรา 9 (4) แผนยุทธศาสตร์และแผนพัฒนาเทศบาล",
+  "m9_5": "มาตรา 9 (5) แผนอัตรากำลัง 3 ปี",
+  "m9_6": "มาตรา 9 (6) คู่มือขออนุญาตสิ่งปลูกสร้าง ดัดแปลง และรื้อถอนอาคาร",
+  "m9_7": "มาตรา 9 (7) ประกาศประกวดราคาจัดซื้อจัดจ้างที่ลงนามแล้ว",
+  "m9_8": "มาตรา 9 (8) สรุปผลการพิจารณาจัดซื้อจัดจ้าง (แบบ สขร. 1)",
   "eval_form": "เเบบฟอร์มสำรวจความพึงพอใจ",
   "eval_summary": "สรุปความพึงพอใจ",
   "eval_stats": "สถิติผ้ใช้บริการ",
@@ -46,6 +50,8 @@ let defaultContentBoxHTML = "";
 
 // Initialize App
 document.addEventListener("componentsLoaded", () => {
+  initializePublicSidebar();
+
   const titleEl = document.querySelector(".content-title");
   const boxEl = document.querySelector(".content-box");
 
@@ -62,6 +68,74 @@ document.addEventListener("componentsLoaded", () => {
 
   // Initialize Cookie Consent Banner
   initCookieConsent();
+});
+
+window.toggleSidebarMenu = function (open) {
+  const sidebar = document.getElementById("sidebar-dock");
+  const backdrop = document.getElementById("sidebar-menu-backdrop");
+  const menuButton = document.querySelector(".sidebar-mobile-toggle");
+  if (!sidebar || !backdrop) return;
+
+  const shouldOpen = typeof open === "boolean" ? open : !sidebar.classList.contains("is-open");
+  sidebar.classList.toggle("is-open", shouldOpen);
+  backdrop.classList.toggle("is-visible", shouldOpen);
+  document.body.classList.toggle("sidebar-menu-open", shouldOpen);
+  if (menuButton) menuButton.setAttribute("aria-expanded", String(shouldOpen));
+};
+
+window.toggleSidebarCollapse = function () {
+  const isCollapsed = document.body.classList.toggle("sidebar-collapsed");
+  const button = document.getElementById("sidebar-collapse-button");
+  const icon = button?.querySelector("i");
+  if (button) {
+    button.title = isCollapsed ? "ขยายเมนู" : "ย่อเมนู";
+    button.setAttribute("aria-label", button.title);
+  }
+  if (icon) {
+    icon.className = isCollapsed ? "fi fi-rr-angle-double-right" : "fi fi-rr-angle-double-left";
+  }
+  localStorage.setItem("public_sidebar_collapsed", String(isCollapsed));
+  document.querySelectorAll("#sidebar-dock .sidebar-link").forEach((link) => {
+    link.title = link.textContent.trim();
+    link.setAttribute("aria-label", link.title);
+  });
+};
+
+function initializePublicSidebar() {
+  if (!document.getElementById("sidebar-dock")) return;
+
+  document.body.classList.add("has-public-sidebar");
+  document.querySelectorAll("#sidebar-dock .sidebar-link").forEach((link) => {
+    Array.from(link.childNodes).forEach((node) => {
+      if (node.nodeType !== Node.TEXT_NODE || !node.textContent.trim()) return;
+      const label = document.createElement("span");
+      label.className = "sidebar-link-label";
+      label.textContent = node.textContent.trim();
+      node.replaceWith(label);
+    });
+  });
+
+  const isCollapsed = localStorage.getItem("public_sidebar_collapsed") === "true";
+  document.body.classList.toggle("sidebar-collapsed", isCollapsed);
+  const collapseButton = document.getElementById("sidebar-collapse-button");
+  const collapseIcon = collapseButton?.querySelector("i");
+  if (collapseButton && isCollapsed) {
+    collapseButton.title = "ขยายเมนู";
+    collapseButton.setAttribute("aria-label", "ขยายเมนู");
+  }
+  if (collapseIcon && isCollapsed) {
+    collapseIcon.className = "fi fi-rr-angle-double-right";
+  }
+
+  document.querySelectorAll("#sidebar-dock .sidebar-link").forEach((link) => {
+    link.title = link.textContent.trim();
+    link.setAttribute("aria-label", link.title);
+    link.addEventListener("click", () => window.toggleSidebarMenu(false));
+  });
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") window.toggleSidebarMenu(false);
 });
 
 // Setup routing listener
@@ -546,28 +620,44 @@ window.navigateToPublicBreadcrumb = function (index) {
 };
 
 function renderPaginationControls(totalPages) {
-  let controls = `<div class="flex justify-center items-center gap-2 mt-10 mb-4">`;
+  let controls = `<div class="flex justify-center items-center gap-1.5 mt-6 mb-3">`;
 
   // Prev Button
   controls += `
-    <button onclick="changePage(${currentPage - 1})" class="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 text-gray-500 hover:bg-brand-teal hover:text-white hover:border-brand-teal transition-all disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-gray-500 disabled:hover:border-gray-200 disabled:cursor-not-allowed" ${currentPage === 1 ? 'disabled' : ''}>
-      <i class="fi fi-rr-angle-small-left text-xl mt-1"></i>
+    <button aria-label="หน้าก่อนหน้า" onclick="changePage(${currentPage - 1})" class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed" ${currentPage === 1 ? 'disabled' : ''}>
+      <i class="fi fi-rr-angle-small-left text-base"></i>
     </button>
   `;
 
   // Page Numbers
-  for (let i = 1; i <= totalPages; i++) {
-    if (i === currentPage) {
-      controls += `<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-brand-teal text-white font-bold shadow-md shadow-brand-teal/30">${i}</button>`;
-    } else {
-      controls += `<button onclick="changePage(${i})" class="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 text-gray-600 hover:bg-brand-teal/10 hover:text-brand-teal hover:border-brand-teal transition-all font-semibold">${i}</button>`;
+  const visiblePages = new Set();
+  if (totalPages <= 5) {
+    for (let i = 1; i <= totalPages; i++) visiblePages.add(i);
+  } else {
+    visiblePages.add(1);
+    visiblePages.add(totalPages);
+    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+      visiblePages.add(i);
     }
+  }
+
+  let previousPage = 0;
+  for (const i of [...visiblePages].sort((a, b) => a - b)) {
+    if (previousPage && i - previousPage > 1) {
+      controls += `<span class="w-5 text-center text-xs text-gray-400" aria-hidden="true">…</span>`;
+    }
+    if (i === currentPage) {
+      controls += `<button aria-current="page" disabled class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-900 text-white text-sm font-semibold cursor-default">${i}</button>`;
+    } else {
+      controls += `<button aria-label="หน้า ${i}" onclick="changePage(${i})" class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-600 text-sm hover:bg-gray-100 transition-colors font-medium cursor-pointer">${i}</button>`;
+    }
+    previousPage = i;
   }
 
   // Next Button
   controls += `
-    <button onclick="changePage(${currentPage + 1})" class="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200 text-gray-500 hover:bg-brand-teal hover:text-white hover:border-brand-teal transition-all disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-gray-500 disabled:hover:border-gray-200 disabled:cursor-not-allowed" ${currentPage === totalPages ? 'disabled' : ''}>
-      <i class="fi fi-rr-angle-small-right text-xl mt-1"></i>
+    <button aria-label="หน้าถัดไป" onclick="changePage(${currentPage + 1})" class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed" ${currentPage === totalPages ? 'disabled' : ''}>
+      <i class="fi fi-rr-angle-small-right text-base"></i>
     </button>
   `;
 
@@ -678,4 +768,3 @@ window.addEventListener("load", () => {
     }
   }, 500);
 });
-

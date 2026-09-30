@@ -179,6 +179,27 @@ window.loadItems = async function () {
     return;
   }
 
+  if (window.activeCategory === "eval_summary") {
+    if (typeof window.loadAdminEvaluations === "function") {
+      await window.loadAdminEvaluations(container);
+    }
+    return;
+  }
+
+  if (window.activeCategory === "eval_stats") {
+    if (typeof window.loadAdminVisitorStats === "function") {
+      await window.loadAdminVisitorStats(container);
+    }
+    return;
+  }
+
+  if (window.activeCategory === "contact") {
+    if (typeof window.loadAdminContactDepartments === "function") {
+      await window.loadAdminContactDepartments(container);
+    }
+    return;
+  }
+
   try {
     let items = [];
 
@@ -225,15 +246,6 @@ window.loadItems = async function () {
           }
         }
       }
-    }
-
-    // Auto-seed Section 9 (1) folders if empty at root level
-    if ((!items || items.length === 0) && window.activeCategory === "m9_1" && !window.currentParentId) {
-      items = await window.seedM91Folders();
-    }
-    // Auto-seed Section 9 (2) items if empty at root level
-    if ((!items || items.length === 0) && window.activeCategory === "m9_2" && !window.currentParentId) {
-      items = await window.seedM92Items();
     }
 
     renderItemsTable(items);
@@ -285,7 +297,7 @@ window.renderItemsTable = function (items) {
           <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200">
             <span class="font-semibold text-gray-700 text-xs">แถวที่ 1:</span>
             <select id="officer-row1-count" onchange="saveOfficerRowConfig()" class="bg-gray-50 text-gray-800 font-semibold text-xs py-1 px-2 rounded-md border border-gray-200 focus:outline-none focus:border-gray-400 cursor-pointer">
-              <option value="1" ${rowConfig.row1 === 1 ? 'selected' : ''}>1 คน (ประธาน/หัวหน้าใหญ่)</option>
+              <option value="1" ${rowConfig.row1 === 1 ? 'selected' : ''}>1 คน (หัวหน้างาน)</option>
               <option value="2" ${rowConfig.row1 === 2 ? 'selected' : ''}>2 คน</option>
               <option value="3" ${rowConfig.row1 === 3 ? 'selected' : ''}>3 คน</option>
               <option value="4" ${rowConfig.row1 === 4 ? 'selected' : ''}>4 คน</option>
@@ -497,10 +509,7 @@ window.renderAdminBreadcrumb = function () {
   if (!bcEl) return;
 
   const key = window.activeCategory || "";
-  const isFolderCategory = key.startsWith("m7_") || key.startsWith("m9_");
-
-  // Hide breadcrumb bar completely for categories that are NOT Section 7 or Section 9
-  if (!key || (!isFolderCategory && (!window.breadcrumbStack || window.breadcrumbStack.length === 0))) {
+  if (!key || !window.breadcrumbStack || window.breadcrumbStack.length === 0) {
     bcEl.classList.add("hidden");
     return;
   }
@@ -532,6 +541,7 @@ window.navigateToAdminBreadcrumb = (index) => {
     window.breadcrumbStack = window.breadcrumbStack.slice(0, index + 1);
     window.currentParentId = window.breadcrumbStack[window.breadcrumbStack.length - 1].id;
   }
+  window.saveAdminNavigationState();
   closeForm();
   loadItems();
 };
@@ -540,6 +550,7 @@ window.openAdminFolder = (folderId, folderTitle) => {
   window.currentParentId = folderId;
   if (!window.breadcrumbStack) window.breadcrumbStack = [];
   window.breadcrumbStack.push({ id: folderId, title: folderTitle });
+  window.saveAdminNavigationState();
   closeForm();
   loadItems();
 };
@@ -548,6 +559,13 @@ window.setupFormListeners = function () {
   const btnAddItem = document.getElementById("btn-add-item");
   if (btnAddItem) {
     btnAddItem.addEventListener("click", () => {
+      if (window.activeCategory === "contact") {
+        if (typeof window.addAdminContactDepartment === "function") {
+          window.addAdminContactDepartment();
+        }
+        return;
+      }
+
       window.isEditing = false;
       document.getElementById("item-id").value = "";
       document.getElementById("item-is-folder").value = "false";
@@ -1032,20 +1050,66 @@ window.editItem = async (id) => {
 window.deleteItem = async (id) => {
   if (!confirm("คุณต้องการลบข้อมูลรายการนี้ใช่หรือไม่? หากลบโฟลเดอร์ไฟล์ภายในจะถูกลบไปด้วย")) return;
   const targetTable = window.ACTIVE_TABLE_NAME || 'oic_documents';
+  const otherTable = targetTable === "oic_documents" ? "items" : "oic_documents";
+  let deletedFromPrimaryTable = false;
 
   try {
-    const { error } = await supabase
+    const { data: item, error: itemError } = await supabase
+      .from(targetTable)
+      .select("id, category, title, parent_id, is_folder")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (itemError) throw itemError;
+    if (!item) throw new Error("ไม่พบรายการที่ต้องการลบ");
+
+    const { data: deletedRows, error: deleteError } = await supabase
       .from(targetTable)
       .delete()
-      .eq("id", id);
+      .eq("id", id)
+      .select("id");
 
-    if (error) {
-      await supabase.from("items").delete().eq("id", id);
+    if (deleteError) throw deleteError;
+    if (!deletedRows || deletedRows.length === 0) {
+      throw new Error("ไม่มีสิทธิ์ลบข้อมูลนี้ กรุณาตรวจสอบสิทธิ์ Supabase RLS");
+    }
+    deletedFromPrimaryTable = true;
+
+    let duplicateQuery = supabase
+      .from(otherTable)
+      .select("id")
+      .eq("category", item.category)
+      .eq("title", item.title)
+      .eq("is_folder", item.is_folder);
+    duplicateQuery = item.parent_id
+      ? duplicateQuery.eq("parent_id", item.parent_id)
+      : duplicateQuery.is("parent_id", null);
+
+    const { data: duplicates, error: duplicateQueryError } = await duplicateQuery;
+    if (duplicateQueryError) throw duplicateQueryError;
+
+    if (duplicates && duplicates.length > 0) {
+      const { data: deletedDuplicates, error: duplicateDeleteError } = await supabase
+        .from(otherTable)
+        .delete()
+        .in("id", duplicates.map(duplicate => duplicate.id))
+        .select("id");
+
+      if (duplicateDeleteError) throw duplicateDeleteError;
+      if (!deletedDuplicates || deletedDuplicates.length !== duplicates.length) {
+        throw new Error(`ลบรายการหลักแล้ว แต่ลบข้อมูลซ้ำในตาราง ${otherTable} ไม่ครบ กรุณาตรวจสอบสิทธิ์ Supabase RLS`);
+      }
     }
 
     loadItems();
   } catch (err) {
     console.error("Error deleting item:", err);
-    alert("ไม่สามารถลบข้อมูลได้: " + err.message);
+    const errorMessage = err.message || String(err);
+    if (deletedFromPrimaryTable) loadItems();
+    if (errorMessage.includes("row-level security policy")) {
+      alert(`ไม่สามารถลบข้อมูลได้ เนื่องจากสิทธิ์ Supabase RLS ไม่อนุญาตให้ลบข้อมูลในตาราง ${targetTable}\n\nกรุณาตรวจสอบ DELETE policy ของตารางนี้\n\nรายละเอียด: ${errorMessage}`);
+      return;
+    }
+    alert("ไม่สามารถลบข้อมูลได้: " + errorMessage);
   }
 };

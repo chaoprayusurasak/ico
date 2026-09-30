@@ -78,7 +78,7 @@ function renderIndexFilesView(container, items = []) {
             <span class="w-2.5 h-2.5 rounded-full bg-slate-900 inline-block"></span>
             ดัชนีข่าวสารตามมาตรา 7
           </h3>
-          <span class="text-xs text-gray-400 font-normal">4 หมวดหมู่ย่อย</span>
+          <span class="text-xs text-gray-400 font-normal">8 หมวดหมู่ย่อย</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -88,8 +88,8 @@ function renderIndexFilesView(container, items = []) {
                 7(1)
               </div>
               <div>
-                <div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">โครงสร้างและการจัดองค์กร</div>
-                <div class="text-xs text-gray-500">การดำเนินงาน และแผนผังหน่วยงาน</div>
+                <div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">โครงสร้างและการจัดตั้งองค์กร</div>
+                <div class="text-xs text-gray-500">การดำเนินงานของสำนักปลัดเทศบาล</div>
               </div>
             </div>
             <i class="fi fi-rr-arrow-right text-gray-300 group-hover:text-brand-teal group-hover:translate-x-1 transition-all text-sm"></i>
@@ -101,8 +101,8 @@ function renderIndexFilesView(container, items = []) {
                 7(2)
               </div>
               <div>
-                <div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">สรุปอำนาจหน้าที่สำคัญ</div>
-                <div class="text-xs text-gray-500">และวิธีการดำเนินงานของราชการ</div>
+                <div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">สรุปอำนาจและหน้าที่สำคัญ</div>
+                <div class="text-xs text-gray-500">วิธีการดำเนินงานของทุกกอง</div>
               </div>
             </div>
             <i class="fi fi-rr-arrow-right text-gray-300 group-hover:text-brand-teal group-hover:translate-x-1 transition-all text-sm"></i>
@@ -114,8 +114,8 @@ function renderIndexFilesView(container, items = []) {
                 7(3)
               </div>
               <div>
-                <div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">สถานที่ติดต่อขอรับข้อมูล</div>
-                <div class="text-xs text-gray-500">ช่องทางการขอรับข้อมูลข่าวสาร</div>
+                <div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">สถานที่ติดต่อขอรับข้อมูลข่าวสาร</div>
+                <div class="text-xs text-gray-500">ศูนย์ข้อมูลข่าวสารและคำแนะนำ</div>
               </div>
             </div>
             <i class="fi fi-rr-arrow-right text-gray-300 group-hover:text-brand-teal group-hover:translate-x-1 transition-all text-sm"></i>
@@ -127,9 +127,41 @@ function renderIndexFilesView(container, items = []) {
                 7(4)
               </div>
               <div>
-                <div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">กฎ มติ ครม. และคำสั่งระเบียบ</div>
-                <div class="text-xs text-gray-500">ที่เกี่ยวข้องโดยตรงกับการปฏิบัติงาน</div>
+                <div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">กฎ มติ ครม. และระเบียบ</div>
+                <div class="text-xs text-gray-500">ข้อบังคับ คำสั่ง หนังสือเวียน แผน และนโยบาย</div>
               </div>
+            </div>
+            <i class="fi fi-rr-arrow-right text-gray-300 group-hover:text-brand-teal group-hover:translate-x-1 transition-all text-sm"></i>
+          </a>
+
+          <a href="#m7_5" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex items-center justify-between group">
+            <div class="flex items-center gap-3.5">
+              <div class="w-10 h-10 rounded-xl bg-white text-slate-700 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-200 group-hover:bg-slate-900 group-hover:text-white transition-colors">7(5)</div>
+              <div><div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">ข้อมูลข่าวสารอื่น ๆ</div><div class="text-xs text-gray-500">ตามที่คณะกรรมการกำหนด</div></div>
+            </div>
+            <i class="fi fi-rr-arrow-right text-gray-300 group-hover:text-brand-teal group-hover:translate-x-1 transition-all text-sm"></i>
+          </a>
+
+          <a href="#m7_6" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex items-center justify-between group">
+            <div class="flex items-center gap-3.5">
+              <div class="w-10 h-10 rounded-xl bg-white text-slate-700 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-200 group-hover:bg-slate-900 group-hover:text-white transition-colors">7(6)</div>
+              <div><div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">ผลการดำเนินงาน</div><div class="text-xs text-gray-500">ตามโครงการต่าง ๆ</div></div>
+            </div>
+            <i class="fi fi-rr-arrow-right text-gray-300 group-hover:text-brand-teal group-hover:translate-x-1 transition-all text-sm"></i>
+          </a>
+
+          <a href="#m7_7" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex items-center justify-between group">
+            <div class="flex items-center gap-3.5">
+              <div class="w-10 h-10 rounded-xl bg-white text-slate-700 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-200 group-hover:bg-slate-900 group-hover:text-white transition-colors">7(7)</div>
+              <div><div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">คู่มือการดำเนินงาน</div><div class="text-xs text-gray-500">และการขอใบอนุญาต</div></div>
+            </div>
+            <i class="fi fi-rr-arrow-right text-gray-300 group-hover:text-brand-teal group-hover:translate-x-1 transition-all text-sm"></i>
+          </a>
+
+          <a href="#m7_8" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex items-center justify-between group">
+            <div class="flex items-center gap-3.5">
+              <div class="w-10 h-10 rounded-xl bg-white text-slate-700 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-200 group-hover:bg-slate-900 group-hover:text-white transition-colors">7(8)</div>
+              <div><div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">ระเบียบที่ควรแจ้งให้ทราบ</div><div class="text-xs text-gray-500">เอกสารจากทุกกอง</div></div>
             </div>
             <i class="fi fi-rr-arrow-right text-gray-300 group-hover:text-brand-teal group-hover:translate-x-1 transition-all text-sm"></i>
           </a>
@@ -149,35 +181,35 @@ function renderIndexFilesView(container, items = []) {
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           <a href="#m9_1" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
             <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (1)</span>
-            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">ผลการพิจารณาอนุมัติ</span>
+            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">รายงานการประชุมสภา</span>
           </a>
           <a href="#m9_2" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
             <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (2)</span>
-            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">นโยบายและการตีความ</span>
+            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">งบประมาณรายจ่ายประจำปี</span>
           </a>
           <a href="#m9_3" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
             <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (3)</span>
-            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">แผนงาน/โครงการงบประมาณ</span>
+            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">แผนการดำเนินงานประจำปี</span>
           </a>
           <a href="#m9_4" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
             <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (4)</span>
-            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">คู่มือและคำสั่งการทำงาน</span>
+            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">แผนยุทธศาสตร์และแผนพัฒนาเทศบาล</span>
           </a>
           <a href="#m9_5" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
             <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (5)</span>
-            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">สิ่งพิมพ์ราชการ</span>
+            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">แผนอัตรากำลัง 3 ปี</span>
           </a>
           <a href="#m9_6" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
             <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (6)</span>
-            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">สัญญาสัมปทาน / ร่วมทุน</span>
+            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">คู่มือขออนุญาตสิ่งปลูกสร้าง</span>
           </a>
           <a href="#m9_7" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
             <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (7)</span>
-            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">มติคณะรัฐมนตรี / คำสั่ง</span>
+            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">ประกาศประกวดราคาจัดซื้อจัดจ้าง</span>
           </a>
           <a href="#m9_8" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex flex-col justify-between gap-2 group">
             <span class="text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md w-max border border-slate-200">ม.9 (8)</span>
-            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">ข้อมูลข่าวสารอื่นที่กำหนด</span>
+            <span class="text-xs font-bold text-gray-800 group-hover:text-brand-teal transition-colors line-clamp-1">สรุปผลจัดซื้อจัดจ้าง (สขร. 1)</span>
           </a>
         </div>
       </div>

@@ -326,9 +326,9 @@
         <p class="text-gray-500 text-xs mt-1.5 font-medium">ระบบจัดการข้อมูลข่าวสารเทศบาลนครเจ้าพระยาสุรศักดิ์</p>
       </div>
 
-      <form id="login-form" onsubmit="handleQuickAdminLogin(event)" class="space-y-4 relative z-10">
+      <form id="login-form" class="space-y-4 relative z-10">
         <div>
-          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">อีเมลเจ้าหน้าที่</label>
+          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">อีเมลบัญชีผู้ดูแล Supabase</label>
           <div class="relative">
             <input type="email" id="login-email" required value="admin@chaophraya.go.th"
               class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-brand-teal focus:bg-white focus:ring-2 focus:ring-brand-teal/10 transition-all font-medium"
@@ -340,7 +340,7 @@
         <div>
           <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">รหัสผ่าน</label>
           <div class="relative">
-            <input type="password" id="login-password" required value="123456"
+            <input type="password" id="login-password" required
               class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-brand-teal focus:bg-white focus:ring-2 focus:ring-brand-teal/10 transition-all font-medium"
               placeholder="••••••••" />
             <i class="fi fi-rr-lock absolute left-3.5 top-3.5 text-gray-400 text-sm pointer-events-none"></i>
@@ -353,17 +353,17 @@
           <span id="login-error-msg">อีเมลหรือรหัสผ่านไม่ถูกต้อง</span>
         </div>
 
-        <button type="submit" onclick="handleQuickAdminLogin(event)"
+        <button type="submit" id="btn-login"
           class="w-full py-3.5 bg-brand-teal hover:bg-teal-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-teal-900/20 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2">
-          <span>เข้าสู่ระบบบริหารจัดการ</span>
+          <span>เข้าสู่ระบบ</span>
           <i class="fi fi-rr-arrow-right text-xs"></i>
         </button>
 
-        <button type="button" id="btn-quick-login" onclick="handleQuickAdminLogin(event)"
+        <!-- <button type="button" id="btn-quick-login" onclick="handleQuickAdminLogin(event)"
           class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 mt-2">
           <i class="fi fi-rr-bolt text-sm"></i>
           <span>เข้าสู่ระบบด่วน (Quick Access Login)</span>
-        </button>
+        </button> -->
       </form>
     </div>
   </div>
@@ -403,7 +403,7 @@
         <a href="./index.html" target="_blank" title="เปิดหน้าเว็บประชาชน"
           class="hidden sm:flex items-center gap-1.5 px-3 py-2 bg-teal-50 text-brand-teal border border-teal-200/80 rounded-xl text-xs font-bold hover:bg-brand-teal hover:text-white transition-all shadow-2xs">
           <i class="fi fi-rr-eye text-xs"></i>
-          <span>ดูหน้าเว็บประชาชน</span>
+          <span>หน้าหลัก</span>
           <i class="fi fi-rr-arrow-up-right text-[10px] opacity-70"></i>
         </a>
 
@@ -459,14 +459,6 @@
 
             <!-- Action Toolbar Buttons (Uniform height h-10 & Distinct functional colors) -->
             <div class="flex items-center gap-2 flex-wrap">
-              <button id="btn-seed-m91"
-                class="hidden px-4 py-2.5 h-10 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer shrink-0">
-                <i class="fi fi-rr-folder-add"></i> ดึงชุดข้อมูลเริ่มต้น ม.9(1) (26 รายการ)
-              </button>
-              <button id="btn-seed-m92"
-                class="hidden px-4 py-2.5 h-10 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer shrink-0">
-                <i class="fi fi-rr-folder-add"></i> ดึงชุดข้อมูลเริ่มต้น ม.9(2) (8 รายการ)
-              </button>
               <button id="btn-add-folder"
                 class="hidden px-4 py-2.5 h-10 bg-amber-500 hover:bg-amber-600 text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer shrink-0">
                 <i class="fi fi-rr-folder-add"></i> เพิ่มโฟลเดอร์ย่อย
@@ -654,6 +646,9 @@
   <!-- Modular Admin Scripts (src-admin Folder) -->
   <script src="./src-admin/admin_app.js"></script>
   <script src="./src-admin/admin_items.js"></script>
+  <script src="./src-admin/admin_contact.js"></script>
+  <script src="./src-admin/admin_evaluations.js"></script>
+  <script src="./src-admin/admin_visitor_stats.js"></script>
   <script src="./src-admin/admin_faq.js"></script>
 
   <!-- Admin Reply Modal (สำหรับเจ้าหน้าที่ตอบคำถามประชาชน) -->

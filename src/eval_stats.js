@@ -33,7 +33,7 @@ window.renderEvalStatsView = async function (container) {
 
           <button onclick="renderEvalStatsView(document.querySelector('.content-box'))" class="self-start md:self-auto px-4 py-2 bg-white/15 hover:bg-white/25 border border-white/20 text-white text-xs font-normal rounded-lg transition-all cursor-pointer inline-flex items-center gap-2 backdrop-blur-xs">
             <i class="fi fi-rr-refresh text-xs"></i>
-            <span>รีเฟรชข้อมูลจริง</span>
+            <span>อัปเดตข้อมูล</span>
           </button>
         </div>
       </div>

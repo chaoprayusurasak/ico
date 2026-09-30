@@ -6,22 +6,53 @@
  * and crisp typography inspired by Silpakorn university's department cards.
  */
 
-function renderContactView(container) {
+const DEFAULT_CONTACT_DEPARTMENTS = [
+  { name: "ประชาสัมพันธ์", phone: "038-348205-6" },
+  { name: "สำนักปลัด", phone: "038-348138" },
+  { name: "สำนักคลัง", phone: "038-348175" },
+  { name: "กองช่าง", phone: "038-348245" },
+  { name: "กองสาธารณสุขและสิ่งแวดล้อม", phone: "038-348253" },
+  { name: "กองยุทธศาสตร์และงบประมาณ", phone: "038-348157" },
+  { name: "กองการศึกษา", phone: "038-348163" },
+  { name: "กองสวัสดิการสังคม", phone: "038-348068" },
+  { name: "งานป้องกันและบรรเทาสาธารณภัย", phone: "038-348000" },
+  { name: "งานรักษาความสงบ (เทศกิจ)", phone: "038-348177" },
+  { name: "งานทะเบียนราษฎร์", phone: "038-348164" }
+];
+
+function escapeContactHtml(value) {
+  return String(value).replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  })[character]);
+}
+
+async function renderContactView(container) {
   if (!container) return;
 
-  const departments = [
-    { name: "ประชาสัมพันธ์", phone: "038-348205-6" },
-    { name: "สำนักปลัด", phone: "038-348138" },
-    { name: "สำนักคลัง", phone: "038-348175" },
-    { name: "กองช่าง", phone: "038-348245" },
-    { name: "กองสาธารณสุขและสิ่งแวดล้อม", phone: "038-348253" },
-    { name: "กองยุทธศาสตร์และงบประมาณ", phone: "038-348157" },
-    { name: "กองการศึกษา", phone: "038-348163" },
-    { name: "กองสวัสดิการสังคม", phone: "038-348068" },
-    { name: "งานป้องกันและบรรเทาสาธารณภัย", phone: "038-348000" },
-    { name: "งานรักษาความสงบ (เทศกิจ)", phone: "038-348177" },
-    { name: "งานทะเบียนราษฎร์", phone: "038-348164" }
-  ];
+  container.innerHTML = `<div class="py-12 text-center text-sm text-slate-500">กำลังโหลดข้อมูลติดต่อ...</div>`;
+  let departments = DEFAULT_CONTACT_DEPARTMENTS;
+  let loadWarning = "";
+
+  try {
+    const client = window.supabase;
+    if (!client || typeof client.from !== "function") throw new Error("Supabase client is not initialized");
+
+    const { data, error } = await client
+      .from("contact_departments")
+      .select("name, phone, sort_order")
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true });
+
+    if (error) throw error;
+    departments = data || [];
+  } catch (error) {
+    console.error("Unable to load contact departments from Supabase:", error);
+    loadWarning = "ขณะนี้ไม่สามารถโหลดข้อมูลล่าสุดจากระบบได้ กำลังแสดงข้อมูลสำรอง";
+  }
 
   // Exact color palette matching the reference image cards
   const cardThemes = [
@@ -41,7 +72,9 @@ function renderContactView(container) {
 
   const deptGridHtml = departments.map((dept, idx) => {
     const theme = cardThemes[idx % cardThemes.length];
-    const cleanPhone = dept.phone.replace(/[^0-9]/g, '');
+    const name = escapeContactHtml(dept.name || "");
+    const phone = escapeContactHtml(dept.phone || "");
+    const cleanPhone = phone.replace(/[^0-9+]/g, '');
 
     return `
       <div class="bg-white p-5 border border-slate-200/90 rounded-none rounded-br-[28px] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"
@@ -50,19 +83,19 @@ function renderContactView(container) {
         <!-- Middle: Department Name (Crisp Dark Bold Text) -->
         <div class="my-2 min-h-[46px] flex items-center">
           <h3 class="text-sm sm:text-base font-bold text-slate-900 leading-snug group-hover:text-[#008675] transition-colors">
-            ${dept.name}
+            ${name}
           </h3>
         </div>
 
         <!-- Bottom: Phone Number Pill Link -->
         <a href="tel:${cleanPhone}" 
-          title="โทรติดต่อ ${dept.name}"
+          title="โทรติดต่อ ${name}"
           class="mt-2 pt-3 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-bold text-slate-800 group-hover:text-[#008675] transition-colors">
           <span class="inline-flex items-center gap-2">
             <span class="w-6 h-6 rounded-full bg-slate-100 group-hover:bg-[#008675]/10 flex items-center justify-center text-slate-600 group-hover:text-[#008675] transition-all">
               <i class="fi fi-rr-phone-call text-xs"></i>
             </span>
-            <span>${dept.phone}</span>
+            <span>${phone}</span>
           </span>
           <i class="fi fi-rr-arrow-right text-[10px] text-slate-300 group-hover:text-[#008675] group-hover:translate-x-0.5 transition-all"></i>
         </a>
@@ -78,6 +111,7 @@ function renderContactView(container) {
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
         ${deptGridHtml}
       </div>
+      ${loadWarning ? `<p class="text-xs text-amber-700" role="status">${escapeContactHtml(loadWarning)}</p>` : ""}
 
         <div class="w-full h-[360px] sm:h-[420px] rounded-2xl overflow-hidden border border-slate-200 shadow-inner">
           <iframe

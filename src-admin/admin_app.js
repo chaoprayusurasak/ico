@@ -25,18 +25,22 @@ window.CATEGORIES = {
 
   // 2. Main Section & Legal Index Categories
   "index_files": "ดัชนีรวม / ดัชนีประจำแฟ้ม",
-  "m7_1": "มาตรา 7 (1) โครงสร้างและการจัดองค์กร",
-  "m7_2": "มาตรา 7 (2) สรุปอำนาจหน้าที่",
+  "m7_1": "มาตรา 7 (1) โครงสร้างและการจัดตั้งองค์กร",
+  "m7_2": "มาตรา 7 (2) สรุปอำนาจและหน้าที่",
   "m7_3": "มาตรา 7 (3) สถานที่ติดต่อขอข้อมูล",
-  "m7_4": "มาตรา 7 (4) กฎ มติ ครม. ระเบียบ",
-  "m9_1": "มาตรา 9 (1) ผลการพิจารณา",
-  "m9_2": "มาตรา 9 (2) นโยบายการตีความ",
-  "m9_3": "มาตรา 9 (3) แผนงาน โครงการ งบประมาณ",
-  "m9_4": "มาตรา 9 (4) คู่มือวิธีปฏิบัติงานเจ้าหน้าที่",
-  "m9_5": "มาตรา 9 (5) สิ่งพิมพ์ที่อ้างถึงตาม ม.7",
-  "m9_6": "มาตรา 9 (6) สัญญาสัมปทาน/ร่วมทุน",
-  "m9_7": "มาตรา 9 (7) มติคณะรัฐมนตรี/มติบอร์ด",
-  "m9_8": "มาตรา 9 (8) ข้อมูลข่าวสารอื่นที่กำหนด",
+  "m7_4": "มาตรา 7 (4) กฎ มติ ครม. ระเบียบ แผน และนโยบาย",
+  "m7_5": "มาตรา 7 (5) ข้อมูลข่าวสารอื่นตามที่กำหนด",
+  "m7_6": "มาตรา 7 (6) ผลการดำเนินงานตามโครงการ",
+  "m7_7": "มาตรา 7 (7) คู่มือและการขอใบอนุญาต",
+  "m7_8": "มาตรา 7 (8) ระเบียบที่ควรแจ้งให้ทราบ",
+  "m9_1": "มาตรา 9 (1) รายงานการประชุมสภา",
+  "m9_2": "มาตรา 9 (2) งบประมาณรายจ่ายประจำปี",
+  "m9_3": "มาตรา 9 (3) แผนการดำเนินงานประจำปี",
+  "m9_4": "มาตรา 9 (4) แผนยุทธศาสตร์และแผนพัฒนาเทศบาล",
+  "m9_5": "มาตรา 9 (5) แผนอัตรากำลัง 3 ปี",
+  "m9_6": "มาตรา 9 (6) คู่มือขออนุญาตสิ่งปลูกสร้าง",
+  "m9_7": "มาตรา 9 (7) ประกาศประกวดราคาจัดซื้อจัดจ้าง",
+  "m9_8": "มาตรา 9 (8) สรุปผลจัดซื้อจัดจ้าง (สขร. 1)",
   "eval_summary": "สรุปความพึงพอใจ",
   "eval_stats": "สถิติผู้ใช้บริการ",
   "eval_faq": "กระดานถาม-ตอบ / ข้อคิดเห็น",
@@ -47,26 +51,85 @@ window.activeCategory = null;
 window.currentParentId = null;
 window.breadcrumbStack = [];
 window.isEditing = false;
+const ADMIN_NAVIGATION_STORAGE_KEY = "admin_navigation_state";
 
-window.handleQuickAdminLogin = function (e) {
+window.saveAdminNavigationState = function () {
+  localStorage.setItem(ADMIN_NAVIGATION_STORAGE_KEY, JSON.stringify({
+    category: window.activeCategory,
+    breadcrumbStack: window.breadcrumbStack || []
+  }));
+};
+
+function restoreAdminNavigationState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(ADMIN_NAVIGATION_STORAGE_KEY) || "null");
+    if (!saved || typeof saved.category !== "string" || !Object.prototype.hasOwnProperty.call(window.CATEGORIES, saved.category)) {
+      return false;
+    }
+
+    const breadcrumbStack = Array.isArray(saved.breadcrumbStack)
+      ? saved.breadcrumbStack.filter(folder =>
+        folder &&
+        (typeof folder.id === "string" || typeof folder.id === "number") &&
+        typeof folder.title === "string"
+      )
+      : [];
+
+    window.activeCategory = saved.category;
+    window.breadcrumbStack = breadcrumbStack;
+    window.currentParentId = breadcrumbStack.length > 0
+      ? breadcrumbStack[breadcrumbStack.length - 1].id
+      : null;
+    return true;
+  } catch (error) {
+    console.warn("Unable to restore admin navigation state:", error);
+    return false;
+  }
+}
+
+window.handleQuickAdminLogin = async function (e) {
   if (e && typeof e.preventDefault === "function") e.preventDefault();
 
   const emailInput = document.getElementById("login-email");
-  const email = (emailInput && emailInput.value.trim()) ? emailInput.value.trim() : "admin@chaophraya.go.th";
+  const passwordInput = document.getElementById("login-password");
+  const loginError = document.getElementById("login-error");
+  const loginErrorMessage = document.getElementById("login-error-msg");
+  const loginButton = document.getElementById("btn-login");
+  if (!emailInput || !passwordInput) return;
 
-  localStorage.setItem("admin_logged_in", "true");
-  localStorage.setItem("admin_email", email);
+  if (loginError) loginError.classList.add("hidden");
+  if (loginButton) {
+    loginButton.disabled = true;
+    loginButton.querySelector("span").textContent = "กำลังเข้าสู่ระบบ...";
+  }
 
-  const authContainer = document.getElementById("auth-container");
-  const dashboard = document.getElementById("admin-dashboard");
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: emailInput.value.trim(),
+      password: passwordInput.value
+    });
+    if (error) throw error;
+    if (!data.session) throw new Error("ไม่พบ session จาก Supabase Auth");
 
-  if (authContainer) authContainer.classList.add("hidden");
-  if (dashboard) dashboard.classList.remove("hidden");
+    passwordInput.value = "";
+    const authContainer = document.getElementById("auth-container");
+    const dashboard = document.getElementById("admin-dashboard");
+    if (authContainer) authContainer.classList.add("hidden");
+    if (dashboard) dashboard.classList.remove("hidden");
 
-  const userEmailEl = document.getElementById("admin-user-email");
-  if (userEmailEl) userEmailEl.textContent = email;
-
-  window.initDashboard();
+    const userEmailEl = document.getElementById("admin-user-email");
+    if (userEmailEl) userEmailEl.textContent = data.user.email || emailInput.value.trim();
+    window.initDashboard();
+  } catch (error) {
+    console.error("Supabase Auth sign-in failed:", error);
+    if (loginErrorMessage) loginErrorMessage.textContent = `เข้าสู่ระบบไม่สำเร็จ: ${error.message || error}`;
+    if (loginError) loginError.classList.remove("hidden");
+  } finally {
+    if (loginButton) {
+      loginButton.disabled = false;
+      loginButton.querySelector("span").textContent = "เข้าสู่ระบบ";
+    }
+  }
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -91,48 +154,51 @@ function setupAuthListener() {
     });
   }
 
-  const btnQuickLogin = document.getElementById("btn-quick-login");
-  if (btnQuickLogin) {
-    btnQuickLogin.addEventListener("click", (e) => {
-      window.handleQuickAdminLogin(e);
-    });
-  }
-
   const btnLogout = document.getElementById("btn-logout");
   if (btnLogout) {
     btnLogout.addEventListener("click", async () => {
-      localStorage.removeItem("admin_logged_in");
-      localStorage.removeItem("admin_email");
       try {
-        await supabase.auth.signOut();
-      } catch (e) { }
-      checkSession();
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+        localStorage.removeItem("admin_logged_in");
+        localStorage.removeItem("admin_email");
+        await checkSession();
+      } catch (error) {
+        console.error("Supabase Auth sign-out failed:", error);
+        alert(`ออกจากระบบไม่สำเร็จ: ${error.message || error}`);
+      }
     });
   }
 }
 async function checkSession() {
-  let session = null;
   try {
-    const { data } = await supabase.auth.getSession();
-    session = data?.session;
-  } catch (e) { }
+    const { data, error } = await supabase.auth.getSession();
+    if (error) throw error;
+    const session = data.session;
+    const authContainer = document.getElementById("auth-container");
+    const dashboard = document.getElementById("admin-dashboard");
 
-  const isLocalAdmin = localStorage.getItem("admin_logged_in") === "true";
-  const storedEmail = localStorage.getItem("admin_email") || "admin@chaophraya.go.th";
-
-  const authContainer = document.getElementById("auth-container");
-  const dashboard = document.getElementById("admin-dashboard");
-
-  if (session || isLocalAdmin) {
-    if (authContainer) authContainer.classList.add("hidden");
-    if (dashboard) dashboard.classList.remove("hidden");
-    const userEmailEl = document.getElementById("admin-user-email");
-    if (userEmailEl) userEmailEl.textContent = session?.user?.email || storedEmail;
-    window.initDashboard();
-  } else {
+    if (session) {
+      if (authContainer) authContainer.classList.add("hidden");
+      if (dashboard) dashboard.classList.remove("hidden");
+      const userEmailEl = document.getElementById("admin-user-email");
+      if (userEmailEl) userEmailEl.textContent = session.user.email || "";
+      window.initDashboard();
+    } else {
+      if (authContainer) authContainer.classList.remove("hidden");
+      if (dashboard) dashboard.classList.add("hidden");
+      window.activeCategory = null;
+    }
+  } catch (error) {
+    console.error("Unable to check Supabase Auth session:", error);
+    const authContainer = document.getElementById("auth-container");
+    const dashboard = document.getElementById("admin-dashboard");
     if (authContainer) authContainer.classList.remove("hidden");
     if (dashboard) dashboard.classList.add("hidden");
-    window.activeCategory = null;
+    const loginError = document.getElementById("login-error");
+    const loginErrorMessage = document.getElementById("login-error-msg");
+    if (loginErrorMessage) loginErrorMessage.textContent = `ตรวจสอบการเข้าสู่ระบบไม่สำเร็จ: ${error.message || error}`;
+    if (loginError) loginError.classList.remove("hidden");
   }
 }
 
@@ -156,25 +222,10 @@ window.initDashboard = function () {
           items: ["about_history", "executives", "officers"]
         },
         {
-          title: "สำหรับหน่วยงานราชการ",
-          type: "group",
-          items: ["agency_form", "agency_report", "agency_contest"]
-        },
-        {
           title: "สำหรับประชาชน",
           type: "group",
           items: ["public_complaint"]
         },
-        {
-          title: "เชื่อมโยงศูนย์ข้อมูลข่าวสารอื่น ๆ",
-          type: "group",
-          items: ["link_agencies", "link_infocenter", "link_testing"]
-        },
-        {
-          title: "เมนูอื่น ๆ",
-          type: "group",
-          items: ["downloads", "sitemap"]
-        }
       ]
     },
     {
@@ -185,7 +236,7 @@ window.initDashboard = function () {
         {
           title: "ข้อมูลข่าวสารตามมาตรา 7",
           type: "group",
-          items: ["m7_1", "m7_2", "m7_3", "m7_4"]
+          items: ["m7_1", "m7_2", "m7_3", "m7_4", "m7_5", "m7_6", "m7_7", "m7_8"]
         },
         {
           title: "ข้อมูลข่าวสารตามมาตรา 9",
@@ -238,11 +289,12 @@ window.initDashboard = function () {
     });
   });
 
-  if (!window.activeCategory) {
+  const restoredNavigation = restoreAdminNavigationState();
+  if (!restoredNavigation && !window.activeCategory) {
     window.activeCategory = "officers";
   }
   window.syncAdminSidebarState();
-  selectCategory(window.activeCategory);
+  selectCategory(window.activeCategory, restoredNavigation);
 };
 
 function createCategoryButton(id, title, icon, isNested = false) {
@@ -332,10 +384,13 @@ window.filterSidebarNav = function (query) {
   }
 };
 
-function selectCategory(key) {
+function selectCategory(key, preserveNavigation = false) {
   window.activeCategory = key;
-  window.currentParentId = null;
-  window.breadcrumbStack = [];
+  if (!preserveNavigation) {
+    window.currentParentId = null;
+    window.breadcrumbStack = [];
+  }
+  window.saveAdminNavigationState();
   if (typeof window.toggleMobileSidebar === "function") window.toggleMobileSidebar(false);
 
   document.querySelectorAll("#admin-categories button").forEach(btn => {
@@ -377,7 +432,12 @@ function selectCategory(key) {
       }
     }
 
-    if (key === "executives") {
+    if (key === "contact") {
+      btnAddItem.innerHTML = `<i class="fi fi-rr-plus"></i> เพิ่มหน่วยงาน`;
+      btnAddFolder.classList.add("hidden");
+      if (btnSeedM91) btnSeedM91.classList.add("hidden");
+      if (btnSeedM92) btnSeedM92.classList.add("hidden");
+    } else if (key === "executives") {
       btnAddItem.innerHTML = `<i class="fi fi-rr-user-add"></i> เพิ่มผู้บริหารใหม่`;
       if (btnSeedM91) btnSeedM91.classList.add("hidden");
       if (btnSeedM92) btnSeedM92.classList.add("hidden");
@@ -416,4 +476,3 @@ function selectCategory(key) {
     window.renderAdminBreadcrumb();
   }
 }
-
