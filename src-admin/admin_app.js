@@ -316,6 +316,7 @@ window.toggleMobileSidebar = function (show) {
   if (!sidebar) return;
 
   const isShowing = show !== undefined ? show : sidebar.classList.contains("-translate-x-full");
+  const toggle = document.getElementById("btn-mobile-sidebar-toggle");
 
   if (isShowing) {
     sidebar.classList.remove("-translate-x-full");
@@ -324,6 +325,7 @@ window.toggleMobileSidebar = function (show) {
     sidebar.classList.add("-translate-x-full");
     if (backdrop) backdrop.classList.add("hidden");
   }
+  if (toggle) toggle.setAttribute("aria-expanded", String(isShowing));
 };
 
 window.syncAdminSidebarState = function () {
