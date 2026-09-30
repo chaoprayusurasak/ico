@@ -110,11 +110,18 @@
 
     #admin-sidebar {
       width: var(--admin-sidebar-width);
+      flex: 0 0 var(--admin-sidebar-width);
       background: var(--admin-sidebar-bg);
       color: var(--admin-ink);
       border-right: 1px solid var(--admin-border);
       padding: 0.85rem;
       box-shadow: none;
+      transition:
+        flex-basis 280ms cubic-bezier(0.22, 1, 0.36, 1),
+        width 280ms cubic-bezier(0.22, 1, 0.36, 1),
+        padding 280ms ease,
+        transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: flex-basis, width, transform;
     }
 
     #admin-sidebar > div:first-child {
@@ -186,53 +193,22 @@
     }
 
     #admin-dashboard.admin-sidebar-collapsed #admin-sidebar {
-      width: 4.25rem;
-      padding-left: 0.65rem;
-      padding-right: 0.65rem;
+      width: 0;
+      min-width: 0;
+      flex-basis: 0;
+      padding-left: 0;
+      padding-right: 0;
+      border-right-width: 0;
+      transform: translateX(-100%);
+      pointer-events: none;
     }
 
-    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar > div:first-child,
-    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar > div:nth-child(2),
-    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar #admin-categories > div {
-      display: none;
-    }
-
-    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar details > div {
-      display: flex;
-      gap: 0.15rem;
-      margin: 0;
-      padding: 0;
-      border: 0;
-    }
-
-    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar #admin-categories {
-      overflow-x: hidden;
-    }
-
-    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar details summary,
-    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar button[data-cat] {
-      justify-content: center;
-      padding-left: 0.5rem;
-      padding-right: 0.5rem;
-      font-size: 0;
-    }
-
-    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar details summary i,
-    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar button[data-cat] i {
-      font-size: 0.85rem;
-      margin: 0;
-    }
-
-    #admin-dashboard.admin-sidebar-collapsed #admin-sidebar details summary {
-      cursor: default;
+    #btn-admin-sidebar-toggle i {
+      transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     #admin-dashboard.admin-sidebar-collapsed #btn-admin-sidebar-toggle i {
       transform: rotate(180deg);
-    }
-
-    #btn-admin-sidebar-toggle i {
-      transition: transform 180ms ease;
     }
 
     #admin-dashboard > div > main {
@@ -302,6 +278,16 @@
       #admin-sidebar {
         top: 4rem;
         height: calc(100vh - 4rem);
+        flex-basis: auto;
+        transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: transform;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #admin-sidebar,
+      #btn-admin-sidebar-toggle i {
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
@@ -318,21 +304,21 @@
 
       <div class="text-center mb-8 relative z-10">
         <div
-          class="w-20 h-20 mx-auto mb-4 bg-teal-50 rounded-2xl p-3 flex items-center justify-center shadow-inner border border-teal-100">
-          <img src="./assets/logo.png" alt="Logo" class="w-full h-full object-contain"
+          class="mx-auto mb-4 rounded-2xl p-3 flex items-center justify-center ">
+          <img src="./assets/logo.png" alt="Logo" class="w-full h-full object-contain" style="max-width: 100px; max-height: 100px;"
             onerror="this.src='https://placehold.co/100x100?text=ICO'" />
         </div>
-        <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">เข้าสู่ระบบผู้ดูแล</h2>
+        <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">เข้าสู่ระบบ</h2>
         <p class="text-gray-500 text-xs mt-1.5 font-medium">ระบบจัดการข้อมูลข่าวสารเทศบาลนครเจ้าพระยาสุรศักดิ์</p>
       </div>
 
       <form id="login-form" class="space-y-4 relative z-10">
         <div>
-          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">อีเมลบัญชีผู้ดูแล Supabase</label>
+          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">อีเมล</label>
           <div class="relative">
-            <input type="email" id="login-email" required value="admin@chaophraya.go.th"
+            <input type="email" id="login-email" required value=""
               class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-brand-teal focus:bg-white focus:ring-2 focus:ring-brand-teal/10 transition-all font-medium"
-              placeholder="admin@domain.com" />
+              placeholder="your.email@domain.com" />
             <i class="fi fi-rr-envelope absolute left-3.5 top-3.5 text-gray-400 text-sm pointer-events-none"></i>
           </div>
         </div>
@@ -358,12 +344,6 @@
           <span>เข้าสู่ระบบ</span>
           <i class="fi fi-rr-arrow-right text-xs"></i>
         </button>
-
-        <!-- <button type="button" id="btn-quick-login" onclick="handleQuickAdminLogin(event)"
-          class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 mt-2">
-          <i class="fi fi-rr-bolt text-sm"></i>
-          <span>เข้าสู่ระบบด่วน (Quick Access Login)</span>
-        </button> -->
       </form>
     </div>
   </div>
@@ -379,7 +359,8 @@
           <i class="fi fi-rr-menu-burger text-lg"></i>
         </button>
 
-        <button id="btn-admin-sidebar-toggle" onclick="toggleAdminSidebar()" title="ย่อหรือขยายเมนูด้านข้าง"
+        <button id="btn-admin-sidebar-toggle" onclick="toggleAdminSidebar()" title="ซ่อนหรือแสดงเมนูด้านข้าง"
+          aria-controls="admin-sidebar" aria-expanded="true"
           class="hidden lg:inline-flex p-2 rounded-lg text-gray-500 hover:bg-teal-50 hover:text-brand-teal transition-all cursor-pointer">
           <i class="fi fi-rr-angle-left text-sm"></i>
           <span class="sr-only">ย่อหรือขยายเมนูด้านข้าง</span>
