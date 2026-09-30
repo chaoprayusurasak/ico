@@ -14,10 +14,9 @@
     box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
     overflow: hidden;
     transition:
-      width 320ms cubic-bezier(0.22, 1, 0.36, 1),
-      transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      width 220ms ease-out,
+      transform 220ms ease-out,
       box-shadow 220ms ease;
-    will-change: width, transform;
   }
 
   .sidebar-header {
@@ -48,6 +47,29 @@
     color: #008675;
   }
 
+  .sidebar-expand-tab {
+    position: fixed;
+    top: 108px;
+    left: 23px;
+    z-index: 2147483647;
+    width: 30px;
+    height: 30px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dce7e5;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+    color: #475569;
+    cursor: pointer;
+  }
+
+  .sidebar-expand-tab:hover {
+    background: #eef5f4;
+    color: #008675;
+  }
+
   .sidebar-nav {
     display: flex;
     flex-direction: column;
@@ -68,7 +90,7 @@
 
   .sidebar-link-label,
   .sidebar-header > span {
-    transition: opacity 140ms ease, max-width 260ms ease, transform 220ms ease;
+    transition: opacity 160ms ease, transform 200ms ease;
   }
 
   .sidebar-link-label {
@@ -87,8 +109,12 @@
     width: 68px;
   }
 
+  body.sidebar-collapsed .sidebar-expand-tab {
+    display: inline-flex;
+  }
+
   body.sidebar-collapsed .sidebar-header > span {
-    max-width: 0;
+    width: 0;
     opacity: 0;
     transform: translateX(-6px);
   }
@@ -108,7 +134,9 @@
   }
 
   body.sidebar-collapsed .sidebar-link-label {
+    flex: 0 0 0;
     max-width: 0;
+    visibility: hidden;
     opacity: 0;
     transform: translateX(-6px);
     white-space: nowrap;
@@ -123,13 +151,11 @@
     max-width: 1360px;
     margin-left: 300px;
     margin-right: 20px;
-    transition: width 320ms cubic-bezier(0.22, 1, 0.36, 1), margin 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   body.sidebar-collapsed.has-public-sidebar .parent {
-    width: calc(100% - 124px);
-    margin-left: 104px;
-    margin-right: 20px;
+    transform: translateX(-196px);
   }
 
   @media (min-width: 1640px) {
@@ -141,8 +167,9 @@
 
     body.sidebar-collapsed.has-public-sidebar .parent {
       width: 1360px;
-      margin-left: calc((100vw - 1484px) / 2 + 84px);
+      margin-left: calc((100vw - 1640px) / 2 + 280px);
       margin-right: 0;
+      transform: translateX(-196px);
     }
   }
 
@@ -171,7 +198,7 @@
 
     body.sidebar-collapsed .sidebar-header > span,
     body.sidebar-collapsed .sidebar-link-label {
-      max-width: 220px;
+      visibility: visible;
       opacity: 1;
       transform: none;
     }
@@ -197,6 +224,10 @@
 
     .sidebar-collapse-button {
       display: none;
+    }
+
+    .sidebar-expand-tab {
+      display: none !important;
     }
 
     .sidebar-nav {
@@ -248,6 +279,7 @@
       max-width: 1360px;
       margin-left: 12px;
       margin-right: 12px;
+      transform: none;
     }
   }
 
@@ -269,6 +301,9 @@
   <span>เมนู</span>
 </button>
 <button type="button" id="sidebar-menu-backdrop" class="sidebar-menu-backdrop" onclick="toggleSidebarMenu(false)" aria-label="ปิดเมนู"></button>
+<button type="button" id="sidebar-expand-tab" class="sidebar-expand-tab" onclick="toggleSidebarCollapse()" title="ขยายเมนู" aria-label="ขยายเมนู">
+  <i class="fi fi-rr-angle-double-right" aria-hidden="true"></i>
+</button>
 
 <aside id="sidebar-dock" class="sidebar">
 
