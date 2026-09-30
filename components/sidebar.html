@@ -47,29 +47,6 @@
     color: #008675;
   }
 
-  .sidebar-expand-tab {
-    position: fixed;
-    top: 106px;
-    left: 72px;
-    z-index: 2147483648;
-    width: 34px;
-    height: 34px;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #dce7e5;
-    border-radius: 8px;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
-    color: #475569;
-    cursor: pointer;
-  }
-
-  .sidebar-expand-tab:hover {
-    background: #eef5f4;
-    color: #008675;
-  }
-
   .sidebar-nav {
     display: flex;
     flex-direction: column;
@@ -109,22 +86,13 @@
     width: 68px;
   }
 
-  body.sidebar-collapsed .sidebar-expand-tab {
-    display: inline-flex;
-  }
-
   body.sidebar-collapsed .sidebar-header > span {
-    opacity: 0;
-    transform: translateX(-6px);
+    display: none;
   }
 
   body.sidebar-collapsed .sidebar-header {
     justify-content: center;
     padding-inline: 0.5rem;
-  }
-
-  body.sidebar-collapsed .sidebar-collapse-button {
-    display: none;
   }
 
   body.sidebar-collapsed .sidebar-nav {
@@ -138,10 +106,6 @@
 
   body.sidebar-collapsed .sidebar-link-label {
     display: none;
-  }
-
-  body.sidebar-collapsed .sidebar-collapse-button i {
-    transform: rotate(180deg);
   }
 
   body.has-public-sidebar .parent {
@@ -448,6 +412,3 @@
     </a>
   </nav>
 </aside>
-<button type="button" id="sidebar-expand-tab" class="sidebar-expand-tab" onclick="toggleSidebarCollapse()" title="ขยายเมนู" aria-label="ขยายเมนู">
-  <i class="fi fi-rr-angle-double-right" aria-hidden="true"></i>
-</button>
