@@ -8,6 +8,11 @@
 window.renderAboutHistoryView = function (container, items) {
   let html = ``;
 
+  const headerBanner = document.getElementById("page-header-banner");
+  if (headerBanner) {
+    headerBanner.style.display = "none";
+  }
+
   const hasItems = items && items.length > 0;
   const mainTitle = hasItems && items[0].title ? items[0].title : "ประวัติศูนย์ข้อมูลข่าวสารอิเล็กทรอนิกส์ของราชการ";
   const mainDesc = hasItems && items[0].description
@@ -19,7 +24,7 @@ window.renderAboutHistoryView = function (container, items) {
   const imageCaption = hasItems && items[0].title ? items[0].title : "ประตูทางเข้าสำนักงานเทศบาลนครเจ้าพระยาสุรศักดิ์ และศูนย์ข้อมูลข่าวสารอิเล็กทรอนิกส์ของราชการ";
 
   html += `
-    <div class="flex flex-col items-center py-6 px-3 sm:px-6 font-prompt max-w-5xl mx-auto">
+    <div class="flex flex-col items-center py-6 px-3 sm:px-6 font-prompt max-w-5xl mx-auto mt-8">
       
       <!-- 1. Main Header Title (Centered Teal Text - Matching Screenshot) -->
       <h1 class="text-3xl sm:text-4xl md:text-[40px] font-extrabold text-[#008675] text-center tracking-tight mb-6 leading-tight">
