@@ -3,7 +3,7 @@
  * Handles rendering for "ข่าวสารจาก สขร." (News from OIC/SBR)
  */
 
-window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPerPage = 6, breadcrumbStack = []) {
+window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPerPage = 6, breadcrumbStack = [], requestedNewsId = null) {
   let html = ``;
   const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
     "&": "&amp;",
@@ -162,7 +162,15 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
 
   container.innerHTML = html;
 
-  const openNewsDetail = (item) => {
+  const openNewsDetail = (item, updateHistory = true) => {
+    if (updateHistory && item.id) {
+      const detailHash = `#news_sbr?detail=${encodeURIComponent(item.id)}`;
+      const currentQuery = window.location.hash.split("?")[1] || "";
+      const alreadyViewingDetail = new URLSearchParams(currentQuery).has("detail");
+      const method = alreadyViewingDetail ? "replaceState" : "pushState";
+      window.history[method](window.history.state, "", `${window.location.pathname}${window.location.search}${detailHash}`);
+    }
+
     const detail = document.createElement("article");
     detail.className = "mt-10 mx-auto w-full bg-white px-4 py-5 text-slate-700 sm:px-8 sm:py-8";
 
@@ -216,7 +224,7 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
     detail.appendChild(description);
 
     const actions = document.createElement("div");
-    actions.className = "flex flex-wrap gap-3 border-t border-dashed border-teal-700/60 py-5";
+    actions.className = "flex flex-wrap gap-3 align-center justify-end ";
     if (item.link) {
       try {
         const linkUrl = new URL(item.link, window.location.href);
@@ -248,6 +256,11 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
     backButton.className = "inline-flex items-center gap-2 rounded-lg border border-teal-700 px-4 py-2 text-sm font-bold text-teal-800 hover:bg-teal-50";
     backButton.innerHTML = '<i class="fi fi-rr-arrow-left"></i> กลับไปหน้ารายการข่าว';
     backButton.addEventListener("click", () => {
+      window.history.replaceState(
+        window.history.state,
+        "",
+        `${window.location.pathname}${window.location.search}#news_sbr`
+      );
       window.renderNewsSbrView(container, items, currentPage, itemsPerPage, breadcrumbStack);
     });
     newsCrumb.addEventListener("click", () => backButton.click());
@@ -330,4 +343,17 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
       }
     });
   });
+
+  if (requestedNewsId) {
+    const requestedItem = items.find(item => String(item.id) === requestedNewsId && !item.is_folder);
+    if (requestedItem) {
+      openNewsDetail(requestedItem, false);
+    } else {
+      window.history.replaceState(
+        window.history.state,
+        "",
+        `${window.location.pathname}${window.location.search}#news_sbr`
+      );
+    }
+  }
 };

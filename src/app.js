@@ -157,6 +157,7 @@ document.addEventListener("keydown", (event) => {
 
 // Setup routing listener
 window.addEventListener("hashchange", handleRouting);
+window.addEventListener("popstate", handleRouting);
 
 // Auto-close mobile drawer when clicking a mobile navigation link
 document.addEventListener("click", (e) => {
@@ -294,7 +295,11 @@ function revealRoutedContent() {
 // Route handler
 async function handleRouting() {
   const requestId = ++routeRequestId;
-  let hash = window.location.hash.replace("#", "");
+  const [routeHash, routeQuery = ""] = window.location.hash.replace(/^#/, "").split("?");
+  let hash = routeHash;
+  const requestedNewsId = hash === "news_sbr"
+    ? new URLSearchParams(routeQuery).get("detail")
+    : null;
   if (!hash) {
     hash = "news_sbr";
     window.history.replaceState(
@@ -461,11 +466,11 @@ async function handleRouting() {
     return;
   }
 
-  loadCategoryItems(hash, requestId);
+  loadCategoryItems(hash, requestId, requestedNewsId);
 }
 
 // Fetch and load dynamic items from Supabase
-async function loadCategoryItems(hash, requestId = ++routeRequestId) {
+async function loadCategoryItems(hash, requestId = ++routeRequestId, requestedNewsId = null) {
   const boxEl = document.querySelector(".content-box");
   if (!boxEl) return;
   const parentId = currentPublicParentId;
@@ -544,7 +549,7 @@ async function loadCategoryItems(hash, requestId = ++routeRequestId) {
     }
 
     currentPage = 1; // Reset to page 1 on new folder view
-    renderItems(boxEl);
+    renderItems(boxEl, requestedNewsId);
     revealRoutedContent();
   } catch (err) {
     if (requestId !== routeRequestId) return;
@@ -602,8 +607,8 @@ function renderError(container, message) {
 }
 
 // Render Items List (With Pagination)
-function renderItems(container) {
-  const hash = window.location.hash.replace("#", "") || "home";
+function renderItems(container, requestedNewsId = null) {
+  const hash = window.location.hash.replace(/^#/, "").split("?")[0] || "home";
   let items = currentItems;
 
   if ((!items || items.length === 0) && hash === "executives") {
@@ -612,7 +617,7 @@ function renderItems(container) {
 
   // 1. Delegate to modular renderer: news_sbr
   if (hash === "news_sbr" && typeof renderNewsSbrView === "function") {
-    renderNewsSbrView(container, items, currentPage, ITEMS_PER_PAGE, publicBreadcrumbStack);
+    renderNewsSbrView(container, items, currentPage, ITEMS_PER_PAGE, publicBreadcrumbStack, requestedNewsId);
     return;
   }
 
