@@ -32,17 +32,32 @@ window.renderAboutHistoryView = function (container, items) {
       </h2>
 
       <!-- 3. Main Narrative Paragraph (Centered Layout with Comfortable Line-Height - Matching Screenshot) -->
-      <div class="text-slate-700 text-base sm:text-lg leading-relaxed sm:leading-loose text-center max-w-4xl mx-auto mb-10 font-normal whitespace-pre-line">
+      <div class="text-black font-weight-700 text-base sm:text-lg leading-relaxed sm:leading-loose text-center max-w-4xl mx-auto mb-10 font-normal whitespace-pre-line">
         ${mainDesc}
       </div>
 
       <!-- 4. White Card Frame containing Image, Floating Overlay Dropdown Pill & Teal Caption -->
-      <div class="w-full max-w-4xl bg-white rounded-3xl p-5 sm:p-8 md:p-10 shadow-[0_15px_45px_rgba(0,0,0,0.06)]  transition-all duration-300">
-        
+      <div class="w-full max-w-4xl bg-white p-5 sm:p-8 md:p-10 shadow-[0_15px_45px_rgba(0,0,0,0.06)] transition-all duration-300 rounded-br-[28px]">
+
         <!-- Image Container with Inner Shadow & Border -->
-        <div class="relative overflow-hidden rounded-2xl shadow-inner group">
-          <img id="history-main-image" src="${heroImage}" alt="${imageCaption}" class="w-full h-auto max-h-[520px] object-cover mx-auto transition-transform duration-500 group-hover:scale-102">
+        <div class="relative overflow-visible">
+          <div class="relative overflow-hidden rounded-br-3xl shadow-inner group">
+            <img
+              id="history-main-image"
+              src="${heroImage}"
+              alt="${imageCaption}"
+              class="w-full h-auto max-h-[520px] object-cover mx-auto transition-transform duration-500 group-hover:scale-102"
+            >
+          </div>
+          <img
+            src="./assets/ปัก.png"
+            alt=""
+            aria-hidden="true"
+            class="pointer-events-none absolute -left-5 sm:-left-8 top-1 z-10 w-20 sm:w-20 h-auto -translate-y-1/2 object-contain drop-shadow-[0_8px_12px_rgba(0,0,0,0.28)]"
+          >
         </div>
+
+      </div>
 
         ${hasItems && (items[0].file_url || items[0].link) ? `
           <!-- Attachment Links / Download Bar -->

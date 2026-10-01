@@ -218,7 +218,6 @@ window.openAdminReplyModal = (id) => {
     infoEl.innerHTML = `
       <div class="font-bold text-gray-800 text-sm mb-1">${item.title}</div>
       <div class="text-xs text-gray-600 mb-2">${item.question_detail}</div>
-      <div class="text-[11px] text-gray-400 font-semibold">รหัสอ้างอิง: ${item.code} | ส่งเมื่อ: ${new Date(item.created_at).toLocaleDateString('th-TH')}</div>
     `;
   }
   document.getElementById("admin-reply-textarea").value = item.admin_answer || "";

@@ -169,6 +169,7 @@ document.addEventListener("click", (e) => {
 let currentItems = [];
 let currentPage = 1;
 let ITEMS_PER_PAGE = 8;
+let routeRequestId = 0;
 
 const DEFAULT_EXECUTIVES = [
   {
@@ -292,8 +293,16 @@ function revealRoutedContent() {
 
 // Route handler
 async function handleRouting() {
+  const requestId = ++routeRequestId;
   let hash = window.location.hash.replace("#", "");
-  if (!hash) hash = "home";
+  if (!hash) {
+    hash = "news_sbr";
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${window.location.pathname}${window.location.search}#${hash}`
+    );
+  }
 
   // Reset public folder level on hash navigation
   currentPublicParentId = null;
@@ -422,7 +431,8 @@ async function handleRouting() {
   // If index_files, delegate to standalone src/index_files.js module (Render immediately!)
   if (hash === "index_files") {
     if (typeof renderIndexFilesView === "function") {
-      renderIndexFilesView(boxEl, currentItems || []);
+      currentItems = [];
+      renderIndexFilesView(boxEl, currentItems);
       const sb = (typeof window !== "undefined" && window.supabase) ? window.supabase : (typeof supabase !== "undefined" ? supabase : null);
       if (sb && typeof sb.from === "function") {
         sb.from("items")
@@ -430,25 +440,35 @@ async function handleRouting() {
           .eq("category", "index_files")
           .order("created_at", { ascending: false })
           .then(({ data, error }) => {
-            if (!error && data && data.length > 0) {
+            if (requestId !== routeRequestId || window.location.hash.replace("#", "") !== "index_files") return;
+            if (error) {
+              console.error("Error fetching index files:", error);
+              return;
+            }
+            if (data) {
               currentItems = data;
               renderIndexFilesView(boxEl, data);
             }
           })
-          .catch(() => {});
+          .catch(error => {
+            if (requestId === routeRequestId) {
+              console.error("Error fetching index files:", error);
+            }
+          });
       }
     }
     revealRoutedContent();
     return;
   }
 
-  loadCategoryItems(hash);
+  loadCategoryItems(hash, requestId);
 }
 
 // Fetch and load dynamic items from Supabase
-async function loadCategoryItems(hash) {
+async function loadCategoryItems(hash, requestId = ++routeRequestId) {
   const boxEl = document.querySelector(".content-box");
   if (!boxEl) return;
+  const parentId = currentPublicParentId;
 
   const sb = (typeof window !== "undefined" && window.supabase) ? window.supabase : (typeof supabase !== "undefined" ? supabase : null);
 
@@ -462,8 +482,8 @@ async function loadCategoryItems(hash) {
 
     // Query both supported tables in parallel so a slow or unavailable
     // oic_documents table does not delay the existing items fallback.
-    const parentQuery = currentPublicParentId
-      ? { method: "eq", value: currentPublicParentId }
+    const parentQuery = parentId
+      ? { method: "eq", value: parentId }
       : { method: "is", value: null };
     const buildCategoryQuery = (table) => {
       let query = sb.from(table).select("*").eq("category", hash);
@@ -477,22 +497,24 @@ async function loadCategoryItems(hash) {
       buildCategoryQuery("oic_documents"),
       buildCategoryQuery("items")
     ]);
+    if (requestId !== routeRequestId) return;
 
     const oicData = oicResult.data || [];
     const itemsData = itemsResult.data || [];
     items = oicData.length > 0 ? oicData : itemsData;
 
     // Keep the legacy broad fallback for records saved without parent_id.
-    if (items.length === 0 && !currentPublicParentId) {
+    if (items.length === 0 && !parentId) {
       const { data: legacyItems } = await sb
         .from("items")
         .select("*")
         .eq("category", hash)
         .order("created_at", { ascending: false });
+      if (requestId !== routeRequestId) return;
       items = legacyItems || [];
     }
 
-    if ((!items || items.length === 0) && hash === "executives" && !currentPublicParentId) {
+    if ((!items || items.length === 0) && hash === "executives" && !parentId) {
       // Auto seed real executives into Supabase database
       const seedData = DEFAULT_EXECUTIVES.map(item => ({
         category: "executives",
@@ -514,8 +536,10 @@ async function loadCategoryItems(hash) {
         .insert(seedData)
         .select("*");
 
+      if (requestId !== routeRequestId) return;
       currentItems = (!insertErr && inserted && inserted.length > 0) ? inserted : DEFAULT_EXECUTIVES;
     } else {
+      if (requestId !== routeRequestId) return;
       currentItems = items || [];
     }
 
@@ -523,6 +547,7 @@ async function loadCategoryItems(hash) {
     renderItems(boxEl);
     revealRoutedContent();
   } catch (err) {
+    if (requestId !== routeRequestId) return;
     console.error("Error fetching items:", err);
     if (hash === "executives") {
       currentItems = DEFAULT_EXECUTIVES;

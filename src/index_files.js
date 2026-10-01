@@ -11,26 +11,26 @@ function renderIndexFilesView(container, items = []) {
 
   // 1. FIRST: Render uploaded items list for index_files if available
   if (items && items.length > 0) {
-    html += `
-      <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
-        <div class="flex items-center justify-between gap-3 border-b border-slate-100 pb-4 mb-5">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center border border-slate-200 shrink-0">
-              <dotlottie-wc src="./assets/icons/document.json" autoplay loop class="w-8 h-8"></dotlottie-wc>
-            </div>
-            <div>
-              <h3 class="font-bold text-gray-900 text-base flex items-center gap-2">
-                รายการแฟ้มเอกสารดัชนีรวมประจำศูนย์
-              </h3>
-            </div>
-          </div>
-          <span class="px-2.5 py-1 bg-slate-100 text-slate-600 font-semibold text-xs rounded-md border border-slate-200 shrink-0">
-            ${items.length} รายการ
-          </span>
-        </div>
+    // html += `
+    //   <div class="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+    //     <div class="flex items-center justify-between gap-3 border-b border-slate-100 pb-4 mb-5">
+    //       <div class="flex items-center gap-3">
+    //         <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center border border-slate-200 shrink-0">
+    //           <dotlottie-wc src="./assets/icons/document.json" autoplay loop class="w-8 h-8"></dotlottie-wc>
+    //         </div>
+    //         <div>
+    //           <h3 class="font-bold text-gray-900 text-base flex items-center gap-2">
+    //             รายการแฟ้มเอกสารดัชนีรวมประจำศูนย์
+    //           </h3>
+    //         </div>
+    //       </div>
+    //       <span class="px-2.5 py-1 bg-slate-100 text-slate-600 font-semibold text-xs rounded-md border border-slate-200 shrink-0">
+    //         ${items.length} รายการ
+    //       </span>
+    //     </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    `;
+    //     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    // `;
 
     items.forEach(item => {
       const formattedDate = item.created_at ? new Date(item.created_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }) : '';

@@ -5,6 +5,13 @@
 
 window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPerPage = 6, breadcrumbStack = []) {
   let html = ``;
+  const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
 
   // Hide top page header banner on #news_sbr page
   const headerBanner = document.getElementById("page-header-banner");
@@ -99,10 +106,9 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
   // Layout แบบ Grid 3 คอลัมน์สำหรับหน้าข่าวสาร
   html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-2">`;
 
-  itemsToShow.forEach(item => {
+  itemsToShow.forEach((item, itemIndex) => {
     const defaultImg = "https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=800&q=80";
     const img = item.image_url || defaultImg;
-    const formattedDate = item.created_at ? new Date(item.created_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
     const isFolder = Boolean(item.is_folder);
 
     if (isFolder) {
@@ -129,35 +135,18 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
       `;
     } else {
       html += `
-        <div class="relative rounded-3xl overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_45px_rgba(0,134,117,0.22)] hover:-translate-y-1.5 transition-all duration-500 group h-80 sm:h-96 flex flex-col justify-end border border-gray-100/50">
-          <img src="${img}" alt="${item.title}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out z-0">
-          <div class="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[#002b26] via-[#004d43]/70 to-transparent z-10 transition-opacity duration-300"></div>
+        <div data-news-detail-index="${itemIndex}" tabindex="0" role="button" aria-label="อ่านรายละเอียดข่าว: ${escapeHtml(item.title || "ข่าวสาร")}" class="relative rounded-none rounded-br-[40px] overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_45px_rgba(0,134,117,0.22)] hover:-translate-y-1.5 transition-all duration-500 group h-80 sm:h-96 flex flex-col justify-end border border-gray-100/50 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
+          <img src="${escapeHtml(img)}" alt="${escapeHtml(item.title || "ข่าวสาร")}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out z-0">
+          <div class="absolute inset-0 bg-gradient-to-t from-[#002b26]/95 via-[#004d43]/30 to-transparent z-10 transition-opacity duration-300"></div>
 
-          <div class="relative z-20 p-5 sm:p-6 text-white flex flex-col justify-end h-full">
-            <div class="mt-auto">
-              <div class="flex items-center gap-1.5 text-xs font-semibold text-teal-200 uppercase tracking-wider mb-2">
-                <i class="fi fi-rr-calendar text-[11px]"></i> ${formattedDate}
-              </div>
-              <h3 class="text-lg sm:text-xl font-bold leading-snug text-white drop-shadow-sm line-clamp-2 group-hover:text-teal-100 transition-colors mb-2">${item.title}</h3>
-              ${item.description ? `<p class="text-xs text-teal-100/90 line-clamp-2 mb-4 font-normal leading-relaxed">${item.description}</p>` : ''}
-              
-              <div class="flex items-center gap-2 pt-3 border-t border-white/20">
-                ${item.link ? `
-                  <a href="${item.link}" target="_blank" class="flex-1 py-2 px-3 bg-white/20 hover:bg-white text-white hover:text-[#005a4e] backdrop-blur-md font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-sm">
-                    <i class="fi fi-rr-link"></i> ลิงก์
-                  </a>
-                ` : ''}
-                ${item.file_url ? `
-                  <button onclick="downloadFile(event, '${(item.file_url || '').replace(/'/g, "\\'")}', '${(item.title || '').replace(/'/g, "\\'")}', '${item.id || ''}')" class="flex-2 py-2 px-3 bg-brand-teal text-white hover:bg-white hover:text-[#005a4e] font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-                    <i class="fi fi-rr-download"></i> ดาวน์โหลด
-                  </button>
-                ` : ''}
-                ${!item.link && !item.file_url ? `
-                  <div class="flex-1 py-2 px-3 bg-white/10 text-white/50 font-medium text-xs rounded-xl flex items-center justify-center cursor-not-allowed">
-                    ไม่มีเอกสารแนบ
-                  </div>
-                ` : ''}
-              </div>
+          <span class="absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-[#087d72] px-3 py-1.5 text-xs font-bold text-white shadow-lg">
+            <i class="fi fi-rr-calendar text-[11px]"></i> ${escapeHtml(item.created_at ? new Date(item.created_at).toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "2-digit" }) : "ข่าวสาร")}
+          </span>
+          <div class="relative z-20 p-5 sm:p-6 text-white">
+            <h3 class="text-lg sm:text-xl font-bold leading-snug text-white drop-shadow-sm line-clamp-2 group-hover:text-teal-100 transition-colors mb-3">${escapeHtml(item.title || "ข่าวสาร")}</h3>
+            <div class="flex items-center gap-2 border-t border-white/25 pt-3 text-xs font-semibold text-teal-100">
+              <i class="fi fi-rr-megaphone"></i>
+              <span>ข่าวสารจาก สขร.</span>
             </div>
           </div>
         </div>
@@ -172,4 +161,112 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
   }
 
   container.innerHTML = html;
+
+  const openNewsDetail = (item) => {
+    const detail = document.createElement("article");
+    detail.className = "mt-10 mx-auto w-full bg-white px-4 py-5 text-slate-700 sm:px-8 sm:py-8";
+
+    const heading = document.createElement("div");
+    const sectionTitle = document.createElement("h2");
+    sectionTitle.className = "text-sm font-bold text-teal-800";
+    const breadcrumb = document.createElement("div");
+    breadcrumb.className = "flex items-center gap-2 text-xs text-slate-600";
+    const homeLink = document.createElement("a");
+    homeLink.href = "#home";
+    homeLink.className = "hover:text-teal-700 hover:underline";
+    const separator = document.createElement("span");
+    const newsCrumb = document.createElement("button");
+    newsCrumb.type = "button";
+    newsCrumb.className = "font-semibold text-slate-700 hover:text-teal-700 hover:underline";
+    breadcrumb.append(homeLink, separator, newsCrumb);
+    heading.append(sectionTitle, breadcrumb);
+    detail.appendChild(heading);
+    const titleRow = document.createElement("div");
+    titleRow.className = "flex flex-col justify-between gap-2 border-b border-dashed border-teal-700/60 py-4 sm:flex-row sm:items-start";
+    const title = document.createElement("h1");
+    title.className = "text-base font-bold leading-relaxed text-teal-800 sm:text-lg";
+    title.textContent = item.title || "ข่าวสาร";
+    const date = document.createElement("time");
+    date.className = "shrink-0 text-xs font-medium text-slate-600";
+    if (item.created_at) {
+      date.dateTime = item.created_at;
+      date.textContent = new Date(item.created_at).toLocaleDateString("th-TH", {
+        day: "numeric",
+        month: "short",
+        year: "2-digit"
+      });
+    }
+    titleRow.append(title, date);
+    detail.appendChild(titleRow);
+
+    if (item.image_url) {
+      const imageWrap = document.createElement("div");
+      imageWrap.className = "flex justify-center py-6 sm:py-8";
+      const image = document.createElement("img");
+      image.src = item.image_url;
+      image.alt = item.title || "";
+      image.className = "max-h-[65vh] max-w-full object-contain";
+      imageWrap.appendChild(image);
+      detail.appendChild(imageWrap);
+    }
+
+    const description = document.createElement("div");
+    description.className = "whitespace-pre-wrap break-words py-5 text-sm leading-relaxed text-slate-700";
+    description.textContent = item.description || "ไม่มีรายละเอียดเพิ่มเติม";
+    detail.appendChild(description);
+
+    const actions = document.createElement("div");
+    actions.className = "flex flex-wrap gap-3 border-t border-dashed border-teal-700/60 py-5";
+    if (item.link) {
+      try {
+        const linkUrl = new URL(item.link, window.location.href);
+        if (linkUrl.protocol === "http:" || linkUrl.protocol === "https:") {
+          const link = document.createElement("a");
+          link.href = linkUrl.href;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.className = "inline-flex items-center gap-2 rounded-lg bg-teal-50 px-4 py-2 text-sm font-bold text-teal-800 hover:bg-teal-100";
+          link.innerHTML = '<i class="fi fi-rr-link"></i> เปิดลิงก์ที่เกี่ยวข้อง';
+          actions.appendChild(link);
+        }
+      } catch (error) {
+        console.warn("ไม่สามารถเปิดลิงก์ข่าวได้:", error);
+      }
+    }
+    if (item.file_url && typeof window.downloadFile === "function") {
+      const downloadButton = document.createElement("button");
+      downloadButton.type = "button";
+      downloadButton.className = "inline-flex items-center gap-2 rounded-lg bg-teal-700 px-4 py-2 text-sm font-bold text-white hover:bg-teal-800";
+      downloadButton.innerHTML = '<i class="fi fi-rr-download"></i> ดาวน์โหลดเอกสาร';
+      downloadButton.addEventListener("click", event => {
+        window.downloadFile(event, item.file_url, item.title || "ข่าวสาร", item.id || "");
+      });
+      actions.appendChild(downloadButton);
+    }
+    const backButton = document.createElement("button");
+    backButton.type = "button";
+    backButton.className = "inline-flex items-center gap-2 rounded-lg border border-teal-700 px-4 py-2 text-sm font-bold text-teal-800 hover:bg-teal-50";
+    backButton.innerHTML = '<i class="fi fi-rr-arrow-left"></i> กลับไปหน้ารายการข่าว';
+    backButton.addEventListener("click", () => {
+      window.renderNewsSbrView(container, items, currentPage, itemsPerPage, breadcrumbStack);
+    });
+    newsCrumb.addEventListener("click", () => backButton.click());
+    actions.prepend(backButton);
+    detail.appendChild(actions);
+    container.replaceChildren(detail);
+  };
+
+  container.querySelectorAll("[data-news-detail-index]").forEach(card => {
+    const item = itemsToShow[Number(card.dataset.newsDetailIndex)];
+    const isInteractive = target => target instanceof Element && target.closest("a, button");
+    card.addEventListener("click", event => {
+      if (!isInteractive(event.target)) openNewsDetail(item);
+    });
+    card.addEventListener("keydown", event => {
+      if ((event.key === "Enter" || event.key === " ") && event.target === card) {
+        event.preventDefault();
+        openNewsDetail(item);
+      }
+    });
+  });
 };
