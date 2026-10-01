@@ -308,8 +308,8 @@ async function handleRouting() {
   currentPublicParentId = null;
   publicBreadcrumbStack = [];
 
-  // ตั้งค่าจำนวนรายการต่อหน้า (ข่าวสารใช้ 6 รายการ เพื่อให้เป็น 2 แถว แถวละ 3)
-  ITEMS_PER_PAGE = hash === "news_sbr" ? 6 : 8;
+  // แสดงข่าว 5 แถวต่อหน้า (กริด 3 คอลัมน์)
+  ITEMS_PER_PAGE = hash === "news_sbr" ? 15 : 8;
 
   // Highlight active sidebar and top nav links
   highlightSidebarLink(hash);

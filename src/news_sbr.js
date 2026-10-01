@@ -253,6 +253,67 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
     newsCrumb.addEventListener("click", () => backButton.click());
     actions.prepend(backButton);
     detail.appendChild(actions);
+
+    const recommendedItems = items
+      .filter(candidate => !candidate.is_folder && candidate !== item && !(item.id && candidate.id === item.id))
+      .slice(0, 3);
+    if (recommendedItems.length > 0) {
+      const recommendedSection = document.createElement("section");
+      recommendedSection.className = "mt-6 border-t border-dashed border-teal-700/60 pt-5";
+
+      const recommendedHeading = document.createElement("h2");
+      recommendedHeading.className = "mb-4 text-base font-bold text-teal-800";
+      recommendedHeading.textContent = "ข่าวอื่นที่น่าสนใจ";
+      recommendedSection.appendChild(recommendedHeading);
+
+      const recommendedGrid = document.createElement("div");
+      recommendedGrid.className = "grid grid-cols-1 gap-3 sm:grid-cols-3";
+
+      recommendedItems.forEach(recommendedItem => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "group overflow-hidden border border-slate-200 bg-white text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md  ";
+        card.setAttribute("aria-label", `อ่านข่าว: ${recommendedItem.title || "ข่าวสาร"}`);
+
+        if (recommendedItem.image_url) {
+          const imageFrame = document.createElement("div");
+          imageFrame.className = "h-40 overflow-hidden bg-slate-100";
+          const image = document.createElement("img");
+          image.src = recommendedItem.image_url;
+          image.alt = "";
+          image.className = "h-full w-full object-cover transition-transform duration-300 group-hover:scale-105";
+          imageFrame.appendChild(image);
+          card.appendChild(imageFrame);
+        }
+
+        const cardContent = document.createElement("div");
+        cardContent.className = "p-3";
+        if (recommendedItem.created_at) {
+          const cardDate = document.createElement("time");
+          cardDate.className = "mb-1 block text-[11px] text-slate-500";
+          cardDate.dateTime = recommendedItem.created_at;
+          cardDate.textContent = new Date(recommendedItem.created_at).toLocaleDateString("th-TH", {
+            day: "numeric",
+            month: "short",
+            year: "2-digit"
+          });
+          cardContent.appendChild(cardDate);
+        }
+
+        const cardTitle = document.createElement("span");
+        cardTitle.className = "line-clamp-2 block text-xs font-semibold leading-relaxed text-slate-800 group-hover:text-teal-800";
+        cardTitle.textContent = recommendedItem.title || "ข่าวสาร";
+        cardContent.appendChild(cardTitle);
+        card.appendChild(cardContent);
+
+        card.addEventListener("click", () => openNewsDetail(recommendedItem));
+        recommendedGrid.appendChild(card);
+      });
+
+      recommendedSection.appendChild(recommendedGrid);
+      detail.appendChild(recommendedSection);
+    }
+
     container.replaceChildren(detail);
   };
 
