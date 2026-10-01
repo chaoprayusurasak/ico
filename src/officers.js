@@ -70,6 +70,11 @@ const DEFAULT_OFFICERS_LIST = [
 window.renderOfficersView = function (container, items = []) {
   if (!container) return;
 
+  const headerBanner = document.getElementById("page-header-banner");
+  if (headerBanner) {
+    headerBanner.style.display = "none";
+  }
+
   const sourceItems = (items && items.length > 0) ? items : DEFAULT_OFFICERS_LIST;
 
   const parsedItems = sourceItems.map(item => {
@@ -166,6 +171,9 @@ window.renderOfficersView = function (container, items = []) {
 
   let html = `
     <div class="w-full py-4 px-2 max-w-6xl mx-auto flex flex-col items-center">
+      <h1 class="content-title text-2xl sm:text-3xl md:text-4xl lg:text-[38px] font-black text-[#008675] tracking-tight leading-tight m-0 text-left mb-5 mt-5">
+        เจ้าหน้าที่ผู้รับผิดชอบ
+      </h1>
   `;
 
   // Row 1

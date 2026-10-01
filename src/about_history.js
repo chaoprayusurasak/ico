@@ -27,7 +27,7 @@ window.renderAboutHistoryView = function (container, items) {
     <div class="flex flex-col items-center py-6 px-3 sm:px-6 font-prompt max-w-5xl mx-auto mt-8">
       
       <!-- 1. Main Header Title (Centered Teal Text - Matching Screenshot) -->
-      <h1 class="text-3xl sm:text-4xl md:text-[40px] font-extrabold text-[#008675] text-center tracking-tight mb-6 leading-tight">
+      <h1 class="content-title text-2xl sm:text-3xl md:text-4xl lg:text-[38px] font-black text-[#008675] tracking-tight leading-tight m-0 text-left mb-5">
         เทศบาลนครเจ้าพระยาสุรศักดิ์
       </h1>
 
