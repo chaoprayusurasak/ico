@@ -85,7 +85,7 @@ function renderIndexFilesView(container, items = []) {
           <a href="#m7_1" class="p-4 bg-slate-50 border border-slate-200 hover:border-slate-400 hover:bg-white rounded-xl shadow-none hover:shadow-sm transition-all flex items-center justify-between group">
             <div class="flex items-center gap-3.5">
               <div class="w-10 h-10 rounded-xl bg-white text-slate-700 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-200 group-hover:bg-slate-900 group-hover:text-white transition-colors">
-                7(1)
+                ม.7(1)
               </div>
               <div>
                 <div class="font-bold text-sm text-gray-800 group-hover:text-brand-teal transition-colors">โครงสร้างและการจัดตั้งองค์กร</div>

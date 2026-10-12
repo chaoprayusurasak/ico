@@ -234,7 +234,7 @@ window.submitSatisfactionEval = async function (e) {
       throw new Error("Supabase client is not available");
     }
 
-    // Direct Awaited Insert into 'evaluations' table
+    // Store satisfaction submissions separately from questions and visitor logs.
     const { data, error } = await client.from("evaluations").insert([payload]);
 
     if (error) {

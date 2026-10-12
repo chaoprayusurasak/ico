@@ -133,12 +133,23 @@ div[data-component*="sidebar.html"] {
 }
 
 .sidebar-group summary .sidebar-icon {
-  transform: rotate(0deg);
+  transform: none;
+}
+
+.sidebar-group > summary::after {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-left: auto;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  flex: 0 0 auto;
+  transform: rotate(-45deg);
   transition: transform 180ms ease;
 }
 
-.sidebar-group[open] summary .sidebar-icon {
-  transform: rotate(90deg);
+.sidebar-group[open] > summary::after {
+  transform: rotate(45deg);
 }
 
 .sidebar-subnav {
@@ -184,18 +195,27 @@ div[data-component*="sidebar.html"] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 2rem;
+  min-width: 2rem;
+  height: 2rem;
+  flex: 0 0 2rem;
+  flex-shrink: 0;
+}
+
+.sidebar-icon > dotlottie-wc {
+  display: inline-flex;
+  width: 2rem !important;
+  min-width: 2rem;
+  height: 2rem !important;
+  flex: 0 0 2rem;
+  flex-shrink: 0;
+}
+
+.sidebar-icon > i {
+  display: inline-flex;
   width: 1.75rem;
   min-width: 1.75rem;
   height: 1.75rem;
-  flex: 0 0 1.75rem;
-}
-
-.sidebar-icon > dotlottie-wc,
-.sidebar-icon > i {
-  display: inline-flex;
-  width: 1.75rem !important;
-  min-width: 1.75rem;
-  height: 1.75rem !important;
   flex: 0 0 1.75rem;
   flex-shrink: 0;
 }

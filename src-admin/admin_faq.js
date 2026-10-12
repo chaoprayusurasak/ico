@@ -8,41 +8,12 @@ window.loadAdminFaqData = async function () {
   if (!container) return;
 
   try {
-    let faqs = [];
-    const res1 = await supabase.from("faqs").select("*").order("created_at", { ascending: false });
-    if (!res1.error && res1.data && res1.data.length > 0) {
-      faqs = res1.data.map(item => ({ ...item, source_table: "faqs" }));
-    } else {
-      const res2 = await supabase.from("evaluations").select("*").eq("category", "eval_faq").order("created_at", { ascending: false });
-      if (res2.error) throw res2.error;
-      if (res2.data) {
-        faqs = res2.data.map(item => {
-          let code = item.code || `611470/${item.id}`;
-          let type = item.type || "คำถาม";
-          let title = item.title || item.improvement_suggestion || "ไม่ระบุเรื่อง";
-
-          if (item.level_label && item.level_label.includes("|")) {
-            const parts = item.level_label.split("|").map(s => s.trim());
-            if (parts.length >= 2) {
-              type = parts[0];
-              code = parts[1];
-            }
-          }
-
-          return {
-            id: item.id,
-            source_table: "evaluations",
-            code: code,
-            title: title,
-            type: type,
-            question_detail: item.comments || item.question_detail || "ไม่มีรายละเอียด",
-            admin_answer: item.admin_answer || "",
-            status: item.admin_answer ? "ตอบแล้ว" : (item.status || "รอการตอบ"),
-            created_at: item.created_at
-          };
-        });
-      }
-    }
+    const { data, error } = await supabase
+      .from("faqs")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    const faqs = (data || []).map(item => ({ ...item, source_table: "faqs" }));
     renderAdminFaqTable(faqs);
   } catch (e) {
     console.error("Admin FAQ load error:", e);
@@ -233,25 +204,56 @@ window.saveAdminFaqReply = async (e) => {
   e.preventDefault();
   const id = document.getElementById("admin-reply-faq-id").value;
   const replyText = document.getElementById("admin-reply-textarea").value.trim();
+  const item = (window.ADMIN_CURRENT_FAQS || []).find(faq => String(faq.id) === String(id));
 
-  if (!id || !replyText) return;
+  if (!id || !replyText) {
+    alert("กรุณากรอกคำตอบก่อนบันทึก");
+    return;
+  }
+  if (!item || !["faqs", "evaluations"].includes(item.source_table)) {
+    alert("ไม่พบแหล่งข้อมูลของคำถามนี้ กรุณารีเฟรชรายการแล้วลองอีกครั้ง");
+    return;
+  }
+
+  const submitButton = e.submitter;
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.dataset.originalText = submitButton.innerHTML;
+    submitButton.innerHTML = `<i class="fi fi-rr-spinner animate-spin"></i> กำลังบันทึก...`;
+  }
 
   try {
-    await supabase.from("evaluations").update({
-      admin_answer: replyText,
-      status: "ตอบแล้ว"
-    }).eq("id", id);
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) throw sessionError;
+    if (!sessionData.session) throw new Error("กรุณาเข้าสู่ระบบก่อนบันทึกคำตอบ");
 
-    await supabase.from("faqs").update({
+    const { data, error } = await supabase.from("faqs").update({
       admin_answer: replyText,
       status: "ตอบแล้ว"
-    }).eq("id", id);
+    }).eq("id", id).select("id").maybeSingle();
+    if (error) throw error;
+    if (!data) {
+      throw new Error(
+        `ไม่พบแถวที่อัปเดตในตาราง ${item.source_table} หรือไม่มีสิทธิ์แก้ไข ` +
+        "(ตรวจสอบ RLS และรัน supabase/faq_reply_policy.sql ใน SQL Editor)"
+      );
+    }
 
     closeAdminReplyModal();
+    await window.loadAdminFaqData();
     alert("บันทึกคำตอบเรียบร้อยแล้ว!");
-    if (typeof loadItems === 'function') loadItems();
   } catch (err) {
     console.error("Error saving reply:", err);
-    alert("ไม่สามารถบันทึกคำตอบได้: " + err.message);
+    const message = err.message || String(err);
+    const setupHint = /column|schema cache|permission|row-level security|policy|42501|42703|PGRST/i.test(message)
+      ? "\n\nตรวจสอบให้มีคอลัมน์ admin_answer และ status พร้อมสิทธิ์ UPDATE ตาม supabase/faq_reply_policy.sql"
+      : "";
+    alert("ไม่สามารถบันทึกคำตอบได้: " + message + setupHint);
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.innerHTML = submitButton.dataset.originalText || `<i class="fi fi-rr-check text-xs"></i><span>บันทึกคำตอบ</span>`;
+      delete submitButton.dataset.originalText;
+    }
   }
 };

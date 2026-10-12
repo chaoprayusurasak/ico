@@ -86,8 +86,8 @@ window.renderEvalSummaryView = async function (container) {
       </div>
 
       <!-- Citizens Comments & Feedback Table List -->
-      <div class="bg-white p-6 sm:p-8 rounded-xl border border-gray-200/90 shadow-2xs">
-        <div class="flex items-center justify-between mb-5 pb-3 border-b border-gray-100">
+      <div class="py-2">
+        <div class="flex items-center justify-between mb-5 pb-3">
           <div class="flex items-center gap-2">
             <i class="fi fi-rr-comment-alt text-brand-teal text-lg"></i>
             <h3 class="font-medium text-sm sm:text-base text-gray-800">ข้อเสนอแนะและข้อแนะนำจากผู้ใช้บริการ</h3>
@@ -113,24 +113,14 @@ async function loadAndRenderEvalSummaryData() {
   let rawEvaluations = [];
 
   try {
-    if (sb) {
-      // 1. Fetch from 'evaluations' table
-      const res1 = await sb.from("evaluations").select("*").order("created_at", { ascending: false });
-      if (!res1.error && res1.data && res1.data.length > 0) {
-        rawEvaluations = res1.data;
-      } else {
-        // 2. Fallback to 'items' or 'oic_documents' table where category = 'evaluations'
-        const res2 = await sb.from("oic_documents").select("*").eq("category", "evaluations").order("created_at", { ascending: false });
-        if (!res2.error && res2.data && res2.data.length > 0) {
-          rawEvaluations = res2.data.map(item => parseItemToEval(item));
-        } else {
-          const res3 = await sb.from("items").select("*").eq("category", "evaluations").order("created_at", { ascending: false });
-          if (!res3.error && res3.data) {
-            rawEvaluations = res3.data.map(item => parseItemToEval(item));
-          }
-        }
-      }
-    }
+    if (!sb) throw new Error("Supabase client is not initialized");
+    const { data, error } = await sb
+      .from("evaluations")
+      .select("*")
+      .eq("category", "evaluations")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    rawEvaluations = data || [];
   } catch (err) {
     console.error("Error fetching evaluations data:", err);
   }
@@ -210,21 +200,6 @@ async function loadAndRenderEvalSummaryData() {
 
   // 3. Render Comments List
   renderCommentsList(rawEvaluations);
-}
-
-function parseItemToEval(item) {
-  let level = 1;
-  if (item.title && item.title.includes("ระดับ 2")) level = 2;
-  if (item.title && item.title.includes("ระดับ 3")) level = 3;
-
-  return {
-    id: item.id,
-    satisfaction_level: level,
-    level_label: level === 1 ? "พึงพอใจมาก" : (level === 2 ? "พึงพอใจ" : "ควรปรับปรุง"),
-    improvement_suggestion: item.description || "",
-    comments: item.description || "",
-    created_at: item.created_at || new Date().toISOString()
-  };
 }
 
 function renderChartJsVisualizations(c1, c2, c3) {
@@ -339,7 +314,16 @@ function renderCommentsList(evaluations) {
 
   if (!container) return;
 
-  const validFeedback = evaluations.filter(e => Boolean(e.comments || e.improvement_suggestion));
+  const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+  const validFeedback = evaluations
+    .filter(item => Boolean(String(item.comments ?? "").trim() || String(item.improvement_suggestion ?? "").trim()))
+    .sort((a, b) => (Date.parse(b.created_at || "") || 0) - (Date.parse(a.created_at || "") || 0));
 
   if (badge) {
     badge.textContent = `${validFeedback.length} รายการ`;
@@ -347,56 +331,115 @@ function renderCommentsList(evaluations) {
 
   if (validFeedback.length === 0) {
     container.innerHTML = `
-      <div class="text-center py-10 text-gray-400 text-xs font-normal bg-gray-50 rounded-xl border border-gray-100">
+      <div class="py-10 text-center text-xs font-normal text-gray-400">
         ยังไม่มีข้อเสนอแนะเพิ่มเติมจากผู้ใช้งาน
       </div>
     `;
     return;
   }
 
-  let html = ``;
-  validFeedback.forEach(item => {
+  const renderCard = (item, isDuplicate = false) => {
     const lvl = parseInt(item.satisfaction_level || 1, 10);
-    const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : 'ไม่ระบุวันที่';
-    
-    let tagBg = "bg-emerald-50 text-emerald-700 border-emerald-200";
-    let tagIcon = "😍";
-    let tagText = "พึงพอใจมาก";
+    const date = item.created_at ? new Date(item.created_at) : null;
+    const dateText = date && !Number.isNaN(date.getTime())
+      ? date.toLocaleDateString("th-TH", { year: "numeric", month: "short", day: "numeric" })
+      : "ไม่ระบุวันที่";
+    const satisfaction = lvl === 3
+      ? { label: "ควรปรับปรุง", classes: "bg-amber-50 text-amber-800" }
+      : lvl === 2
+        ? { label: "พึงพอใจ", classes: "bg-sky-50 text-sky-800" }
+        : { label: "พึงพอใจมาก", classes: "bg-emerald-50 text-emerald-800" };
+    const comment = String(item.comments ?? "").trim();
+    const suggestion = String(item.improvement_suggestion ?? "").trim();
 
-    if (lvl === 2) {
-      tagBg = "bg-teal-50 text-teal-700 border-teal-200";
-      tagIcon = "🙂";
-      tagText = "พึงพอใจ";
-    } else if (lvl === 3) {
-      tagBg = "bg-amber-50 text-amber-700 border-amber-200";
-      tagIcon = "🙁";
-      tagText = "ควรปรับปรุง";
-    }
-
-    html += `
-      <div class="p-4 bg-gray-50/70 hover:bg-gray-50 border border-gray-200/80 rounded-xl transition-all space-y-2">
-        <div class="flex items-center justify-between gap-2 flex-wrap">
-          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-normal border ${tagBg}">
-            <span>${tagIcon}</span>
-            <span>${tagText}</span>
-          </div>
-          <span class="text-[11px] text-gray-400 font-normal">${dateStr}</span>
+    return `
+      <article class="eval-feedback-card${isDuplicate ? " eval-feedback-extra" : ""}"${isDuplicate ? ' aria-hidden="true"' : ""} role="listitem">
+        <div class="eval-feedback-meta">
+          <span class="eval-feedback-person">
+            <span class="eval-feedback-avatar" aria-hidden="true">
+              <svg viewBox="0 0 40 40" focusable="false">
+                <circle cx="20" cy="20" r="20" fill="#e8e8e8"/>
+                <circle cx="20" cy="14.5" r="7" fill="#8a8a8a"/>
+                <path d="M6.5 36c.9-8.1 6-12.5 13.5-12.5S32.6 27.9 33.5 36v4h-27z" fill="#8a8a8a"/>
+              </svg>
+            </span>
+            <span class="eval-feedback-rating ${satisfaction.classes}">${satisfaction.label}</span>
+          </span>
+          <time class="eval-feedback-date"${date ? ` datetime="${escapeHtml(item.created_at)}"` : ""}>${dateText}</time>
         </div>
-
-        ${item.comments ? `
-          <p class="text-xs sm:text-sm text-gray-700 font-normal leading-relaxed whitespace-normal break-words">
-            "${item.comments}"
-          </p>
-        ` : ''}
-
-        ${item.improvement_suggestion ? `
-          <div class="text-xs text-amber-800 bg-amber-50/80 p-2.5 rounded-lg border border-amber-200/60 font-normal">
-            <span class="font-medium text-amber-900">ข้อแนะนำปรับปรุง:</span> ${item.improvement_suggestion}
+        ${comment ? `<blockquote class="eval-feedback-quote">${escapeHtml(comment)}</blockquote>` : ""}
+        ${suggestion ? `
+          <div class="eval-feedback-suggestion">
+            <span class="font-semibold text-amber-900">ข้อแนะนำ</span>
+            <p>${escapeHtml(suggestion)}</p>
           </div>
         ` : ''}
-      </div>
+      </article>
     `;
-  });
+  };
 
-  container.innerHTML = html;
+  const useScrollingColumns = validFeedback.length >= 9;
+  if (!useScrollingColumns) {
+    container.innerHTML = `
+      <style>
+        .eval-feedback-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:20px;padding:6px}
+        .eval-feedback-card{list-style:none;min-width:0;padding:18px;border:1px solid #e5ebe8;border-radius:18px;background:linear-gradient(145deg,#fff,#fbfdfc);box-shadow:0 5px 18px rgba(25,59,55,.045)}
+        .eval-feedback-meta{display:flex;align-items:center;justify-content:space-between;gap:8px}
+        .eval-feedback-person{display:inline-flex;align-items:center;gap:9px;min-width:0}
+        .eval-feedback-avatar{display:grid;width:34px;height:34px;flex:none;place-items:center;overflow:hidden;border:1px solid #d9e8e2;border-radius:50%;background:#e5f2ee}
+        .eval-feedback-avatar svg{display:block;width:100%;height:100%}
+        .eval-feedback-rating{border-radius:999px;padding:4px 10px;font-size:11px;font-weight:600}
+        .eval-feedback-date{color:#83918c;font-size:11px;white-space:nowrap}
+        .eval-feedback-quote{margin:14px 0 0;color:#34443e;font-size:13px;line-height:1.85;white-space:pre-wrap;overflow-wrap:anywhere}
+        .eval-feedback-suggestion{margin-top:12px;border-left:2px solid #f2c76c;padding:2px 0 2px 12px;color:#795b25;font-size:12px;line-height:1.8}
+        .eval-feedback-suggestion p{margin:3px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+      </style>
+      <div class="eval-feedback-grid" role="list">${validFeedback.map(item => renderCard(item)).join("")}</div>
+    `;
+    return;
+  }
+
+  const columns = [[], [], []];
+  validFeedback.forEach((item, index) => columns[index % columns.length].push(item));
+  const durations = [34, 40, 37];
+
+  container.innerHTML = `
+    <style>
+      .eval-feedback-wall{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;padding:6px;max-height:560px;overflow:hidden;mask-image:linear-gradient(to bottom,transparent,#000 7%,#000 93%,transparent);-webkit-mask-image:linear-gradient(to bottom,transparent,#000 7%,#000 93%,transparent)}
+      .eval-feedback-column{min-width:0;padding:0 4px;overflow:hidden}
+      .eval-feedback-track{display:flex;flex-direction:column;gap:0;will-change:transform;animation:eval-feedback-scroll var(--eval-feedback-duration) linear infinite}
+      .eval-feedback-column:nth-child(2) .eval-feedback-track{animation-delay:-11s}
+      .eval-feedback-column:nth-child(3) .eval-feedback-track{animation-delay:-22s}
+      .eval-feedback-column:hover .eval-feedback-track,.eval-feedback-column:focus-within .eval-feedback-track{animation-play-state:paused}
+      .eval-feedback-group{display:flex;flex-direction:column;gap:18px;padding-bottom:18px;flex:none}
+      .eval-feedback-card{list-style:none;min-width:0;min-height:160px;padding:18px;border:1px solid #e5ebe8;border-radius:18px;background:linear-gradient(145deg,#fff,#fbfdfc);box-shadow:0 5px 18px rgba(25,59,55,.045)}
+      .eval-feedback-meta{display:flex;align-items:center;justify-content:space-between;gap:8px}
+      .eval-feedback-person{display:inline-flex;align-items:center;gap:9px;min-width:0}
+      .eval-feedback-avatar{display:grid;width:34px;height:34px;flex:none;place-items:center;overflow:hidden;border:1px solid #d9e8e2;border-radius:50%;background:#e5f2ee}
+      .eval-feedback-avatar svg{display:block;width:100%;height:100%}
+      .eval-feedback-rating{border-radius:999px;padding:4px 10px;font-size:11px;font-weight:600}
+      .eval-feedback-date{color:#83918c;font-size:11px;white-space:nowrap}
+      .eval-feedback-quote{margin:14px 0 0;color:#34443e;font-size:13px;line-height:1.85;white-space:pre-wrap;overflow-wrap:anywhere}
+      .eval-feedback-suggestion{margin-top:12px;border-left:2px solid #f2c76c;padding:2px 0 2px 12px;color:#795b25;font-size:12px;line-height:1.8}
+      .eval-feedback-suggestion p{margin:3px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+      @keyframes eval-feedback-scroll{to{transform:translateY(-50%)}}
+      @media(max-width:767px){.eval-feedback-wall{grid-template-columns:minmax(0,1fr);max-height:none;overflow:visible;mask-image:none;-webkit-mask-image:none}.eval-feedback-column{overflow:visible}.eval-feedback-track{animation:none}.eval-feedback-group[aria-hidden="true"],.eval-feedback-extra{display:none}}
+      @media(prefers-reduced-motion:reduce){.eval-feedback-wall{max-height:none;overflow:visible;mask-image:none;-webkit-mask-image:none}.eval-feedback-track{animation:none!important}.eval-feedback-group[aria-hidden="true"],.eval-feedback-extra{display:none}.eval-feedback-column{display:block!important;overflow:visible}}
+    </style>
+    <div class="eval-feedback-wall" role="region" aria-label="ข้อเสนอแนะจากผู้ใช้บริการ">
+      ${columns.map((column, index) => {
+        const minCardsPerLoop = Math.max(column.length, Math.ceil(560 / 188));
+        const repeatedItems = Array.from({ length: minCardsPerLoop }, (_, itemIndex) => column[itemIndex % column.length]);
+        const group = repeatedItems.map((item, itemIndex) => renderCard(item, itemIndex >= column.length)).join("");
+        return `
+          <div class="eval-feedback-column">
+            <div class="eval-feedback-track" style="--eval-feedback-duration:${durations[index]}s">
+              <div class="eval-feedback-group" role="list">${group}</div>
+              <div class="eval-feedback-group" aria-hidden="true" role="list">${group}</div>
+            </div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
 }

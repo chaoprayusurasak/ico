@@ -14,6 +14,9 @@
     z-index: 999999;
     padding: 0 0.5rem;
     pointer-events: none;
+    will-change: transform;
+    transform: translate3d(0, calc(0px - var(--nav-scroll-offset, 0px)), 0);
+    transition: transform 0.35s ease-out;
   }
 
   @media (min-width: 640px) {
@@ -573,7 +576,7 @@
     <nav class="nav-inner-container">
 
       <!-- Left: Brand Logo & Title -->
-      <a href="#home" class="brand-lockup">
+      <a href="#news_sbr" class="brand-lockup">
         <img src="./assets/logo.png" alt="Logo เทศบาลนครเจ้าพระยาสุรศักดิ์" class="brand-logo" />
         <div class="brand-text-container">
           <span class="brand-title">ศูนย์ข้อมูลข่าวสารอิเล็กทรอนิกส์ของราชการ</span>
@@ -650,7 +653,6 @@
           <summary>หน้าแรก <span>⌄</span></summary>
           <div class="mobile-submenu-list">
             <a href="#index_files">ดัชนีรวม / ดัชนีประจำแฟ้ม</a>
-            <a href="#news_sbr">ข่าวประชาสัมพันธ์</a>
             <a href="#announcements">ประกาศล่าสุด</a>
             <a href="#popular_services">บริการยอดนิยม</a>
           </div>
@@ -666,36 +668,17 @@
         </details>
 
         <details class="mobile-menu-item">
-          <summary>สำหรับหน่วยงานราชการ <span>⌄</span></summary>
-          <div class="mobile-submenu-list">
-            <a href="#agency_form">แบบฟอร์มรายงาน พ.ร.บ. ข้อมูลข่าวสาร 2540</a>
-            <a href="#agency_report">ระบบรายงาน Template ศูนย์ข้อมูลข่าวสาร</a>
-            <a href="#agency_contest">สมัครเข้าร่วมโครงการประกวดศูนย์ข้อมูลโดดเด่น</a>
-          </div>
-        </details>
-
-        <details class="mobile-menu-item">
           <summary>สำหรับประชาชน <span>⌄</span></summary>
           <div class="mobile-submenu-list">
             <a href="#public_complaint">ระบบร้องเรียน/อุทธรณ์ออนไลน์</a>
           </div>
         </details>
 
-        <details class="mobile-menu-item">
-          <summary>เชื่อมโยงศูนย์ข้อมูลข่าวสารอื่น ๆ <span>⌄</span></summary>
-          <div class="mobile-submenu-list">
-            <a href="#link_agencies">หน่วยงานที่มีศูนย์ข้อมูลข่าวสาร</a>
-            <a href="#link_infocenter">หน่วยงานที่ใช้ INFOCENTER</a>
-            <a href="#link_testing">ระบบทดสอบความรู้ตาม พ.ร.บ. ข้อมูลฯ</a>
-          </div>
-        </details>
 
         <details class="mobile-menu-item">
           <summary>อื่น ๆ <span>⌄</span></summary>
           <div class="mobile-submenu-list">
-            <a href="#downloads">ดาวน์โหลดเอกสาร</a>
-            <a href="#sitemap">แผนผังเว็บไซต์</a>
-            <a href="#contact">ติดต่อเรา</a>
+            <a href="admin.html">ระบบบริการจัดการ</a>a>
           </div>
         </details>
       </div>

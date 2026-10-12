@@ -77,7 +77,7 @@ async function renderContactView(container) {
     const cleanPhone = phone.replace(/[^0-9+]/g, '');
 
     return `
-      <div class="bg-white p-5 border border-slate-200/90 rounded-none rounded-br-[28px] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"
+      <div class="bg-white p-5 border border-slate-200/90 rounded-none rounded-br-[28px] shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"
         style="border-top: 4px solid ${theme.topBorder};">
 
         <!-- Middle: Department Name (Crisp Dark Bold Text) -->

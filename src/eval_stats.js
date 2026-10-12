@@ -124,18 +124,16 @@ async function recordAndLoadRealVisitorStats() {
   const isNewSession = !sessionStorage.getItem("ico_unique_visitor_logged");
 
   if (isNewSession && sb) {
-    sessionStorage.setItem("ico_unique_visitor_logged", "true");
-    
-    // Insert real visitor log into Supabase 'evaluations' table with category 'visitor_log'
+    // Store visitor logs separately from evaluation submissions.
     try {
-      await sb.from("evaluations").insert([{
-        category: "visitor_log",
-        satisfaction_level: 0,
-        level_label: deviceType,
-        improvement_suggestion: ua.substring(0, 200),
-        comments: todayKey,
+      const { error } = await sb.from("visitor_logs").insert([{
+        device_type: deviceType,
+        user_agent: ua.substring(0, 200),
+        visit_date: todayKey,
         created_at: new Date().toISOString()
       }]);
+      if (error) throw error;
+      sessionStorage.setItem("ico_unique_visitor_logged", "true");
     } catch (e) {
       console.warn("Visitor log insert error:", e);
     }
@@ -147,13 +145,13 @@ async function recordAndLoadRealVisitorStats() {
   try {
     if (sb) {
       const [logsRes, totalRes] = await Promise.all([
-        sb.from("evaluations").select("*").eq("category", "visitor_log").order("created_at", { ascending: false }),
-        sb.from("items").select("description").eq("category", "site_stats").eq("title", "visitor_count").maybeSingle()
+        sb.from("visitor_logs").select("*").order("created_at", { ascending: false }),
+        sb.from("visitor_stats").select("total_count").eq("key", "site_total").maybeSingle()
       ]);
 
       if (!logsRes.error && logsRes.data) logs = logsRes.data;
       if (!totalRes.error && totalRes.data) {
-        const parsedTotal = parseInt(totalRes.data.description, 10);
+        const parsedTotal = parseInt(totalRes.data.total_count, 10);
         if (Number.isFinite(parsedTotal) && parsedTotal > 0) {
           totalVisitorCount = parsedTotal;
         }
@@ -188,8 +186,8 @@ async function recordAndLoadRealVisitorStats() {
 
   logs.forEach(log => {
     const dtStr = log.created_at || "";
-    const datePart = log.comments || (dtStr ? dtStr.split('T')[0] : "");
-    const dev = log.level_label || "Desktop";
+    const datePart = log.visit_date || (dtStr ? dtStr.split('T')[0] : "");
+    const dev = log.device_type || "Desktop";
 
     // Today & Month check
     if (datePart === todayKey) todayCount++;

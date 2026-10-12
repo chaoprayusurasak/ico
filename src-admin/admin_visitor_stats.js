@@ -14,15 +14,13 @@ window.loadAdminVisitorStats = async function (container) {
   try {
     const [logsResult, totalResult] = await Promise.all([
       window.supabase
-        .from("evaluations")
-        .select("id, category, level_label, comments, improvement_suggestion, created_at")
-        .eq("category", "visitor_log")
+        .from("visitor_logs")
+        .select("id, device_type, user_agent, visit_date, created_at")
         .order("created_at", { ascending: false }),
       window.supabase
-        .from("items")
-        .select("description")
-        .eq("category", "site_stats")
-        .eq("title", "visitor_count")
+        .from("visitor_stats")
+        .select("total_count")
+        .eq("key", "site_total")
         .maybeSingle()
     ]);
 
@@ -31,7 +29,7 @@ window.loadAdminVisitorStats = async function (container) {
       console.warn("Unable to load the site-wide visitor counter; using visitor log count:", totalResult.error);
     }
 
-    const parsedTotal = Number.parseInt(totalResult.data?.description || "", 10);
+    const parsedTotal = Number.parseInt(totalResult.data?.total_count || "", 10);
     const totalVisitors = Number.isFinite(parsedTotal) && parsedTotal > 0
       ? parsedTotal
       : (logsResult.data || []).length;
@@ -43,7 +41,7 @@ window.loadAdminVisitorStats = async function (container) {
     container.innerHTML = `
       <div class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700" role="alert">
         โหลดสถิติผู้เข้าชมไม่สำเร็จ: ${escapeAdminVisitorHtml(error.message || error)}
-        <p class="mt-2 text-xs">ตรวจสอบสิทธิ์ SELECT ของตาราง evaluations ใน Supabase RLS</p>
+        <p class="mt-2 text-xs">ตรวจสอบสิทธิ์ SELECT ของตาราง visitor_logs ใน Supabase RLS</p>
       </div>
     `;
   }
@@ -62,8 +60,8 @@ function renderAdminVisitorStats(container, logs, totalVisitors) {
   let monthCount = 0;
 
   logs.forEach(log => {
-    const logDate = log.comments || String(log.created_at || "").slice(0, 10);
-    const device = countsByDevice[log.level_label] === undefined ? "Desktop" : log.level_label;
+    const logDate = log.visit_date || String(log.created_at || "").slice(0, 10);
+    const device = countsByDevice[log.device_type] === undefined ? "Desktop" : log.device_type;
     countsByDevice[device]++;
     if (logDate === today) todayCount++;
     if (logDate.startsWith(month)) monthCount++;
@@ -79,8 +77,8 @@ function renderAdminVisitorStats(container, logs, totalVisitors) {
   const deviceNames = { Mobile: "มือถือ", Tablet: "แท็บเล็ต", Desktop: "คอมพิวเตอร์" };
   const logsHtml = visibleLogs.map(log => {
     const date = log.created_at ? new Date(log.created_at).toLocaleString("th-TH") : "-";
-    const device = deviceNames[log.level_label] || "คอมพิวเตอร์";
-    const userAgent = log.improvement_suggestion || "-";
+    const device = deviceNames[log.device_type] || "คอมพิวเตอร์";
+    const userAgent = log.user_agent || "-";
     return `
       <tr class="hover:bg-slate-50/80 transition-colors">
         <td class="py-3 px-3.5 text-xs text-gray-500 whitespace-nowrap">${escapeAdminVisitorHtml(date)}</td>

@@ -19,7 +19,7 @@ window.renderOicSectionsView = function (container, items, currentPage = 1, item
   const breadcrumbEl = document.getElementById("content-breadcrumb");
   if (breadcrumbEl) {
     let bHTML = `
-      <a href="#home" onclick="navigateToPublicBreadcrumb(-1)" class="hover:underline hover:text-[#008675] text-slate-900 font-bold">หน้าหลัก</a>
+      <a href="#news_sbr" onclick="navigateToPublicBreadcrumb(-1)" class="hover:underline hover:text-[#008675] text-slate-900 font-bold">หน้าหลัก</a>
       <span class="text-slate-600 font-normal">/</span>
       <span class="${breadcrumbStack && breadcrumbStack.length > 0 ? 'text-slate-800 font-medium' : 'text-slate-900 font-bold'}">${categoryTitle || 'ข้อมูลข่าวสาร'}</span>
     `;

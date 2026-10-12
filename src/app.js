@@ -48,8 +48,35 @@ const CATEGORY_NAMES = {
 let defaultContentTitle = "";
 let defaultContentBoxHTML = "";
 
+function initializeNavScrollBehavior() {
+  const header = document.querySelector(".site-header-wrapper");
+  if (!header || header.dataset.scrollBehaviorInitialized === "true") return;
+
+  header.dataset.scrollBehaviorInitialized = "true";
+  let previousScrollY = window.scrollY;
+  let hiddenOffset = 0;
+
+  window.addEventListener("scroll", () => {
+    const currentScrollY = window.scrollY;
+    const scrollDelta = currentScrollY - previousScrollY;
+    const headerHeight = header.offsetHeight;
+
+    if (currentScrollY <= 80) {
+      hiddenOffset = 0;
+    } else if (scrollDelta > 0) {
+      hiddenOffset = Math.min(headerHeight, hiddenOffset + scrollDelta * 0.45);
+    } else if (scrollDelta < 0) {
+      hiddenOffset = Math.max(0, hiddenOffset + scrollDelta * 0.45);
+    }
+
+    header.style.setProperty("--nav-scroll-offset", `${hiddenOffset}px`);
+    previousScrollY = currentScrollY;
+  }, { passive: true });
+}
+
 // Initialize App
 document.addEventListener("componentsLoaded", () => {
+  initializeNavScrollBehavior();
   initializePublicSidebar();
 
   const titleEl = document.querySelector(".content-title");
@@ -65,9 +92,6 @@ document.addEventListener("componentsLoaded", () => {
 
   // Initialize Visitor Counter Statistics
   window.visitorCounterPromise = initVisitorCounter();
-
-  // Initialize Cookie Consent Banner
-  initCookieConsent();
 });
 
 window.toggleSidebarMenu = function (open) {
@@ -171,6 +195,23 @@ let currentItems = [];
 let currentPage = 1;
 let ITEMS_PER_PAGE = 8;
 let routeRequestId = 0;
+let lastHandledRoute = null;
+const ROUTE_ITEMS_CACHE_TTL = 60 * 1000;
+const routeItemsCache = new Map();
+const routeItemsRequests = new Map();
+
+function getRouteItems(key, fetchItems) {
+  if (!routeItemsRequests.has(key)) {
+    const request = fetchItems()
+      .then(items => {
+        routeItemsCache.set(key, { items, cachedAt: Date.now() });
+        return items;
+      })
+      .finally(() => routeItemsRequests.delete(key));
+    routeItemsRequests.set(key, request);
+  }
+  return routeItemsRequests.get(key);
+}
 
 const DEFAULT_EXECUTIVES = [
   {
@@ -294,7 +335,6 @@ function revealRoutedContent() {
 
 // Route handler
 async function handleRouting() {
-  const requestId = ++routeRequestId;
   const [routeHash, routeQuery = ""] = window.location.hash.replace(/^#/, "").split("?");
   let hash = routeHash;
   const requestedNewsId = hash === "news_sbr"
@@ -309,12 +349,20 @@ async function handleRouting() {
     );
   }
 
+  const routeKey = `${window.location.pathname}${window.location.search}#${hash}?${routeQuery}`;
+  if (routeKey === lastHandledRoute) return;
+  lastHandledRoute = routeKey;
+  if (typeof window.cleanupAnnouncementsCarousel === "function") {
+    window.cleanupAnnouncementsCarousel();
+  }
+  const requestId = ++routeRequestId;
+
   // Reset public folder level on hash navigation
   currentPublicParentId = null;
   publicBreadcrumbStack = [];
 
-  // แสดงข่าว 5 แถวต่อหน้า (กริด 3 คอลัมน์)
-  ITEMS_PER_PAGE = hash === "news_sbr" ? 15 : 8;
+  // แสดงข่าว 15 รายการต่อหน้า
+  ITEMS_PER_PAGE = hash === "news_sbr" || hash === "announcements" ? 15 : 8;
 
   // Highlight active sidebar and top nav links
   highlightSidebarLink(hash);
@@ -436,24 +484,27 @@ async function handleRouting() {
   // If index_files, delegate to standalone src/index_files.js module (Render immediately!)
   if (hash === "index_files") {
     if (typeof renderIndexFilesView === "function") {
-      currentItems = [];
+      const cacheKey = JSON.stringify([hash, null]);
+      const cached = routeItemsCache.get(cacheKey);
+      currentItems = cached ? cached.items : [];
       renderIndexFilesView(boxEl, currentItems);
+      revealRoutedContent();
+
+      if (cached && Date.now() - cached.cachedAt < ROUTE_ITEMS_CACHE_TTL) return;
+
       const sb = (typeof window !== "undefined" && window.supabase) ? window.supabase : (typeof supabase !== "undefined" ? supabase : null);
       if (sb && typeof sb.from === "function") {
-        sb.from("items")
-          .select("*")
-          .eq("category", "index_files")
-          .order("created_at", { ascending: false })
-          .then(({ data, error }) => {
+        getRouteItems(cacheKey, async () => {
+          const { data, error } = await sb.from("items")
+            .select("*")
+            .eq("category", "index_files")
+            .order("created_at", { ascending: false });
+          if (error) throw error;
+          return data || [];
+        }).then(data => {
             if (requestId !== routeRequestId || window.location.hash.replace("#", "") !== "index_files") return;
-            if (error) {
-              console.error("Error fetching index files:", error);
-              return;
-            }
-            if (data) {
-              currentItems = data;
-              renderIndexFilesView(boxEl, data);
-            }
+            currentItems = data;
+            renderIndexFilesView(boxEl, data);
           })
           .catch(error => {
             if (requestId === routeRequestId) {
@@ -462,7 +513,6 @@ async function handleRouting() {
           });
       }
     }
-    revealRoutedContent();
     return;
   }
 
@@ -474,86 +524,95 @@ async function loadCategoryItems(hash, requestId = ++routeRequestId, requestedNe
   const boxEl = document.querySelector(".content-box");
   if (!boxEl) return;
   const parentId = currentPublicParentId;
+  const cacheKey = JSON.stringify([hash, parentId || null]);
+  const cached = routeItemsCache.get(cacheKey);
 
   const sb = (typeof window !== "undefined" && window.supabase) ? window.supabase : (typeof supabase !== "undefined" ? supabase : null);
 
-  // Fetch dynamic items from Supabase
-  renderLoading(boxEl);
+  if (cached) {
+    currentItems = cached.items;
+    currentPage = 1;
+    renderItems(boxEl, requestedNewsId);
+    revealRoutedContent();
+
+    if (Date.now() - cached.cachedAt < ROUTE_ITEMS_CACHE_TTL) return;
+  } else {
+    renderLoading(boxEl);
+  }
 
   try {
     if (!sb || typeof sb.from !== "function") throw new Error("Supabase client is not initialized");
 
-    let items = [];
+    const items = await getRouteItems(cacheKey, async () => {
+      // Query both supported tables in parallel so a slow or unavailable
+      // oic_documents table does not delay the existing items fallback.
+      const parentQuery = parentId
+        ? { method: "eq", value: parentId }
+        : { method: "is", value: null };
+      const dataCategory = hash === "announcements" ? "news_sbr" : hash;
+      const buildCategoryQuery = (table) => {
+        let query = sb.from(table).select("*").eq("category", dataCategory);
+        query = parentQuery.method === "eq"
+          ? query.eq("parent_id", parentQuery.value)
+          : query.is("parent_id", null);
+        return hash === "announcements"
+          ? query.order("created_at", { ascending: false })
+          : query.order("is_folder", { ascending: false }).order("created_at", { ascending: false });
+      };
 
-    // Query both supported tables in parallel so a slow or unavailable
-    // oic_documents table does not delay the existing items fallback.
-    const parentQuery = parentId
-      ? { method: "eq", value: parentId }
-      : { method: "is", value: null };
-    const buildCategoryQuery = (table) => {
-      let query = sb.from(table).select("*").eq("category", hash);
-      query = parentQuery.method === "eq"
-        ? query.eq("parent_id", parentQuery.value)
-        : query.is("parent_id", null);
-      return query.order("is_folder", { ascending: false }).order("created_at", { ascending: false });
-    };
+      const [oicResult, itemsResult] = await Promise.all([
+        buildCategoryQuery("oic_documents"),
+        buildCategoryQuery("items")
+      ]);
+      const oicData = oicResult.data || [];
+      const itemsData = itemsResult.data || [];
+      let fetchedItems = oicData.length > 0 ? oicData : itemsData;
 
-    const [oicResult, itemsResult] = await Promise.all([
-      buildCategoryQuery("oic_documents"),
-      buildCategoryQuery("items")
-    ]);
+      // Keep the legacy broad fallback for records saved without parent_id.
+      if (fetchedItems.length === 0 && !parentId) {
+        const { data: legacyItems } = await sb
+          .from("items")
+          .select("*")
+          .eq("category", dataCategory)
+          .order("created_at", { ascending: false });
+        fetchedItems = legacyItems || [];
+      }
+
+      if (fetchedItems.length === 0 && hash === "executives" && !parentId) {
+        const seedData = DEFAULT_EXECUTIVES.map(item => ({
+          category: "executives",
+          parent_id: null,
+          is_folder: false,
+          title: item.title,
+          description: JSON.stringify({
+            position: item.pos,
+            department: item.dept,
+            phone: item.phone,
+            level: item.level,
+            bio: ""
+          }),
+          image_url: item.image_url
+        }));
+
+        const { data: inserted, error: insertErr } = await sb
+          .from("items")
+          .insert(seedData)
+          .select("*");
+        fetchedItems = (!insertErr && inserted && inserted.length > 0) ? inserted : DEFAULT_EXECUTIVES;
+      }
+
+      return fetchedItems;
+    });
     if (requestId !== routeRequestId) return;
 
-    const oicData = oicResult.data || [];
-    const itemsData = itemsResult.data || [];
-    items = oicData.length > 0 ? oicData : itemsData;
-
-    // Keep the legacy broad fallback for records saved without parent_id.
-    if (items.length === 0 && !parentId) {
-      const { data: legacyItems } = await sb
-        .from("items")
-        .select("*")
-        .eq("category", hash)
-        .order("created_at", { ascending: false });
-      if (requestId !== routeRequestId) return;
-      items = legacyItems || [];
-    }
-
-    if ((!items || items.length === 0) && hash === "executives" && !parentId) {
-      // Auto seed real executives into Supabase database
-      const seedData = DEFAULT_EXECUTIVES.map(item => ({
-        category: "executives",
-        parent_id: null,
-        is_folder: false,
-        title: item.title,
-        description: JSON.stringify({
-          position: item.pos,
-          department: item.dept,
-          phone: item.phone,
-          level: item.level,
-          bio: ""
-        }),
-        image_url: item.image_url
-      }));
-
-      const { data: inserted, error: insertErr } = await sb
-        .from("items")
-        .insert(seedData)
-        .select("*");
-
-      if (requestId !== routeRequestId) return;
-      currentItems = (!insertErr && inserted && inserted.length > 0) ? inserted : DEFAULT_EXECUTIVES;
-    } else {
-      if (requestId !== routeRequestId) return;
-      currentItems = items || [];
-    }
-
+    currentItems = items;
     currentPage = 1; // Reset to page 1 on new folder view
     renderItems(boxEl, requestedNewsId);
     revealRoutedContent();
   } catch (err) {
     if (requestId !== routeRequestId) return;
     console.error("Error fetching items:", err);
+    if (cached) return;
     if (hash === "executives") {
       currentItems = DEFAULT_EXECUTIVES;
       renderItems(boxEl);
@@ -777,26 +836,27 @@ async function initVisitorCounter() {
     const sb = window.supabase;
     if (sb) {
       const { data, error } = await sb
-        .from("items")
-        .select("*")
-        .eq("category", "site_stats")
-        .eq("title", "visitor_count")
+        .from("visitor_stats")
+        .select("total_count")
+        .eq("key", "site_total")
         .maybeSingle();
 
-      if (!error && data && data.description) {
-        let cloudCount = parseInt(data.description) || 1;
+      if (!error && data && data.total_count != null) {
+        let cloudCount = parseInt(data.total_count, 10) || 1;
         if (cloudCount > 10000) cloudCount = 1; // Clear old dummy base count if in database
 
         if (isNewVisit) {
           cloudCount += 1;
-          await sb.from("items")
-            .update({ description: String(cloudCount) })
-            .eq("id", data.id);
+          const { error: updateError } = await sb.from("visitor_stats")
+            .update({ total_count: cloudCount, updated_at: new Date().toISOString() })
+            .eq("key", "site_total");
+          if (updateError) throw updateError;
         }
         totalCount = Math.max(totalCount, cloudCount);
       } else if (!error && !data) {
-        await sb.from("items")
-          .insert([{ category: "site_stats", title: "visitor_count", description: String(totalCount) }])
+        const { error: insertError } = await sb.from("visitor_stats")
+          .insert([{ key: "site_total", total_count: totalCount }]);
+        if (insertError) throw insertError;
       }
       localStorage.setItem("ico_real_visitor_count", String(totalCount));
       totalEl.textContent = totalCount.toLocaleString("th-TH");
