@@ -63,7 +63,7 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
           
           <!-- Decorative image extends beyond the banner frame -->
           <div class="absolute inset-0 flex items-end justify-center pointer-events-none z-0 overflow-visible [clip-path:inset(-160px_0_0_0_round_1rem)] sm:[clip-path:none] sm:inset-y-0 sm:left-0 sm:right-auto sm:block sm:w-64 md:w-80 sm:z-20">
-            <img src="./assets/3.png" alt="นายกเทศมนตรี"
+            <img src="./assets/3.svg" alt="นายกเทศมนตรี"
                  class="absolute bottom-0 left-1/2 h-[135%] w-auto max-w-none -translate-x-1/2 object-contain object-bottom opacity-60 sm:inset-auto sm:bottom-0 sm:left-0 sm:h-[135%] sm:translate-x-0 sm:object-bottom sm:opacity-100 md:h-[142%] sm:rounded-bl-2xl md:rounded-bl-3xl filter drop-shadow-[0_10px_16px_rgba(0,0,0,0.25)]">
           </div>
 
