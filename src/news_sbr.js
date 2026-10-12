@@ -62,13 +62,13 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
         <div class="group relative w-full h-44 sm:h-44 md:h-52 rounded-2xl md:rounded-3xl bg-gradient-to-r from-[#eef4f3] via-slate-50 to-[#f3f8f7] border border-t-0 border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_45px_rgba(6,87,87,0.18)] hover:border-[#065757]/30 transition-all duration-500 flex items-center justify-between cursor-pointer select-none overflow-visible">
           
           <!-- Decorative image extends beyond the banner frame -->
-          <div class="absolute inset-0 flex items-end justify-center pointer-events-none z-0 overflow-visible [clip-path:inset(-160px_0_0_0_round_1rem)] sm:[clip-path:none] sm:inset-y-0 sm:left-0 sm:right-auto sm:block sm:w-64 md:w-80 sm:z-20">
+          <div class="absolute inset-0 flex items-end justify-center pointer-events-none z-0 overflow-visible [clip-path:inset(-160px_0_0_0_round_1rem)] xl:[clip-path:none] xl:inset-y-0 xl:left-0 xl:right-auto xl:block xl:w-64 xl:overflow-visible xl:z-20 2xl:w-80">
             <img src="./assets/3.png" alt="นายกเทศมนตรี" loading="eager" decoding="async" fetchpriority="high"
-                 class="absolute bottom-0 left-1/2 h-full w-auto max-w-full -translate-x-1/2 object-contain object-bottom opacity-60 sm:inset-auto sm:bottom-0 sm:left-0 sm:h-[135%] sm:max-w-none sm:translate-x-0 sm:object-bottom sm:opacity-100 md:h-[142%] sm:rounded-bl-2xl md:rounded-bl-3xl filter drop-shadow-[0_10px_16px_rgba(0,0,0,0.25)]">
+                 class="absolute inset-x-0 bottom-0 h-[calc(100%+40px)] w-full max-w-none translate-y-5 object-cover object-center opacity-60 xl:inset-auto xl:bottom-0 xl:left-0 xl:h-[135%] xl:w-auto xl:max-w-none xl:translate-y-0 xl:object-bottom xl:opacity-100 2xl:h-[142%] xl:rounded-bl-2xl md:rounded-bl-3xl filter drop-shadow-[0_10px_16px_rgba(0,0,0,0.25)]">
           </div>
 
           <!-- Spacer so right content doesn't collide with person portrait -->
-          <div class="hidden sm:block sm:w-52 md:w-64 flex-shrink-0 pointer-events-none"></div>
+          <div class="hidden xl:block xl:w-52 2xl:w-64 flex-shrink-0 pointer-events-none"></div>
 
           <!-- Title Content on Right -->
           <div class="relative z-10 flex-1 flex flex-col justify-center items-center px-4 sm:px-8 text-center">
