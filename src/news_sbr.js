@@ -63,8 +63,8 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
           
           <!-- Decorative image extends beyond the banner frame -->
           <div class="absolute inset-0 flex items-end justify-center pointer-events-none z-0 overflow-visible [clip-path:inset(-160px_0_0_0_round_1rem)] sm:[clip-path:none] sm:inset-y-0 sm:left-0 sm:right-auto sm:block sm:w-64 md:w-80 sm:z-20">
-            <img src="./assets/3.svg" alt="นายกเทศมนตรี"
-                 class="absolute bottom-0 left-1/2 h-[135%] w-auto max-w-none -translate-x-1/2 object-contain object-bottom opacity-60 sm:inset-auto sm:bottom-0 sm:left-0 sm:h-[135%] sm:translate-x-0 sm:object-bottom sm:opacity-100 md:h-[142%] sm:rounded-bl-2xl md:rounded-bl-3xl filter drop-shadow-[0_10px_16px_rgba(0,0,0,0.25)]">
+            <img src="./assets/3.png" alt="นายกเทศมนตรี" loading="eager" decoding="async" fetchpriority="high"
+                 class="absolute bottom-0 left-1/2 h-full w-auto max-w-full -translate-x-1/2 object-contain object-bottom opacity-60 sm:inset-auto sm:bottom-0 sm:left-0 sm:h-[135%] sm:max-w-none sm:translate-x-0 sm:object-bottom sm:opacity-100 md:h-[142%] sm:rounded-bl-2xl md:rounded-bl-3xl filter drop-shadow-[0_10px_16px_rgba(0,0,0,0.25)]">
           </div>
 
           <!-- Spacer so right content doesn't collide with person portrait -->
@@ -88,7 +88,7 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
 
           <!-- Pin Overlay on the Right Corner/Edge (assets/ปัก.png) -->
           <div class="absolute hidden sm:block -top-8 sm:-top-11 md:-top-13 -right-2 sm:-right-4 md:-right-5 z-30 pointer-events-none select-none">
-            <img src="./assets/ปัก.png" alt="หมุดปัก" 
+            <img src="./assets/pin-optimized.png" alt="หมุดปัก" decoding="async"
                  class="w-16 sm:w-24 md:w-28 h-auto object-contain -scale-x-100 filter drop-shadow-[0_12px_20px_rgba(0,0,0,0.32)]">
           </div>
         </div>
@@ -129,7 +129,7 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
     } else {
       html += `
         <div data-news-detail-index="${itemIndex}" tabindex="0" role="button" aria-label="อ่านรายละเอียดข่าว: ${escapeHtml(item.title || "ข่าวสาร")}" class="relative rounded-none rounded-br-[40px] overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_45px_rgba(0,134,117,0.22)] hover:-translate-y-1.5 transition-all duration-500 group h-80 sm:h-96 flex flex-col justify-end border border-gray-100/50 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700">
-          <img src="${escapeHtml(img)}" alt="${escapeHtml(item.title || "ข่าวสาร")}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out z-0">
+          <img src="${escapeHtml(img)}" alt="${escapeHtml(item.title || "ข่าวสาร")}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out z-0">
           <div class="absolute inset-0 bg-gradient-to-t from-[#002b26]/95 via-[#004d43]/30 to-transparent z-10 transition-opacity duration-300"></div>
 
           <span class="absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-[#087d72] px-3 py-1.5 text-xs font-bold text-white shadow-lg">
