@@ -15,8 +15,17 @@
     padding: 0 0.5rem;
     pointer-events: none;
     will-change: transform;
-    transform: translate3d(0, calc(0px - var(--nav-scroll-offset, 0px)), 0);
-    transition: transform 0.35s ease-out;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .site-header-wrapper.is-hidden {
+    transform: translate3d(0, -100%, 0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header-wrapper {
+      transition-duration: 0.01ms;
+    }
   }
 
   @media (min-width: 640px) {

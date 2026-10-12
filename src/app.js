@@ -54,22 +54,29 @@ function initializeNavScrollBehavior() {
 
   header.dataset.scrollBehaviorInitialized = "true";
   let previousScrollY = window.scrollY;
-  let hiddenOffset = 0;
+  let scrollDirectionDelta = 0;
 
   window.addEventListener("scroll", () => {
     const currentScrollY = window.scrollY;
     const scrollDelta = currentScrollY - previousScrollY;
-    const headerHeight = header.offsetHeight;
 
     if (currentScrollY <= 80) {
-      hiddenOffset = 0;
-    } else if (scrollDelta > 0) {
-      hiddenOffset = Math.min(headerHeight, hiddenOffset + scrollDelta * 0.45);
-    } else if (scrollDelta < 0) {
-      hiddenOffset = Math.max(0, hiddenOffset + scrollDelta * 0.45);
+      header.classList.remove("is-hidden");
+      scrollDirectionDelta = 0;
+    } else if (scrollDelta !== 0) {
+      if (Math.sign(scrollDelta) !== Math.sign(scrollDirectionDelta)) {
+        scrollDirectionDelta = scrollDelta;
+      } else {
+        scrollDirectionDelta += scrollDelta;
+      }
+
+      if (scrollDirectionDelta > 8) {
+        header.classList.add("is-hidden");
+      } else if (scrollDirectionDelta < -8) {
+        header.classList.remove("is-hidden");
+      }
     }
 
-    header.style.setProperty("--nav-scroll-offset", `${hiddenOffset}px`);
     previousScrollY = currentScrollY;
   }, { passive: true });
 }

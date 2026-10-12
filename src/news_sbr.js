@@ -59,23 +59,16 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
   if (currentPage === 1 && (!breadcrumbStack || breadcrumbStack.length === 0)) {
     html += `
       <div class="relative w-full pt-10 sm:pt-14 md:pt-16 pb-2 mb-4 sm:mb-6 overflow-visible">
-        <div class="group relative w-full h-36 sm:h-44 md:h-52 rounded-2xl md:rounded-3xl bg-gradient-to-r from-[#eef4f3] via-slate-50 to-[#f3f8f7] border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_45px_rgba(6,87,87,0.18)] hover:border-[#065757]/30 transition-all duration-500 flex items-center justify-between cursor-pointer select-none overflow-visible">
+        <div class="group relative w-full h-44 sm:h-44 md:h-52 rounded-2xl md:rounded-3xl bg-gradient-to-r from-[#eef4f3] via-slate-50 to-[#f3f8f7] border border-t-0 border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_45px_rgba(6,87,87,0.18)] hover:border-[#065757]/30 transition-all duration-500 flex items-center justify-between cursor-pointer select-none overflow-visible">
           
-          <!-- Left Unified Green Backdrop Behind Portrait (Continuous angled polygon, no white gaps) -->
-          <div class="absolute inset-y-0 left-0 w-48 sm:w-64 md:w-80 bg-[#065757] rounded-l-2xl md:rounded-l-3xl overflow-hidden pointer-events-none"
-               style="clip-path: polygon(0 0, 100% 0, calc(100% - 40px) 100%, 0 100%); -webkit-clip-path: polygon(0 0, 100% 0, calc(100% - 40px) 100%, 0 100%);">
-            <div class="absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-transparent"></div>
-          </div>
-
-          <!-- Popping Out Person Image (Upper head pops out top, body neatly clipped to card frame at bottom/left) -->
-          <div class="absolute inset-y-0 left-0 w-44 sm:w-64 md:w-80 pointer-events-none z-20 overflow-visible"
-               style="clip-path: inset(-160px 0px 0px 0px round 24px 0 0 24px); -webkit-clip-path: inset(-160px 0px 0px 0px round 24px 0 0 24px);">
-            <img src="./assets/นายก.png" alt="นายกเทศมนตรี" 
-                 class="absolute bottom-0 left-2 sm:left-6 md:left-8 h-[125%] sm:h-[135%] md:h-[142%] max-w-none object-contain object-bottom filter drop-shadow-[0_10px_16px_rgba(0,0,0,0.25)] group-hover:scale-105 group-hover:-translate-y-1.5 transition-transform duration-500 ease-out origin-bottom">
+          <!-- Decorative image extends beyond the banner frame -->
+          <div class="absolute inset-0 flex items-end justify-center pointer-events-none z-0 overflow-visible [clip-path:inset(-160px_0_0_0_round_1rem)] sm:[clip-path:none] sm:inset-y-0 sm:left-0 sm:right-auto sm:block sm:w-64 md:w-80 sm:z-20">
+            <img src="./assets/3.png" alt="นายกเทศมนตรี"
+                 class="absolute bottom-0 left-1/2 h-[135%] w-auto max-w-none -translate-x-1/2 object-contain object-bottom opacity-60 sm:inset-auto sm:bottom-0 sm:left-0 sm:h-[135%] sm:translate-x-0 sm:object-bottom sm:opacity-100 md:h-[142%] sm:rounded-bl-2xl md:rounded-bl-3xl filter drop-shadow-[0_10px_16px_rgba(0,0,0,0.25)]">
           </div>
 
           <!-- Spacer so right content doesn't collide with person portrait -->
-          <div class="w-32 sm:w-52 md:w-64 flex-shrink-0 pointer-events-none"></div>
+          <div class="hidden sm:block sm:w-52 md:w-64 flex-shrink-0 pointer-events-none"></div>
 
           <!-- Title Content on Right -->
           <div class="relative z-10 flex-1 flex flex-col justify-center items-center px-4 sm:px-8 text-center">
@@ -94,9 +87,9 @@ window.renderNewsSbrView = function (container, items, currentPage = 1, itemsPer
           <div class="absolute right-0 top-0 bottom-0 w-2.5 sm:w-3.5 bg-gradient-to-b from-[#05afae] to-[#065757] rounded-r-2xl md:rounded-r-3xl"></div>
 
           <!-- Pin Overlay on the Right Corner/Edge (assets/ปัก.png) -->
-          <div class="absolute -top-8 sm:-top-11 md:-top-13 -right-2 sm:-right-4 md:-right-5 z-30 pointer-events-none select-none">
+          <div class="absolute hidden sm:block -top-8 sm:-top-11 md:-top-13 -right-2 sm:-right-4 md:-right-5 z-30 pointer-events-none select-none">
             <img src="./assets/ปัก.png" alt="หมุดปัก" 
-                 class="w-16 sm:w-24 md:w-28 h-auto object-contain -scale-x-100 filter drop-shadow-[0_12px_20px_rgba(0,0,0,0.32)] group-hover:-rotate-12 group-hover:-scale-x-110 group-hover:scale-y-110 transition-transform duration-500 ease-out origin-center">
+                 class="w-16 sm:w-24 md:w-28 h-auto object-contain -scale-x-100 filter drop-shadow-[0_12px_20px_rgba(0,0,0,0.32)]">
           </div>
         </div>
       </div>
