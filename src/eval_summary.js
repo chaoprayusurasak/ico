@@ -3,8 +3,7 @@
  * Dedicated Satisfaction Summary & Analytics Dashboard view renderer using Chart.js & Supabase data.
  */
 
-window.evalDoughnutChart = null;
-window.evalBarChart = null;
+let selectedEvalLevel = 1;
 
 window.renderEvalSummaryView = async function (container) {
   if (!container) return;
@@ -36,54 +35,7 @@ window.renderEvalSummaryView = async function (container) {
         </div>
       </div>
 
-      <!-- KPI Summary Cards Skeleton / Container -->
-      <div id="eval-kpi-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-2xs animate-pulse h-28"></div>
-        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-2xs animate-pulse h-28"></div>
-        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-2xs animate-pulse h-28"></div>
-        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-2xs animate-pulse h-28"></div>
-      </div>
-
-      <!-- Charts Section (2 Columns) -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        
-        <!-- Chart 1: Doughnut Chart (สัดส่วนระดับความพึงพอใจ) -->
-        <div class="bg-white p-6 rounded-xl border border-gray-200/90 shadow-2xs flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-5 bg-[#008675] rounded-full inline-block"></span>
-              <h3 class="font-medium text-sm sm:text-base text-gray-800">สัดส่วนระดับความพึงพอใจรวม</h3>
-            </div>
-          </div>
-
-          <div class="relative w-full aspect-square max-h-72 mx-auto flex items-center justify-center py-2">
-            <canvas id="chart-satisfaction-doughnut"></canvas>
-          </div>
-
-          <div id="doughnut-legend" class="grid grid-cols-3 gap-2 pt-4 border-t border-gray-100 text-center text-xs">
-            <!-- Legend Populated Dynamically -->
-          </div>
-        </div>
-
-        <!-- Chart 2: Bar Chart (จำนวนผู้ตอบในแต่ละระดับ) -->
-        <div class="bg-white p-6 rounded-xl border border-gray-200/90 shadow-2xs flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-5 bg-sky-600 rounded-full inline-block"></span>
-              <h3 class="font-medium text-sm sm:text-base text-gray-800">จำนวนผู้ประเมิน</h3>
-            </div>
-          </div>
-
-          <div class="relative w-full h-64 sm:h-72 mx-auto flex items-center justify-center">
-            <canvas id="chart-satisfaction-bar"></canvas>
-          </div>
-
-          <div class="pt-4 border-t border-gray-100 text-xs text-gray-500 font-normal text-center">
-            สถิติผู้ใช้บริการทั้งหมด
-          </div>
-        </div>
-
-      </div>
+      <div id="eval-satisfaction-district" class="mb-8"></div>
 
       <!-- Citizens Comments & Feedback Table List -->
       <div class="py-2">
@@ -196,116 +148,174 @@ async function loadAndRenderEvalSummaryData() {
   }
 
   // 2. Render Chart.js Visualizations
-  renderChartJsVisualizations(countLevel1, countLevel2, countLevel3);
+  renderSatisfactionDistrict(
+    [countLevel1, countLevel2, countLevel3],
+    totalCount,
+    overallSatisfactionPercent
+  );
 
   // 3. Render Comments List
   renderCommentsList(rawEvaluations);
 }
 
-function renderChartJsVisualizations(c1, c2, c3) {
-  if (typeof Chart === "undefined") {
-    console.warn("Chart.js library is not loaded yet.");
-    return;
-  }
+function renderSatisfactionDistrict(counts, total, satisfactionPercent) {
+  const container = document.getElementById("eval-satisfaction-district");
+  if (!container) return;
 
-  // Destroy previous chart instances to prevent memory leaks or duplicate renders
-  if (window.evalDoughnutChart) window.evalDoughnutChart.destroy();
-  if (window.evalBarChart) window.evalBarChart.destroy();
+  const levels = [
+    { id: 1, name: "พึงพอใจมาก", color: "#008675", side: "#07584f" },
+    { id: 2, name: "พึงพอใจ", color: "#0284c7", side: "#07527a" },
+    { id: 3, name: "ควรปรับปรุง", color: "#f59e0b", side: "#a85b09" }
+  ].map((level, index) => ({
+    ...level,
+    count: counts[index],
+    percent: total > 0 ? Math.round(counts[index] / total * 100) : 0
+  }));
+  const selected = levels.find(level => level.id === selectedEvalLevel) || levels[0];
+  const topLevel = levels.reduce((top, level) => level.count > top.count ? level : top, levels[0]);
+  const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[character]);
+  const pointList = vertices => vertices.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
 
-  const ctxDoughnut = document.getElementById("chart-satisfaction-doughnut");
-  const ctxBar = document.getElementById("chart-satisfaction-bar");
+  const width = 640;
+  const height = 230;
+  const maximum = Math.max(1, ...levels.map(level => level.count));
+  const project = (x, y, z = 0) => [(x - y) * 0.86, (x + y) * 0.43 - z];
+  const blocks = levels.map((level, index) => {
+    const x = index * 1.55;
+    const y = 0;
+    const side = 1.05;
+    const z = level.count ? Math.max(0.12, level.count / maximum * 1.12) : 0.04;
+    return {
+      ...level,
+      depth: x + y,
+      base: [project(x, y), project(x + side, y), project(x + side, y + side), project(x, y + side)],
+      roof: [project(x, y, z), project(x + side, y, z), project(x + side, y + side, z), project(x, y + side, z)]
+    };
+  });
+  const ground = [project(-0.35, -0.35), project(4.55, -0.35), project(4.55, 1.35), project(-0.35, 1.35)];
+  const vertices = [...ground, ...blocks.flatMap(block => [...block.base, ...block.roof])];
+  const minX = Math.min(...vertices.map(point => point[0]));
+  const maxX = Math.max(...vertices.map(point => point[0]));
+  const minY = Math.min(...vertices.map(point => point[1]));
+  const maxY = Math.max(...vertices.map(point => point[1]));
+  const scale = Math.min((width - 96) / (maxX - minX), (height - 30) / (maxY - minY));
+  const fit = ([x, y]) => [
+    (x - minX) * scale + (width - (maxX - minX) * scale) / 2,
+    (y - minY) * scale + (height - (maxY - minY) * scale) / 2
+  ];
+  const fittedGround = pointList(ground.map(fit));
+  const blocksSvg = blocks.sort((a, b) => a.depth - b.depth).map(block => {
+    const base = block.base.map(fit);
+    const roof = block.roof.map(fit);
+    const centerX = roof.reduce((sum, point) => sum + point[0], 0) / 4;
+    const centerY = roof.reduce((sum, point) => sum + point[1], 0) / 4;
+    const isSelected = selected.id === block.id;
+    return `
+      <g class="ed-block${isSelected ? " is-selected" : ""}" data-level="${block.id}" role="button" tabindex="0"
+         aria-label="${escapeHtml(block.name)} ${block.count.toLocaleString()} ท่าน ${block.percent}%"
+         aria-pressed="${isSelected}" style="--ed-color:${block.color};--ed-side:${block.side}">
+        <polygon class="ed-side-left" points="${pointList([roof[3], roof[2], base[2], base[3]])}"></polygon>
+        <polygon class="ed-side-right" points="${pointList([roof[1], roof[2], base[2], base[1]])}"></polygon>
+        <polygon class="ed-roof" points="${pointList(roof)}"></polygon>
+        <text x="${centerX.toFixed(1)}" y="${(centerY + 4).toFixed(1)}" text-anchor="middle">${block.id}</text>
+      </g>`;
+  }).join("");
+  const distribution = levels.map(level =>
+    `<span style="width:${total ? level.count / total * 100 : 0}%;background:${level.color}" title="${escapeHtml(level.name)} ${level.percent}%"></span>`
+  ).join("");
 
-  // Chart 1: Doughnut Chart
-  if (ctxDoughnut) {
-    window.evalDoughnutChart = new Chart(ctxDoughnut, {
-      type: "doughnut",
-      data: {
-        labels: ["พึงพอใจมาก (ระดับ 1)", "พึงพอใจ (ระดับ 2)", "ควรปรับปรุง (ระดับ 3)"],
-        datasets: [{
-          data: [c1, c2, c3],
-          backgroundColor: ["#008675", "#0284C7", "#F59E0B"],
-          hoverBackgroundColor: ["#0B5C52", "#0369A1", "#D97706"],
-          borderWidth: 2,
-          borderColor: "#FFFFFF"
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: function (context) {
-                const total = c1 + c2 + c3;
-                const val = context.raw || 0;
-                const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                return ` ${context.label}: ${val} ท่าน (${pct}%)`;
-              }
-            }
-          }
-        },
-        cutout: "68%"
+  container.innerHTML = `
+    <style>
+      .eval-district{--ed-border:#e5e7eb;--ed-muted:#737373;--ed-ink:#17201f;--ed-surface:#fff;--ed-subtle:#f8faf9;--ed-ground:#f1f5f4;width:100%;max-width:none;margin:0;color:var(--ed-ink);background:var(--ed-surface);border:1px solid var(--ed-border);border-radius:16px;box-shadow:0 4px 20px rgba(15,23,42,.06);overflow:hidden;font-size:13px}
+      .eval-district *{box-sizing:border-box}
+      .ed-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 24px 0}
+      .ed-heading{display:flex;align-items:center;gap:11px;min-width:0}
+      .ed-emblem{display:grid;place-items:center;width:36px;height:36px;flex:none;border:1px solid var(--ed-border);border-radius:10px;background:var(--ed-subtle);color:#087d72}
+      .ed-heading h3{margin:0;font-size:15px;font-weight:600;line-height:1.4}
+      .ed-heading p{margin:3px 0 0;color:var(--ed-muted);font-size:12px}
+      .ed-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:23px 24px 16px}
+      .ed-stat{display:flex;flex-direction:column;min-width:0}
+      .ed-stat+.ed-stat{padding-left:18px;border-left:1px solid var(--ed-border)}
+      .ed-stat span{color:var(--ed-muted);font-size:11px}
+      .ed-stat strong{margin-top:3px;font-size:22px;font-weight:600;line-height:1.35;font-variant-numeric:tabular-nums}
+      .ed-stat small{margin-top:2px;color:var(--ed-muted);font-size:11px}
+      .ed-capacity{display:flex;align-items:center;gap:11px;margin:0 24px 17px}
+      .ed-meter{display:flex;flex:1;height:6px;overflow:hidden;border-radius:9px;background:var(--ed-ground)}
+      .ed-meter span{height:100%;transition:width .25s ease}
+      .ed-capacity-label{color:var(--ed-muted);font-size:11px;white-space:nowrap}
+      .ed-browser{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 24px 7px;padding-top:13px;border-top:1px solid var(--ed-border)}
+      .ed-breadcrumb{display:flex;align-items:center;gap:7px;min-width:0;color:var(--ed-muted);font-size:11px}
+      .ed-breadcrumb strong{color:var(--ed-ink);font-weight:500}
+      .ed-plot{position:relative;margin:0 12px}
+      .ed-chart{display:block;width:100%;height:230px;user-select:none}
+      .ed-ground{fill:var(--ed-ground)}
+      .ed-block{cursor:pointer;outline:none;transition:filter .16s ease,transform .16s ease}
+      .ed-block polygon{stroke:rgba(255,255,255,.7);stroke-width:1}
+      .ed-roof{fill:var(--ed-color)}
+      .ed-side-left,.ed-side-right{fill:var(--ed-side)}
+      .ed-side-right{filter:brightness(.88)}
+      .ed-block text{fill:#fff;font:600 12px sans-serif;pointer-events:none}
+      .ed-block:hover,.ed-block:focus-visible{filter:brightness(1.12) drop-shadow(0 5px 5px rgba(15,23,42,.18))}
+      .ed-block.is-selected{filter:brightness(1.08) drop-shadow(0 4px 4px rgba(15,23,42,.2))}
+      .ed-caption{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:0 24px 14px;color:var(--ed-muted);font-size:11px}
+      .ed-legend{display:flex;flex-wrap:wrap;gap:12px}
+      .ed-legend span{display:inline-flex;align-items:center;gap:5px}
+      .ed-dot{width:8px;height:8px;border-radius:50%}
+      .ed-inspector{padding:14px 24px 15px;border-top:1px solid var(--ed-border);background:var(--ed-subtle)}
+      .ed-selected-summary{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--ed-muted);font-size:11px}
+      .ed-selected-summary strong{color:var(--ed-ink);font-size:13px;font-weight:600}
+      .ed-empty{padding:35px 15px;color:var(--ed-muted);text-align:center;font-size:12px}
+      @media(max-width:560px){.ed-header{align-items:flex-start;gap:10px;padding:18px 16px 0}.ed-heading{gap:8px}.ed-heading h3{font-size:13px}.ed-heading p{font-size:11px}.ed-stats{gap:7px;margin:19px 16px 14px}.ed-stat+.ed-stat{padding-left:9px}.ed-stat strong{font-size:19px}.ed-stat span,.ed-stat small{font-size:10px}.ed-capacity{margin:0 16px 14px}.ed-browser{margin-inline:16px}.ed-plot{margin-inline:2px}.ed-chart{height:190px}.ed-caption{margin-inline:16px}.ed-inspector{padding-inline:16px}}
+      @media(prefers-reduced-motion:reduce){.eval-district *{scroll-behavior:auto!important;transition:none!important}}
+    </style>
+    <section class="eval-district" aria-label="สรุปผลระดับความพึงพอใจ">
+      <div class="ed-stats">
+        <div class="ed-stat"><span>ผู้ตอบแบบประเมิน</span><strong>${total.toLocaleString()}</strong><small>ท่าน</small></div>
+        <div class="ed-stat"><span>ความพึงพอใจรวม</span><strong>${satisfactionPercent}%</strong><small>คะแนนภาพรวม</small></div>
+        <div class="ed-stat"><span>ระดับที่พบมากที่สุด</span><strong>${escapeHtml(topLevel.name)}</strong><small>${topLevel.count.toLocaleString()} ท่าน</small></div>
+      </div>
+      <div class="ed-capacity" aria-label="สัดส่วนคำตอบในแต่ละระดับ">
+        <div class="ed-meter">${distribution}</div>
+        <span class="ed-capacity-label">${total.toLocaleString()} คำตอบ</span>
+      </div>
+      <div class="ed-browser"><div class="ed-breadcrumb"><span>ผลประเมิน</span><span aria-hidden="true">›</span><strong>ระดับความพึงพอใจ</strong></div><span class="ed-capacity-label"></span></div>
+      <div class="ed-plot">
+        <svg class="ed-chart" viewBox="0 0 ${width} ${height}" role="group" aria-label="แผนผังสามมิติแสดงจำนวนผู้ตอบในแต่ละระดับ">
+          <polygon class="ed-ground" points="${fittedGround}"></polygon>${blocksSvg}
+        </svg>
+      </div>
+      <div class="ed-caption">
+        <div class="ed-legend">${levels.map(level => `<span><i class="ed-dot" style="background:${level.color}"></i>${escapeHtml(level.name)}</span>`).join("")}</div>
+        <span>เลือกแท่งกราฟเพื่อดูรายละเอียด</span>
+      </div>
+      <div class="ed-inspector" aria-live="polite" aria-atomic="true">
+        <div class="ed-selected-summary"><span><strong>${escapeHtml(selected.name)}</strong> · ระดับ ${selected.id}</span><span>${selected.percent}% ของผู้ตอบทั้งหมด</span></div>
+        <div class="ed-selected-summary"><span>${selected.count.toLocaleString()} ท่าน</span><span>จาก ${total.toLocaleString()} ท่าน</span></div>
+      </div>
+    </section>
+  `;
+
+  container.querySelectorAll("[data-eval-level]").forEach(button => {
+    button.addEventListener("click", () => {
+      selectedEvalLevel = Number(button.dataset.evalLevel);
+      renderSatisfactionDistrict(counts, total, satisfactionPercent);
+    });
+  });
+  container.querySelectorAll(".ed-block").forEach(block => {
+    const selectLevel = () => {
+      selectedEvalLevel = Number(block.dataset.level);
+      renderSatisfactionDistrict(counts, total, satisfactionPercent);
+    };
+    block.addEventListener("click", selectLevel);
+    block.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        selectLevel();
       }
     });
-
-    // Populate Custom Legend
-    const legendEl = document.getElementById("doughnut-legend");
-    if (legendEl) {
-      legendEl.innerHTML = `
-        <div class="flex flex-col items-center">
-          <span class="inline-block w-3 h-3 rounded-full bg-[#008675] mb-1"></span>
-          <span class="text-gray-700 font-medium">พึงพอใจมาก</span>
-          <span class="text-gray-400 font-normal">${c1} ท่าน</span>
-        </div>
-        <div class="flex flex-col items-center">
-          <span class="inline-block w-3 h-3 rounded-full bg-[#0284C7] mb-1"></span>
-          <span class="text-gray-700 font-medium">พึงพอใจ</span>
-          <span class="text-gray-400 font-normal">${c2} ท่าน</span>
-        </div>
-        <div class="flex flex-col items-center">
-          <span class="inline-block w-3 h-3 rounded-full bg-[#F59E0B] mb-1"></span>
-          <span class="text-gray-700 font-medium">ควรปรับปรุง</span>
-          <span class="text-gray-400 font-normal">${c3} ท่าน</span>
-        </div>
-      `;
-    }
-  }
-
-  // Chart 2: Bar Chart
-  if (ctxBar) {
-    window.evalBarChart = new Chart(ctxBar, {
-      type: "bar",
-      data: {
-        labels: ["พึงพอใจมาก", "พึงพอใจ", "ควรปรับปรุง"],
-        datasets: [{
-          label: "จำนวนผู้ตอบ (ท่าน)",
-          data: [c1, c2, c3],
-          backgroundColor: ["#008675", "#0284C7", "#F59E0B"],
-          borderRadius: 8,
-          barThickness: 36
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: { precision: 0, font: { family: "Kanit" } },
-            grid: { color: "#F1F5F9" }
-          },
-          x: {
-            ticks: { font: { family: "Kanit" } },
-            grid: { display: false }
-          }
-        }
-      }
-    });
-  }
+  });
 }
 
 function renderCommentsList(evaluations) {
