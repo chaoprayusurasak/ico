@@ -430,17 +430,60 @@
 
   /* Mobile Drawer Menu with Liquid Glass */
   .mobile-drawer-container {
+    display: grid;
+    grid-template-rows: 0fr;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border-top: 1.5px solid rgba(255, 255, 255, 0.9);
     border-radius: 0 0 28px 28px;
-    padding: 1rem 1.25rem 1.5rem;
+    padding: 0 1.25rem;
     position: relative;
     z-index: 2;
+    opacity: 0;
+    transform: translateY(-8px);
+    visibility: hidden;
+    pointer-events: none;
+    overflow: hidden;
     box-shadow:
       inset 0 2px 2px rgba(255, 255, 255, 0.95),
       0 20px 40px rgba(0, 0, 0, 0.15);
+    transition:
+      grid-template-rows 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      padding 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 240ms ease,
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 420ms;
+  }
+
+  .mobile-drawer-container > .grid {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .mobile-drawer-container > .grid > .mobile-menu-item {
+    margin-bottom: 0;
+  }
+
+  #mobile-nav-toggle:checked ~ .mobile-drawer-container {
+    grid-template-rows: 1fr;
+    padding-block: 1rem 1.5rem;
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+      grid-template-rows 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      padding 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 240ms ease,
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s;
+  }
+
+  @media (min-width: 1024px) {
+    .mobile-drawer-container {
+      display: none;
+    }
   }
 
   .mobile-menu-item {
@@ -512,6 +555,13 @@
   @media (min-width: 768px) {
     .ocean {
       height: 120px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-drawer-container,
+    #mobile-nav-toggle:checked ~ .mobile-drawer-container {
+      transition: none;
     }
   }
 
@@ -656,7 +706,7 @@
     </nav>
 
     <!-- Mobile Responsive Slide-down Drawer -->
-    <div class="mobile-drawer-container hidden peer-checked:block lg:hidden">
+    <div class="mobile-drawer-container lg:hidden">
       <div class="grid gap-2">
         <details class="mobile-menu-item">
           <summary>หน้าแรก <span>⌄</span></summary>

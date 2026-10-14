@@ -68,7 +68,7 @@ window.renderOicSectionsView = function (container, items, currentPage = 1, item
   // LEFT SIDEBAR: กล่องหมวดหมู่ ( Category Folder Sidebar Widget - rounded-md / rounded-lg )
   // --------------------------------------------------------------------------
   html += `
-    <div class="w-full md:w-72 lg:w-80 shrink-0 overflow-hidden">
+    <div class="hidden md:block w-full md:w-72 lg:w-80 shrink-0 overflow-hidden">
       <!-- Dark Teal Widget Header (rounded-t-md, font-medium, text-xs sm:text-sm) -->
       <div class="bg-[#2F4F4F] text-white rounded-t-md px-5 py-3 font-medium text-xs sm:text-sm shadow-sm flex items-center justify-between">
         <span>หมวดหมู่</span>
