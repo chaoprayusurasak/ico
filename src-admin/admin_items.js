@@ -572,6 +572,7 @@ window.setupFormListeners = function () {
       document.getElementById("item-form").reset();
 
       const titleLabel = document.getElementById("item-title-label-text");
+      const docUploadLabel = document.getElementById("doc-upload-label-text");
       const linkWrap = document.getElementById("external-link-wrapper");
       const docCard = document.getElementById("doc-upload-card");
       const imgCard = document.getElementById("image-upload-card");
@@ -599,9 +600,20 @@ window.setupFormListeners = function () {
         if (descWrap) descWrap.classList.remove("hidden");
         if (officerFields) officerFields.classList.add("hidden");
         if (execFields) execFields.classList.remove("hidden");
+      } else if (window.activeCategory === "index_files") {
+        document.getElementById("form-title").textContent = "เพิ่มไฟล์ดัชนีรวม";
+        if (titleLabel) titleLabel.textContent = "ชื่อเอกสาร";
+        if (docUploadLabel) docUploadLabel.textContent = "ไฟล์ดัชนีรวม (PDF, Word, Excel หรือ ZIP)";
+        if (linkWrap) linkWrap.classList.remove("hidden");
+        if (docCard) docCard.classList.remove("hidden");
+        if (imgCard) imgCard.classList.add("hidden");
+        if (descWrap) descWrap.classList.remove("hidden");
+        if (officerFields) officerFields.classList.add("hidden");
+        if (execFields) execFields.classList.add("hidden");
       } else {
         document.getElementById("form-title").textContent = "เพิ่มข้อมูลใหม่";
         if (titleLabel) titleLabel.textContent = "หัวเรื่อง / ชื่อโฟลเดอร์";
+        if (docUploadLabel) docUploadLabel.textContent = "ไฟล์เอกสารแนบ (PDF, Word, Excel)";
         if (linkWrap) linkWrap.classList.remove("hidden");
         if (docCard) docCard.classList.remove("hidden");
         if (imgCard) imgCard.classList.remove("hidden");
@@ -948,11 +960,14 @@ window.closeForm = function () {
 
 window.editItem = async (id) => {
   window.isEditing = true;
-  document.getElementById("form-title").textContent = "แก้ไขข้อมูล";
+  document.getElementById("form-title").textContent = window.activeCategory === "index_files"
+    ? "แก้ไขไฟล์ดัชนีรวม"
+    : "แก้ไขข้อมูล";
 
   const execFields = document.getElementById("executive-fields");
   const officerFields = document.getElementById("officer-fields");
   const titleLabel = document.getElementById("item-title-label-text");
+  const docUploadLabel = document.getElementById("doc-upload-label-text");
   const linkWrap = document.getElementById("external-link-wrapper");
   const docCard = document.getElementById("doc-upload-card");
   const imgCard = document.getElementById("image-upload-card");
@@ -1032,8 +1047,15 @@ window.editItem = async (id) => {
         if (officerFields) officerFields.classList.add("hidden");
         if (linkWrap) linkWrap.classList.remove("hidden");
         if (docCard) docCard.classList.remove("hidden");
-        if (imgCard) imgCard.classList.remove("hidden");
+        if (imgCard) imgCard.classList.toggle("hidden", window.activeCategory === "index_files");
         if (descWrap) descWrap.classList.remove("hidden");
+        if (window.activeCategory === "index_files") {
+          document.getElementById("form-title").textContent = "แก้ไขไฟล์ดัชนีรวม";
+          if (titleLabel) titleLabel.textContent = "ชื่อเอกสาร";
+          if (docUploadLabel) docUploadLabel.textContent = "ไฟล์ดัชนีรวม (PDF, Word, Excel หรือ ZIP)";
+        } else if (docUploadLabel) {
+          docUploadLabel.textContent = "ไฟล์เอกสารแนบ (PDF, Word, Excel)";
+        }
         document.getElementById("item-desc").value = item.description || "";
       }
     }

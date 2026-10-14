@@ -18,13 +18,16 @@ alter table public.visitor_logs
 
 create table if not exists public.visitor_stats (
   key text primary key,
-  total_count bigint not null default 1,
+  total_count bigint not null default 0,
   updated_at timestamptz not null default now()
 );
 
 alter table public.visitor_stats
-  add column if not exists total_count bigint not null default 1,
+  add column if not exists total_count bigint not null default 0,
   add column if not exists updated_at timestamptz not null default now();
+
+alter table public.visitor_stats
+  alter column total_count set default 0;
 
 create unique index if not exists visitor_logs_legacy_evaluation_id_key
   on public.visitor_logs (legacy_evaluation_id)
@@ -199,14 +202,14 @@ drop policy if exists "Public can initialize visitor stats" on public.visitor_st
 create policy "Public can initialize visitor stats"
   on public.visitor_stats for insert
   to anon, authenticated
-  with check (key = 'site_total' and total_count >= 1);
+  with check (key = 'site_total' and total_count >= 0);
 
 drop policy if exists "Public can update visitor stats" on public.visitor_stats;
 create policy "Public can update visitor stats"
   on public.visitor_stats for update
   to anon, authenticated
   using (key = 'site_total')
-  with check (key = 'site_total' and total_count >= 1);
+  with check (key = 'site_total' and total_count >= 0);
 
 drop policy if exists "Public can read FAQs" on public.faqs;
 create policy "Public can read FAQs"

@@ -502,11 +502,22 @@ async function handleRouting() {
       const sb = (typeof window !== "undefined" && window.supabase) ? window.supabase : (typeof supabase !== "undefined" ? supabase : null);
       if (sb && typeof sb.from === "function") {
         getRouteItems(cacheKey, async () => {
+          const { data: oicData, error: oicError } = await sb.from("oic_documents")
+            .select("*")
+            .eq("category", "index_files")
+            .order("created_at", { ascending: false });
+          if (!oicError && oicData && oicData.length > 0) return oicData;
+
           const { data, error } = await sb.from("items")
             .select("*")
             .eq("category", "index_files")
             .order("created_at", { ascending: false });
-          if (error) throw error;
+          if (error) {
+            if (oicError) {
+              throw new Error(`ไม่สามารถโหลดเอกสารจาก oic_documents (${oicError.message}) หรือ items (${error.message})`);
+            }
+            throw error;
+          }
           return data || [];
         }).then(data => {
             if (requestId !== routeRequestId || window.location.hash.replace("#", "") !== "index_files") return;
@@ -516,6 +527,13 @@ async function handleRouting() {
           .catch(error => {
             if (requestId === routeRequestId) {
               console.error("Error fetching index files:", error);
+              boxEl.innerHTML = `
+                <div role="alert" class="flex flex-col items-center justify-center py-12 gap-3 text-rose-500 text-center">
+                  <i class="fi fi-rr-triangle-warning text-3xl"></i>
+                  <p class="text-sm font-semibold">โหลดเอกสารดัชนีรวมไม่สำเร็จ</p>
+                  <p class="text-xs text-gray-500">กรุณาลองใหม่อีกครั้งภายหลัง</p>
+                </div>
+              `;
             }
           });
       }
@@ -814,62 +832,84 @@ window.toggleExecutiveMarquee = function (btn) {
   }
 };
 
-// Real Website Visitor Counter Logic (Incremental Tracking starting from 1)
+// Track visits from a clean, versioned counter baseline.
 async function initVisitorCounter() {
   const totalEl = document.getElementById("visitor-total");
-  if (!totalEl) return;
+  const sb = window.supabase;
+  const visitSessionKey = "ico_visit_session_v2";
+  const logSessionKey = "ico_unique_visitor_logged_v2";
+  const isNewVisit = !sessionStorage.getItem(visitSessionKey);
+  let totalCount = 0;
 
-  // Clear old dummy base count (125,480) if present in localStorage
-  let savedLocal = localStorage.getItem("ico_real_visitor_count");
-  if (savedLocal && parseInt(savedLocal) > 10000) {
-    localStorage.removeItem("ico_real_visitor_count");
-    savedLocal = null;
-  }
+  localStorage.removeItem("ico_real_visitor_count");
 
-  let totalCount = parseInt(savedLocal) || 1;
-  const isNewVisit = !sessionStorage.getItem("ico_visit_session");
-
-  if (isNewVisit) {
-    totalCount = savedLocal ? totalCount + 1 : 1;
-    sessionStorage.setItem("ico_visit_session", "true");
-    localStorage.setItem("ico_real_visitor_count", String(totalCount));
-  }
-
-  // Render current count immediately
-  totalEl.textContent = totalCount.toLocaleString("th-TH");
-
-  // Sync with Supabase cloud database if available
-  try {
-    const sb = window.supabase;
-    if (sb) {
+  if (sb) {
+    try {
       const { data, error } = await sb
         .from("visitor_stats")
         .select("total_count")
         .eq("key", "site_total")
         .maybeSingle();
+      if (error) throw error;
 
-      if (!error && data && data.total_count != null) {
-        let cloudCount = parseInt(data.total_count, 10) || 1;
-        if (cloudCount > 10000) cloudCount = 1; // Clear old dummy base count if in database
-
-        if (isNewVisit) {
-          cloudCount += 1;
-          const { error: updateError } = await sb.from("visitor_stats")
-            .update({ total_count: cloudCount, updated_at: new Date().toISOString() })
-            .eq("key", "site_total");
-          if (updateError) throw updateError;
-        }
-        totalCount = Math.max(totalCount, cloudCount);
-      } else if (!error && !data) {
+      totalCount = Number.parseInt(data?.total_count ?? "0", 10);
+      if (!Number.isFinite(totalCount) || totalCount < 0) totalCount = 0;
+      if (!data) {
         const { error: insertError } = await sb.from("visitor_stats")
-          .insert([{ key: "site_total", total_count: totalCount }]);
+          .insert([{ key: "site_total", total_count: 0 }]);
         if (insertError) throw insertError;
       }
-      localStorage.setItem("ico_real_visitor_count", String(totalCount));
-      totalEl.textContent = totalCount.toLocaleString("th-TH");
+
+      if (isNewVisit) {
+        totalCount++;
+        const { error: updateError } = await sb.from("visitor_stats")
+          .update({ total_count: totalCount, updated_at: new Date().toISOString() })
+          .eq("key", "site_total");
+        if (updateError) throw updateError;
+        sessionStorage.setItem(visitSessionKey, "true");
+      }
+    } catch (err) {
+      console.warn("Visitor counter error:", err);
     }
-  } catch (err) {
-    console.warn("Visitor counter error:", err);
+  } else {
+    totalCount = Number.parseInt(localStorage.getItem("ico_real_visitor_count_v2") || "0", 10);
+    if (!Number.isFinite(totalCount) || totalCount < 0) totalCount = 0;
+    if (isNewVisit) {
+      totalCount++;
+      localStorage.setItem("ico_real_visitor_count_v2", String(totalCount));
+      sessionStorage.setItem(visitSessionKey, "true");
+    }
+  }
+
+  if (totalEl) totalEl.textContent = totalCount.toLocaleString("th-TH");
+
+  if (sb && !sessionStorage.getItem(logSessionKey)) {
+    const now = new Date();
+    const dateParts = new Intl.DateTimeFormat("en", {
+      timeZone: "Asia/Bangkok",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).formatToParts(now);
+    const dateValue = type => dateParts.find(part => part.type === type)?.value || "";
+    const visitDate = `${dateValue("year")}-${dateValue("month")}-${dateValue("day")}`;
+    const userAgent = navigator.userAgent || "";
+    const deviceType = /Mobi|Android|iPhone|iPod/i.test(userAgent)
+      ? "Mobile"
+      : /Tablet|iPad/i.test(userAgent) ? "Tablet" : "Desktop";
+
+    try {
+      const { error } = await sb.from("visitor_logs").insert([{
+        device_type: deviceType,
+        user_agent: userAgent.substring(0, 200),
+        visit_date: visitDate,
+        created_at: now.toISOString()
+      }]);
+      if (error) throw error;
+      sessionStorage.setItem(logSessionKey, "true");
+    } catch (err) {
+      console.warn("Visitor log insert error:", err);
+    }
   }
 }
 

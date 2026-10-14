@@ -178,22 +178,16 @@ window.renderOicSectionsView = function (container, items, currentPage = 1, item
           
           <div onclick="openPublicFolder('${item.id}', '${escapedTitle}')" class="bg-white rounded-md p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-gray-200 shadow-2xs hover:border-brand-teal transition-all cursor-pointer group">
             <div class="flex items-center gap-3 flex-1">
-              <!-- macOS Glossy Blue Folder Icon (mariotreo650 style) -->
+              <!-- Cyan folder with white documents inside -->
               <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <svg class="w-7 h-7 drop-shadow-xs" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M7 16C7 13.2386 9.23858 11 12 11H24.5C26.1569 11 27.6953 11.8213 28.5912 13.2003L30.8 16.6H52C54.7614 16.6 57 18.8386 57 21.6V48C57 50.7614 54.7614 53 52 53H12C9.23858 53 7 50.7614 7 48V16Z" fill="url(#mac_folder_back_${item.id || 'def'})" />
-                  <path d="M7 22C7 19.2386 9.23858 17 12 17H52C54.7614 17 57 19.2386 57 22V48C57 50.7614 54.7614 53 52 53H12C9.23858 53 7 50.7614 7 48V22Z" fill="url(#mac_folder_front_${item.id || 'def'})" />
-                  <path d="M8 23H56V25H8V23Z" fill="white" opacity="0.3"/>
-                  <defs>
-                    <linearGradient id="mac_folder_back_${item.id || 'def'}" x1="32" y1="11" x2="32" y2="53" gradientUnits="userSpaceOnUse">
-                      <stop stop-color="#2563EB"/>
-                      <stop offset="1" stop-color="#1D4ED8"/>
-                    </linearGradient>
-                    <linearGradient id="mac_folder_front_${item.id || 'def'}" x1="32" y1="17" x2="32" y2="53" gradientUnits="userSpaceOnUse">
-                      <stop stop-color="#60A5FA"/>
-                      <stop offset="1" stop-color="#2563EB"/>
-                    </linearGradient>
-                  </defs>
+                <svg class="w-7 h-7 drop-shadow-xs" viewBox="0 0 64 64" role="img" aria-label="โฟลเดอร์เอกสาร" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7 17C7 13.7 9.7 11 13 11H25L31 17H51C54.3 17 57 19.7 57 23V47C57 50.3 54.3 53 51 53H13C9.7 53 7 50.3 7 47V17Z" fill="#7BDCF4"/>
+                  <g class="oic-folder-papers">
+                    <path d="M17 16H39L46 23V39H17V16Z" fill="#FFFFFF"/>
+                    <path d="M21 19H39L43 23V39H21V19Z" fill="#F8FAFC"/>
+                  </g>
+                  <path class="oic-folder-front" d="M7 23C7 19.7 9.7 17 13 17H51C54.3 17 57 19.7 57 23V47C57 50.3 54.3 53 51 53H13C9.7 53 7 50.3 7 47V23Z" fill="#35C9ED"/>
+                  <path d="M8 24H56" stroke="#FFFFFF" stroke-opacity=".28" stroke-width="2"/>
                 </svg>
               </div>
               <div class="flex-1">
@@ -486,4 +480,3 @@ async function downloadFile(event, url, fileName, itemId) {
   }
 }
 window.downloadFile = downloadFile;
-

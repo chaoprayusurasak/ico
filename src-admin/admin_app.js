@@ -409,6 +409,8 @@ function selectCategory(key, preserveNavigation = false) {
 
   const titleEl = document.getElementById("active-category-title");
   if (titleEl) titleEl.textContent = window.CATEGORIES[key] || key;
+  const indexFilesHelp = document.getElementById("index-files-admin-help");
+  if (indexFilesHelp) indexFilesHelp.classList.toggle("hidden", key !== "index_files");
 
   const readOnlyCategories = ["eval_summary", "eval_stats", "eval_faq"];
   // Folders are strictly ONLY used in Section 7 (m7_*) and Section 9 (m9_*)
@@ -456,6 +458,10 @@ function selectCategory(key, preserveNavigation = false) {
       btnAddItem.innerHTML = `<i class="fi fi-rr-document-signed"></i> เพิ่มไฟล์ / ข้อมูลใหม่`;
       if (btnSeedM91) btnSeedM91.classList.add("hidden");
       if (btnSeedM92) btnSeedM92.classList.remove("hidden");
+    } else if (key === "index_files") {
+      btnAddItem.innerHTML = `<i class="fi fi-rr-upload"></i> อัปโหลดไฟล์ดัชนีรวม`;
+      if (btnSeedM91) btnSeedM91.classList.add("hidden");
+      if (btnSeedM92) btnSeedM92.classList.add("hidden");
     } else if (key === "about_history") {
       btnAddItem.innerHTML = `<i class="fi fi-rr-document-signed"></i> เพิ่มข้อมูลประวัติความเป็นมา`;
       if (btnSeedM91) btnSeedM91.classList.add("hidden");

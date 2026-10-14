@@ -761,3 +761,135 @@ div[data-component*="sidebar.html"] {
     background-position-x: -1200px;
   }
 }
+
+.index-folder-art {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 42px;
+  perspective: 360px;
+}
+
+.index-folder-layer {
+  position: absolute;
+  right: 2px;
+  bottom: 1px;
+  left: 2px;
+  height: 34px;
+  border-radius: 7px 8px 8px 8px;
+  transform-origin: bottom center;
+  transition: transform 320ms cubic-bezier(0.2, 0.75, 0.25, 1), box-shadow 320ms ease;
+}
+
+.index-folder-layer-back {
+  background: #ffffff;
+  transform: translateY(-5px) scale(0.84);
+}
+
+.index-folder-layer-middle {
+  background: #f8fafc;
+  transform: translateY(-3px) scale(0.91);
+}
+
+.index-folder-layer-front {
+  background: linear-gradient(145deg, #36c9ed, #27bde7);
+  box-shadow: inset 0 3px 5px rgba(255, 255, 255, 0.25);
+}
+
+.index-folder-art--section-9 .index-folder-layer-back,
+.index-folder-art--section-9 .index-folder-layer-front::before {
+  background: #fbbf24;
+}
+
+.index-folder-art--section-9 .index-folder-layer-middle {
+  background: #fde68a;
+}
+
+.index-folder-art--section-9 .index-folder-layer-front {
+  background: linear-gradient(145deg, #fbbf24, #d97706);
+}
+
+.index-folder-art--section-9 .index-folder-label {
+  border-color: rgba(120, 53, 15, 0.14);
+  color: #78350f;
+}
+
+.oic-folder-papers,
+.oic-folder-front {
+  transition: transform 280ms cubic-bezier(0.2, 0.75, 0.25, 1);
+}
+
+.oic-folder-papers {
+  transform: translateY(0);
+}
+
+.oic-folder-front {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+
+.group:hover .oic-folder-papers,
+.group:focus-within .oic-folder-papers {
+  transform: translateY(-8px);
+}
+
+.group:hover .oic-folder-front,
+.group:focus-within .oic-folder-front {
+  transform: scaleY(0.94) translateY(1px);
+}
+
+.index-folder-layer-front::before {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 18px;
+  height: 6px;
+  border-radius: 5px 5px 0 0;
+  background: #7bdcf4;
+  content: "";
+}
+
+.index-folder-label {
+  position: absolute;
+  right: 4px;
+  bottom: 5px;
+  z-index: 1;
+  padding: 1px 3px;
+  border: 1px solid rgba(8, 145, 178, 0.18);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #0e7490;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.group:hover .index-folder-layer-back,
+.group:focus-visible .index-folder-layer-back {
+  transform: rotateX(-20deg) translateY(-7px) scale(0.84);
+}
+
+.group:hover .index-folder-layer-middle,
+.group:focus-visible .index-folder-layer-middle {
+  transform: rotateX(-30deg) translateY(-5px) scale(0.91);
+}
+
+.group:hover .index-folder-layer-front,
+.group:focus-visible .index-folder-layer-front {
+  transform: rotateX(-42deg) translateY(1px);
+  box-shadow: inset 0 9px 14px rgba(125, 220, 244, 0.72), inset 0 -8px 12px rgba(8, 145, 178, 0.28);
+}
+
+.group:hover .index-folder-art--section-9 .index-folder-layer-front,
+.group:focus-visible .index-folder-art--section-9 .index-folder-layer-front {
+  box-shadow: inset 0 9px 14px rgba(251, 191, 36, 0.72), inset 0 -8px 12px rgba(146, 64, 14, 0.24);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .index-folder-layer,
+  .oic-folder-papers,
+  .oic-folder-front {
+    transition: none;
+  }
+}
