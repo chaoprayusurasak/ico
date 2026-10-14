@@ -38,16 +38,16 @@ window.renderOicSectionsView = function (container, items, currentPage = 1, item
 
   // 2. Top Controls Bar: Search & Sort (Clean rounded-md inputs)
   html += `
-    <div class="flex items-center justify-end gap-3 flex-wrap sm:flex-nowrap mb-5 w-full">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3 mb-5 w-full">
       <!-- Search Box (Short & Compact, rounded-md) -->
-      <div class="relative w-48 sm:w-60 shrink-0 ml-auto">
+      <div class="relative w-full sm:w-60 shrink-0 sm:ml-auto">
         <input type="text" id="oic-search-input" value="${window.oicSearchQuery}" oninput="onOicSearchInput(this.value)" placeholder="ค้นหา..." class="w-full pl-4 pr-9 py-2.5 bg-white border border-gray-300 rounded-md text-xs sm:text-sm focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/10 transition-all shadow-2xs">
         <i class="fi fi-rr-search absolute right-3 top-3 text-gray-400 text-sm pointer-events-none"></i>
       </div>
 
       <!-- Sort Dropdown (rounded-md) -->
-      <div class="relative shrink-0">
-        <select id="oic-sort-select" onchange="onOicSortChange(this.value)" class="py-2.5 pl-3 pr-8 bg-white border border-gray-300 rounded-md text-xs sm:text-sm font-semibold text-gray-700 focus:outline-none focus:border-brand-teal transition-all shadow-2xs cursor-pointer appearance-none">
+      <div class="relative w-full sm:w-auto shrink-0">
+        <select id="oic-sort-select" onchange="onOicSortChange(this.value)" class="w-full sm:w-auto py-2.5 pl-3 pr-8 bg-white border border-gray-300 rounded-md text-xs sm:text-sm font-semibold text-gray-700 focus:outline-none focus:border-brand-teal transition-all shadow-2xs cursor-pointer appearance-none">
           <option value="name" ${window.oicSortOrder === 'name' ? 'selected' : ''}>เรียงลำดับข้อมูล :ตามชื่อ (ก-ฮ)</option>
           <option value="newest" ${window.oicSortOrder === 'newest' ? 'selected' : ''}>เรียงลำดับข้อมูล :ที่มาใหม่</option>
           <option value="oldest" ${window.oicSortOrder === 'oldest' ? 'selected' : ''}>เรียงลำดับข้อมูล :ที่มาเก่า</option>
@@ -176,8 +176,8 @@ window.renderOicSectionsView = function (container, items, currentPage = 1, item
         <div class="bg-[#f8f9fa] rounded-md p-3.5 md:p-4 shadow-xs hover:shadow-md transition-all duration-300 border border-gray-200/80">
           <h3 class="font-normal text-sm sm:text-base text-gray-800 mb-2 leading-snug whitespace-normal break-words">${item.title}</h3>
           
-          <div onclick="openPublicFolder('${item.id}', '${escapedTitle}')" class="bg-white rounded-md p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-gray-200 shadow-2xs hover:border-brand-teal transition-all cursor-pointer group">
-            <div class="flex items-center gap-3 flex-1">
+          <div onclick="openPublicFolder('${item.id}', '${escapedTitle}')" class="bg-white rounded-md p-3 flex items-start sm:items-center justify-between gap-3 border border-gray-200 shadow-2xs hover:border-brand-teal transition-all cursor-pointer group">
+            <div class="flex items-center gap-3 flex-1 min-w-0">
               <!-- Cyan folder with white documents inside -->
               <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <svg class="w-7 h-7 drop-shadow-xs" viewBox="0 0 64 64" role="img" aria-label="โฟลเดอร์เอกสาร" xmlns="http://www.w3.org/2000/svg">
@@ -190,7 +190,7 @@ window.renderOicSectionsView = function (container, items, currentPage = 1, item
                   <path d="M8 24H56" stroke="#FFFFFF" stroke-opacity=".28" stroke-width="2"/>
                 </svg>
               </div>
-              <div class="flex-1">
+              <div class="flex-1 min-w-0">
                 <h4 class="font-normal text-xs sm:text-sm text-gray-800 group-hover:text-amber-600 transition-colors leading-snug whitespace-normal break-words">${item.title}</h4>
                 ${formattedDate ? `<div class="mt-0.5 text-[11px] text-gray-400 font-normal">${formattedDate}</div>` : ''}
               </div>
@@ -200,8 +200,8 @@ window.renderOicSectionsView = function (container, items, currentPage = 1, item
               -
             </div>
 
-            <div class="w-32 flex items-center justify-end gap-2 shrink-0">
-              <button class="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-white font-medium text-xs rounded-md shadow-xs transition-all inline-flex items-center gap-1.5">
+            <div class="w-auto sm:w-32 flex items-start sm:items-center justify-end gap-2 shrink-0">
+              <button class="px-2 sm:px-3 py-1 bg-amber-500 hover:bg-amber-600 text-white font-medium text-xs rounded-md shadow-xs transition-all inline-flex items-center gap-1.5 whitespace-nowrap">
                 <i class="fi fi-rr-folder-open text-[11px]"></i> เปิดดูเอกสาร
               </button>
             </div>
